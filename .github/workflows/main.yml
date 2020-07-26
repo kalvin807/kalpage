@@ -6,11 +6,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Fetch...
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Get Packages...
       run: yarn
 
     - name: Export...
@@ -19,6 +27,11 @@ jobs:
         yarn export
         
     - name: Deploy...!
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        git config --global user.email "worker@github.com"
+        git config --global user.name "GitHub Action Worker"
+        git remote set-url origin https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
         touch out/.nojekyll
         yarn deploy
