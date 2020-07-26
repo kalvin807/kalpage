@@ -14,7 +14,9 @@ jobs:
       run: yarn
 
     - name: Export...
-      run: yarn export
+      run: |
+        export NODE_ENV=production
+        yarn export
         
     - name: Deploy...!
       run: |
