@@ -1,0 +1,22 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Fetch...
+      run: yarn
+
+    - name: Export...
+      run: yarn export
+        
+    - name: Deploy...!
+      run: |
+        touch out/.nojekyll
+        gh-pages -t -d out
