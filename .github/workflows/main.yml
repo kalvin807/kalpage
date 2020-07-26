@@ -33,5 +33,5 @@ jobs:
         git config --global user.email "worker@github.com"
         git config --global user.name "GitHub Action Worker"
         git remote set-url origin https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-        touch out/.nojekyll
+        touch ./out/.nojekyll
         yarn deploy
