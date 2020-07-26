@@ -1,0 +1,86 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+@tailwind utilities;
+
+/* Font */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&family=Roboto&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+h1,
+h2 {
+  font-family: 'Open Sans', sans-serif;
+}
+
+@keyframes moveDown {
+  from {
+    transform: translateY(-5rem);
+  }
+  to {
+    transform: translateY(0rem);
+  }
+}
+
+.icon-dark:hover {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+}
+
+.icon-dark:hover svg {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  fill: rgba(244, 208, 63, 1);
+  border-radius: 0.25rem;
+}
+
+.icon-light:hover {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 0.25rem;
+}
+
+.icon-light:hover svg {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  fill: rgba(40, 55, 71, 1);
+}
+
+.mail:hover svg {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  fill: rgba(213, 72, 59, 1);
+}
+
+.github:hover svg {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  fill: rgba(148, 85, 175, 1);
+}
+
+.linkedin:hover svg {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  fill: rgba(0, 112, 171, 1);
+}
+
+.vertical-timeline.vertical-timeline-dark::before {
+  background: #ffffff;
+}
+
+.vertical-timeline.vertical-timeline-light::before {
+  background: #424242;
+}

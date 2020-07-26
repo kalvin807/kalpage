@@ -1,15 +1,22 @@
 {
   "name": "kalpage",
-  "version": "0.1.0",
+  "version": "1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "export": "next build && next export"
   },
   "dependencies": {
+    "@fullhuman/postcss-purgecss": "^2.3.0",
+    "js-yaml": "^3.14.0",
+    "js-yaml-loader": "^1.2.2",
+    "lodash.debounce": "^4.0.8",
     "next": "9.4.4",
+    "next-react-svg": "^1.1.2",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "tailwindcss": "^1.4.6"
   }
 }
