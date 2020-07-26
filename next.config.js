@@ -1,6 +1,7 @@
+require('dotenv').config()
+
 const withReactSvg = require('next-react-svg');
 const path = require('path');
-import dotenv from 'dotenv'
 
 module.exports = withReactSvg({
   assetPrefix: process.env.GITHUB_PAGES ? '/kalpage' : '',
