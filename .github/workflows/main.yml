@@ -21,4 +21,4 @@ jobs:
     - name: Deploy...!
       run: |
         touch out/.nojekyll
-        yarn gh-pages -t -d out
+        yarn deploy
