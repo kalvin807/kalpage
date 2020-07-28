@@ -17,7 +17,6 @@ const styleSheet = {
     animation: 'moveDown 200ms ease-in-out',
   },
   base: {
-    ...animation.transition,
     position: 'absolute',
     zIndex: 10,
   },
@@ -87,7 +86,9 @@ const HeaderBar = (props) => {
   return (
     <div className={'w-full header'} style={{ ...style }} ref={navRef}>
       <nav
-        className={'py-3 px-2 mx-auto flex flex-row justify-between items-center'}
+        className={
+          'py-3 px-2 mx-auto flex flex-row justify-between items-center'
+        }
         style={innerStyle}
       >
         <IconToggle onClick={darkMode.toggle} className={'p-2 bulb icon'}>

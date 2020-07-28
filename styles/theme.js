@@ -22,9 +22,5 @@ export const dark = {
 
 export const animation = {
   transition: {
-    transition: 'background-color 500ms ease',
-    MozTransition: 'background-color 500ms ease',
-    WebkitTransition: 'background-color 500ms ease',
-    OTransition: 'background-color 500ms ease',
   },
 };
