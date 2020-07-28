@@ -10,10 +10,6 @@ h2 {
 body.dark-mode {
   background-color: #121212;
   color: #fbfbfc;
-  transition: background-color 500ms ease;
-  -moz-transition: background-color 500ms ease;
-  -webkit-transition: background-color 500ms ease;
-  -o-transition: background-color 500ms ease;
 }
 
 body.dark-mode svg {
@@ -39,11 +35,10 @@ body.light-mode svg {
 
 body.light-mode .header {
   background-color: rgba(251, 252, 252, 0.6);
+  transition: background-color 500ms ease;
 }
 
 body.dark-mode a:hover.icon {
-  -webkit-transition: all 100ms;
-  -moz-transition: all 100ms;
   transition: all 100ms;
   background-color: rgba(251, 252, 252, 0.1);
   border-radius: 0.25rem;
@@ -52,6 +47,7 @@ body.dark-mode a:hover.icon {
 body.light-mode a:hover.icon {
   -webkit-transition: all 100ms;
   -moz-transition: all 100ms;
+  -o-transition: all 100ms;
   transition: all 100ms;
   background-color: rgba(18, 18, 18, 0.1);
   border-radius: 0.25rem;
