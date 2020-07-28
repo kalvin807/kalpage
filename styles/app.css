@@ -1,0 +1,87 @@
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+h1,
+h2 {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #fbfbfc;
+  transition: background-color 500ms ease;
+  -moz-transition: background-color 500ms ease;
+  -webkit-transition: background-color 500ms ease;
+  -o-transition: background-color 500ms ease;
+}
+
+body.dark-mode svg {
+  fill: #fbfbfc;
+}
+
+body.dark-mode .header {
+  background-color: rgba(18, 18, 18, 0.6);
+}
+
+body.light-mode {
+  background-color: #fbfbfc;
+  color: #050505;
+  transition: background-color 500ms ease;
+  -moz-transition: background-color 500ms ease;
+  -webkit-transition: background-color 500ms ease;
+  -o-transition: background-color 500ms ease;
+}
+
+body.light-mode svg {
+  fill: #050505;
+}
+
+body.light-mode .header {
+  background-color: rgba(251, 252, 252, 0.6);
+}
+
+body.dark-mode a:hover.icon {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  background-color: rgba(251, 252, 252, 0.1);
+  border-radius: 0.25rem;
+}
+
+body.light-mode a:hover.icon {
+  -webkit-transition: all 100ms;
+  -moz-transition: all 100ms;
+  transition: all 100ms;
+  background-color: rgba(18, 18, 18, 0.1);
+  border-radius: 0.25rem;
+}
+
+body.dark-mode a:hover.bulb.icon svg {
+  fill: rgba(244, 208, 63, 1);
+}
+
+body.light-mode a:hover.bulb.icon svg {
+  fill: rgba(40, 55, 71, 1);
+}
+
+a:hover.mail.icon svg {
+  fill: rgba(213, 72, 59, 1);
+}
+
+a:hover.github.icon svg {
+  fill: rgba(148, 85, 175, 1);
+}
+
+a:hover.linkedin.icon svg {
+  fill: rgba(0, 112, 171, 1);
+}
+
+@keyframes moveDown {
+  from {
+    transform: translateY(-5rem);
+  }
+  to {
+    transform: translateY(0rem);
+  }
+}

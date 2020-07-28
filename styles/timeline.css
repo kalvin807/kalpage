@@ -6,7 +6,7 @@
   list-style-type: none;
 }
 
-.timeline.timeline-dark:before {
+body.dark-mode .timeline.timeline:before {
   position: absolute;
   left: 0;
   top: 0;
@@ -19,7 +19,7 @@
   z-index: 5;
 }
 
-.timeline.timeline-light:before {
+body.light-mode .timeline.timeline:before {
   position: absolute;
   left: 0;
   top: 0;
