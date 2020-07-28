@@ -3,38 +3,20 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Timeline from '../components/Timeline/Timeline';
 import { light, dark, animation } from '../styles/theme';
+import useDarkMode from 'use-dark-mode';
 
 const Home = () => {
-  const [isLight, setIsLight] = React.useState(true);
-  const [theme, setTheme] = React.useState(isLight ? light : dark);
-  const themeToggle = () => {
-    setIsLight(!isLight);
-    localStorage.setItem('isLight', isLight ? '0' : '1');
-  };
-
-  React.useEffect(() => {
-    const savedPref = localStorage.getItem('isLight');
-    if (savedPref) setIsLight(savedPref === '1');
-  }, []);
-
-  React.useEffect(() => {
-    setTheme(isLight ? light : dark);
-  }, [isLight]);
-
+  const darkMode = useDarkMode();
+  const theme = !darkMode.value ? light : dark;
+  
   return (
-    <div
-      style={{
-        backgroundColor: theme.bg.primary,
-        color: theme.text.primary,
-        ...animation.transition,
-      }}
-    >
+    <div>
       <Head>
         <title>Home | Kal</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header themeToggle={themeToggle} theme={theme} />
+      <Header theme={theme} />
       <div className="container mx-auto max-w-screen-lg p-8">
         <div className="py-16">
           <h1 className="text-2xl md:text-5xl font-bold ">

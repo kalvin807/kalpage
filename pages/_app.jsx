@@ -1,4 +1,21 @@
+import useDarkMode from 'use-dark-mode';
+import { useEffect } from 'react';
+
 import '../styles/index.css';
 import '../styles/timeline.css';
+import '../styles/app.css';
 
-export default ({ Component, pageProps }) => <Component {...pageProps} />;
+const App = ({ Component, pageProps }) => {
+  useEffect(() => {
+    document.body.className = (document.body.className ?? '').replace(
+      'no-js',
+      'js'
+    );
+  }, []);
+
+  useDarkMode();
+
+  return <Component {...pageProps} />;
+};
+
+export default App;

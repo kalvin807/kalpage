@@ -1,9 +1,12 @@
 import * as React from 'react';
+import useDarkMode from 'use-dark-mode';
+import debounce from 'lodash.debounce';
+
 import Github from '../assets/svg/github.svg';
 import Linkedin from '../assets/svg/linkedin.svg';
 import Mail from '../assets/svg/email.svg';
 import Bulb from '../assets/svg/bulb.svg';
-import debounce from 'lodash.debounce';
+
 import { animation } from '../styles/theme';
 
 const styleSheet = {
@@ -41,12 +44,14 @@ const IconLink = (props) => (
 );
 
 const HeaderBar = (props) => {
-  const navRef = React.useRef();
   const {
     base: baseStyle,
     sticky: stickyStyle,
     inner: innerStyle,
   } = styleSheet;
+  const darkMode = useDarkMode();
+
+  const navRef = React.useRef();
   const [sticky, setSticky] = React.useState(false);
   const [style, setStyle] = React.useState(baseStyle);
 
@@ -80,52 +85,32 @@ const HeaderBar = (props) => {
   }, [sticky]);
 
   return (
-    <div
-      className="w-full"
-      style={{ ...style, backgroundColor: props.theme.bg.translucent }}
-      ref={navRef}
-    >
+    <div className={'w-full header'} style={{ ...style }} ref={navRef}>
       <nav
-        className="py-3 mx-auto flex flex-row justify-between items-center"
+        className={'py-3 px-2 mx-auto flex flex-row justify-between items-center'}
         style={innerStyle}
       >
-        <IconToggle
-          onClick={props.themeToggle}
-          className={`p-2 ${
-            props.theme.theme === 'light' ? 'icon-light' : 'icon-dark'
-          }`}
-        >
-          <Bulb
-            className="bulb"
-            width={24}
-            height={24}
-            fill={props.theme.text.primary}
-          />
+        <IconToggle onClick={darkMode.toggle} className={'p-2 bulb icon'}>
+          <Bulb className="bulb" width={24} height={24} />
         </IconToggle>
-        <div className="px-2 flex flex-row">
+        <div className={'flex flex-row'}>
           <IconLink
-            className={`p-2 github ${
-              props.theme.theme === 'light' ? 'icon-light' : 'icon-dark'
-            }`}
+            className={'p-2 icon github '}
             url="https://github.com/kalvin807"
           >
-            <Github width={24} height={24} fill={props.theme.text.primary} />
+            <Github width={24} height={24} />
           </IconLink>
           <IconLink
-            className={`p-2 linkedin ${
-              props.theme.theme === 'light' ? 'icon-light' : 'icon-dark'
-            }`}
+            className={'p-2 icon linkedin '}
             url="https://www.linkedin.com/in/calvin-leung-chun-yin/"
           >
-            <Linkedin width={24} height={24} fill={props.theme.text.primary} />
+            <Linkedin width={24} height={24} />
           </IconLink>
           <IconLink
-            className={`p-2 mail ${
-              props.theme.theme === 'light' ? 'icon-light' : 'icon-dark'
-            }`}
+            className={'p-2 icon mail '}
             url="mailto:kalvin80pad@gmail.com"
           >
-            <Mail width={24} height={24} fill={props.theme.text.primary} />
+            <Mail width={24} height={24} />
           </IconLink>
         </div>
       </nav>
