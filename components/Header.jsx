@@ -7,8 +7,6 @@ import Linkedin from '../assets/svg/linkedin.svg';
 import Mail from '../assets/svg/email.svg';
 import Bulb from '../assets/svg/bulb.svg';
 
-import { animation } from '../styles/theme';
-
 const styleSheet = {
   sticky: {
     position: 'fixed',
@@ -31,7 +29,7 @@ const IconToggle = (props) => (
   </a>
 );
 
-const IconLink = (props) => (
+export const IconLink = (props) => (
   <a
     className={props.className}
     href={props.url}
