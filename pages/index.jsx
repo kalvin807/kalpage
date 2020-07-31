@@ -2,13 +2,14 @@
 import Head from 'next/head';
 import Header from '../components/Header';
 import Timeline from '../components/Timeline/Timeline';
-import { light, dark, animation } from '../styles/theme';
+import { light, dark } from '../styles/theme';
 import useDarkMode from 'use-dark-mode';
+import Footer from '../components/Footer';
 
 const Home = () => {
   const darkMode = useDarkMode();
   const theme = !darkMode.value ? light : dark;
-  
+
   return (
     <div>
       <Head>
@@ -42,6 +43,7 @@ const Home = () => {
           <h2 className="text-xl md:text-3xl font-bold">Timeline</h2>
           <Timeline theme={theme} />
         </div>
+        <Footer />
       </div>
     </div>
   );

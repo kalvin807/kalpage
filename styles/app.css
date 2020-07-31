@@ -10,6 +10,10 @@ h2 {
 body.dark-mode {
   background-color: #121212;
   color: #fbfbfc;
+  transition: background-color 500ms ease;
+  -moz-transition: background-color 500ms ease;
+  -webkit-transition: background-color 500ms ease;
+  -o-transition: background-color 500ms ease;
 }
 
 body.dark-mode svg {
@@ -18,6 +22,10 @@ body.dark-mode svg {
 
 body.dark-mode .header {
   background-color: rgba(18, 18, 18, 0.6);
+  transition: background-color 500ms ease;
+  -moz-transition: background-color 500ms ease;
+  -webkit-transition: background-color 500ms ease;
+  -o-transition: background-color 500ms ease;
 }
 
 body.light-mode {
@@ -36,6 +44,9 @@ body.light-mode svg {
 body.light-mode .header {
   background-color: rgba(251, 252, 252, 0.6);
   transition: background-color 500ms ease;
+  -moz-transition: background-color 500ms ease;
+  -webkit-transition: background-color 500ms ease;
+  -o-transition: background-color 500ms ease;
 }
 
 body.dark-mode a:hover.icon {
@@ -71,6 +82,16 @@ a:hover.github.icon svg {
 
 a:hover.linkedin.icon svg {
   fill: rgba(0, 112, 171, 1);
+}
+
+a:hover.arrow {
+  transition: transform 0.3s ease-out;
+  transform: translateX(0.29rem);
+}
+
+a:hover.arrow svg {
+  transition: transform 0.3s ease-out;
+  transform: translateX(0.3rem);
 }
 
 @keyframes moveDown {
