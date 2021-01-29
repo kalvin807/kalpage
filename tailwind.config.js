@@ -5,11 +5,14 @@ module.exports = {
           './pages/**/*.{js,jsx,ts,tsx}',
           './components/**/*.{js,jsx,ts,tsx}',
         ],
-        theme: {
-          extend: {},
-        },
-        variants: {},
-        plugins: [],
       }
     : {}),
+  darkMode: false, // or 'media' or 'class'
+  theme: {
+    extend: {},
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [],
 };
