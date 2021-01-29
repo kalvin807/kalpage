@@ -15,6 +15,10 @@ const Home = () => {
       <Head>
         <title>Home | Kal</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          name="Description"
+          content="Calvin Leung personal page and he is looking for a software engineer job on cloud and web!"
+        ></meta>
       </Head>
 
       <Header theme={theme} />
