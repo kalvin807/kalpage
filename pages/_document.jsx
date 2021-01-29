@@ -5,7 +5,7 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <meta charSet="utf-8" />
+          <meta charSet="utf-8" lang="en" />
         </Head>
         <body>
           <script src="noflash.min.js" />
