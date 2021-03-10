@@ -11,6 +11,11 @@ export default class MyDocument extends Document {
           <script src="noflash.min.js" />
           <Main />
           <NextScript />
+          <script
+            data-goatcounter="https://kalvin807.goatcounter.com/count"
+            async
+            src="//gc.zgo.at/count.js"
+          ></script>
         </body>
       </Html>
     );
