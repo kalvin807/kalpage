@@ -2,10 +2,7 @@ import * as React from 'react';
 import useDarkMode from 'use-dark-mode';
 import debounce from 'lodash.debounce';
 
-import Github from '../assets/svg/github.svg';
-import Linkedin from '../assets/svg/linkedin.svg';
-import Mail from '../assets/svg/email.svg';
-import Bulb from '../assets/svg/bulb.svg';
+import { Sun, Moon, GitHub, Linkedin, Mail } from 'react-feather';
 
 const styleSheet = {
   sticky: {
@@ -90,14 +87,18 @@ const HeaderBar = (props) => {
         style={innerStyle}
       >
         <IconToggle onClick={darkMode.toggle} className={'p-2 bulb icon'}>
-          <Bulb className="bulb" width={24} height={24} />
+          {darkMode.value ? (
+            <Sun className="bulb" width={24} height={24} />
+          ) : (
+            <Moon className="bulb" width={24} height={24} />
+          )}
         </IconToggle>
         <div className={'flex flex-row'}>
           <IconLink
             className={'p-2 icon github '}
             url="https://github.com/kalvin807"
           >
-            <Github width={24} height={24} />
+            <GitHub width={24} height={24} />
           </IconLink>
           <IconLink
             className={'p-2 icon linkedin '}

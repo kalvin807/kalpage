@@ -1,11 +1,8 @@
-require('dotenv').config()
+/**
+ * @type {import('next').NextConfig}
+ */
 
-const withReactSvg = require('next-react-svg');
-const path = require('path');
-
-module.exports = withReactSvg({
-  assetPrefix: process.env.GITHUB_PAGES ? '/kalpage' : '',
-  include: path.resolve(__dirname, 'assets/svg'),
+const nextConfig = {
   webpack: function (config) {
     config.module.rules.push({
       test: /\.ya?ml$/,
@@ -13,4 +10,6 @@ module.exports = withReactSvg({
     });
     return config;
   },
-});
+};
+
+module.exports = nextConfig;
