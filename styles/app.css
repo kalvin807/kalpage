@@ -17,7 +17,7 @@ body.dark-mode {
 }
 
 body.dark-mode svg {
-  fill: #fbfbfc;
+  stroke: #fbfbfc;
 }
 
 body.dark-mode .header {
@@ -38,7 +38,7 @@ body.light-mode {
 }
 
 body.light-mode svg {
-  fill: #050505;
+  stroke: #050505;
 }
 
 body.light-mode .header {
@@ -65,23 +65,23 @@ body.light-mode a:hover.icon {
 }
 
 body.dark-mode a:hover.bulb.icon svg {
-  fill: rgba(244, 208, 63, 1);
+  stroke: rgba(244, 208, 63, 1);
 }
 
 body.light-mode a:hover.bulb.icon svg {
-  fill: rgba(40, 55, 71, 1);
+  stroke: rgba(40, 55, 71, 1);
 }
 
 a:hover.mail.icon svg {
-  fill: rgba(213, 72, 59, 1);
+  stroke: rgba(213, 72, 59, 1);
 }
 
 a:hover.github.icon svg {
-  fill: rgba(148, 85, 175, 1);
+  stroke: rgba(148, 85, 175, 1);
 }
 
 a:hover.linkedin.icon svg {
-  fill: rgba(0, 112, 171, 1);
+  stroke: rgba(0, 112, 171, 1);
 }
 
 a:hover.arrow {
