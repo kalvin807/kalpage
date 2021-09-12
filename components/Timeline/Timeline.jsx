@@ -1,11 +1,11 @@
-import rawData from './data.yaml';
+import rawData from "./data.yaml"
 
-const timelineData = rawData.timeline.reverse();
+const timelineData = rawData.timeline.reverse()
 
 const Timeline = () => {
   return (
-    <div className='py-2'>
-      <ul className={'timeline'}>
+    <div className="py-2">
+      <ul className={"timeline"}>
         {timelineData.map((event, idx) => (
           <li key={`timeline-${idx}`}>
             <div className="flag-wrapper">
@@ -20,6 +20,6 @@ const Timeline = () => {
         ))}
       </ul>
     </div>
-  );
-};
-export default Timeline;
+  )
+}
+export default Timeline

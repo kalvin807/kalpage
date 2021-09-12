@@ -1,5 +1,12 @@
 module.exports = {
+  printWidth: 100,
   tabWidth: 2,
-  semi: true,
-  singleQuote: true,
-};
+  useTabs: false,
+  semi: false,
+  singleQuote: false,
+  trailingComma: "all",
+  bracketSpacing: true,
+  bracketSameLine: false,
+  arrowParens: "always",
+  proseWrap: "always",
+}

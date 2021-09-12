@@ -1,12 +1,12 @@
 // pages/index.jsx
-import Head from 'next/head';
-import Header from '../components/Header';
-import Timeline from '../components/Timeline/Timeline';
-import useDarkMode from 'use-dark-mode';
-import Footer from '../components/Footer';
+import Head from "next/head"
+import Header from "../components/Header"
+import Timeline from "../components/Timeline/Timeline"
+import useDarkMode from "use-dark-mode"
+import Footer from "../components/Footer"
 
 const Home = () => {
-  const darkMode = useDarkMode();
+  const darkMode = useDarkMode()
 
   return (
     <>
@@ -19,16 +19,11 @@ const Home = () => {
         ></meta>
       </Head>
 
-      <Header/>
+      <Header />
       <div className="container mx-auto max-w-screen-lg p-8">
         <div className="py-16">
-          <h1 className="text-2xl md:text-5xl font-bold ">
-            {"Hey, I'm Calvin Leung"}
-          </h1>
-          <p>
-            Welcome to my page. Here is small intro of my life as a dev,
-            student, and geek.
-          </p>
+          <h1 className="text-2xl md:text-5xl font-bold ">{"Hey, I'm Calvin Leung"}</h1>
+          <p>Welcome to my page. Here is small intro of my life as a dev, student, and geek.</p>
         </div>
         <div className="py-8">
           <h2 className="text-xl md:text-3xl font-bold">About me</h2>
@@ -48,7 +43,7 @@ const Home = () => {
         <Footer />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
