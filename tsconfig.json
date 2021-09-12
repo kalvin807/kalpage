@@ -18,8 +18,8 @@
       "~/components/*": ["components/*"],
       "~/layouts/*": ["components/layouts/*"],
       "~/contents/*": ["contents/*"],
-      "~/posts/*": ["contents/posts/*"],
-      "~/pages/*": ["contents/pages/*"],
+      "~/posts/*": ["pages/contents/posts/*"],
+      "~/pages/*": ["pages/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

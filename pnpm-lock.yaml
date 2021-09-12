@@ -2,7 +2,9 @@ lockfileVersion: 5.3
 
 specifiers:
   '@mdx-js/loader': ^1.6.22
+  '@mdx-js/preact': ^1.6.22
   '@next/mdx': ^11.1.2
+  '@react-hook/window-scroll': ^1.3.0
   '@tailwindcss/typography': ^0.4.1
   '@types/react': ^17.0.20
   autoprefixer: ^10.3.4
@@ -33,7 +35,10 @@ specifiers:
 
 dependencies:
   '@mdx-js/loader': 1.6.22_@preact+compat@17.0.2
+  '@mdx-js/preact': 1.6.22_preact@10.5.14
   '@next/mdx': 11.1.2_@mdx-js+loader@1.6.22
+  '@react-hook/window-scroll': 1.3.0_@preact+compat@17.0.2
+  '@tailwindcss/typography': 0.4.1_tailwindcss@2.2.15
   boring-avatars: 1.5.8
   js-yaml: 4.1.0
   js-yaml-loader: 1.2.2
@@ -51,7 +56,6 @@ dependencies:
   use-dark-mode: 2.3.1_@preact+compat@17.0.2
 
 devDependencies:
-  '@tailwindcss/typography': 0.4.1_tailwindcss@2.2.15
   '@types/react': 17.0.20
   autoprefixer: 10.3.4_postcss@8.3.6
   daisyui: 1.14.0
@@ -432,6 +436,14 @@ packages:
       - supports-color
     dev: false
 
+  /@mdx-js/preact/1.6.22_preact@10.5.14:
+    resolution: {integrity: sha512-ZVq6uvfVGSAphYNuD+9MVcoRSF8yi6RlZIQDVIkgc3ZnUwqYdLheCkPZ+nIG1Mil8Kanah5tgPHLNmA7HwfGLw==}
+    peerDependencies:
+      preact: ^10.4.8
+    dependencies:
+      preact: 10.5.14
+    dev: false
+
   /@mdx-js/react/1.6.22_@preact+compat@17.0.2:
     resolution: {integrity: sha512-TDoPum4SHdfPiGSAaRBw7ECyI8VaHpK8GJugbJIJuqyh6kzw9ZLJZW3HGL3NNrJGxcAixUvqROm+YuQOo5eXtg==}
     peerDependencies:
@@ -631,6 +643,50 @@ packages:
       preact: 10.5.14
     dev: false
 
+  /@react-hook/event/1.2.3_@preact+compat@17.0.2:
+    resolution: {integrity: sha512-WMBwLnYY2rubLeecsi4skl1imfx0oiXTgazV/1ByPT6WkmLvxUao3hC+mxps5D/+JK4Fq3uG9OWU/dn5jMtXyg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@react-hook/passive-layout-effect': 1.2.1_@preact+compat@17.0.2
+      react: /@preact/compat/17.0.2_preact@10.5.14
+    dev: false
+
+  /@react-hook/latest/1.0.3_@preact+compat@17.0.2:
+    resolution: {integrity: sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: /@preact/compat/17.0.2_preact@10.5.14
+    dev: false
+
+  /@react-hook/passive-layout-effect/1.2.1_@preact+compat@17.0.2:
+    resolution: {integrity: sha512-IwEphTD75liO8g+6taS+4oqz+nnroocNfWVHWz7j+N+ZO2vYrc6PV1q7GQhuahL0IOR7JccFTsFKQ/mb6iZWAg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: /@preact/compat/17.0.2_preact@10.5.14
+    dev: false
+
+  /@react-hook/throttle/2.2.0_@preact+compat@17.0.2:
+    resolution: {integrity: sha512-LJ5eg+yMV8lXtqK3lR+OtOZ2WH/EfWvuiEEu0M3bhR7dZRfTyEJKxH1oK9uyBxiXPtWXiQggWbZirMCXam51tg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@react-hook/latest': 1.0.3_@preact+compat@17.0.2
+      react: /@preact/compat/17.0.2_preact@10.5.14
+    dev: false
+
+  /@react-hook/window-scroll/1.3.0_@preact+compat@17.0.2:
+    resolution: {integrity: sha512-LdYnCL22pFI+LTs85Fi2OQHSKWkzIuHFgv8lA+wwuaPxLOEhWR5bzJ21iygUH9X4meeLVRZKEbfpYi3OWWD4GQ==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@react-hook/event': 1.2.3_@preact+compat@17.0.2
+      '@react-hook/throttle': 2.2.0_@preact+compat@17.0.2
+      react: /@preact/compat/17.0.2_preact@10.5.14
+    dev: false
+
   /@rushstack/eslint-patch/1.0.6:
     resolution: {integrity: sha512-Myxw//kzromB9yWgS8qYGuGVf91oBUUJpNvy5eM50sqvmKLbKjwLxohJnkWGTeeI9v9IBMtPLxz5Gc60FIfvCA==}
     dev: true
@@ -645,7 +701,7 @@ packages:
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
       tailwindcss: 2.2.15_4dc2d3db2b138fb8fa7d5c7b0c803aba
-    dev: true
+    dev: false
 
   /@types/hast/2.3.4:
     resolution: {integrity: sha512-wLEm0QvaoawEDoTRwzTXp4b4jpwiJDvR5KMnFnVodm3scufTlBOWRD6N1OBf9TZMhjlNsSfcO5V+7AF4+Vy+9g==}
@@ -2841,7 +2897,7 @@ packages:
 
   /lodash.castarray/4.4.0:
     resolution: {integrity: sha1-wCUTUV4wna3dTCTGDP3c9ZdtkRU=}
-    dev: true
+    dev: false
 
   /lodash.clonedeep/4.5.0:
     resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
@@ -2853,11 +2909,10 @@ packages:
 
   /lodash.isplainobject/4.0.6:
     resolution: {integrity: sha1-fFJqUtibRcRcxpC4gWO+BJf1UMs=}
-    dev: true
+    dev: false
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
-    dev: true
 
   /lodash.sortby/4.7.0:
     resolution: {integrity: sha1-7dFMgk4sycHgsKG0K7UhBRakJDg=}
@@ -2873,6 +2928,7 @@ packages:
 
   /lodash.uniq/4.5.0:
     resolution: {integrity: sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=}
+    dev: false
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}

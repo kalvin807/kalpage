@@ -15,7 +15,7 @@ export default function DefaultLayout(props) {
   }
 
   return (
-    <div className="flex flex-col h-screen justify-between">
+    <div>
       <Head>
         <title>{meta.title}</title>
         <meta name="robots" content="follow, index" />
@@ -30,8 +30,9 @@ export default function DefaultLayout(props) {
         <meta name="twitter:description" content={meta.description} />
         {meta.date && <meta property="article:published_time" content={meta.date} />}
       </Head>
+      {/* TODO: Until I have my blod */}
       <Header />
-      <main className="mb-auto flex flex-col justify-center px-8">{children}</main>
+      <main className="mt-8 flex flex-col justify-center px-8">{children}</main>
       <Footer />
     </div>
   )

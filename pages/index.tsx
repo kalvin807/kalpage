@@ -1,29 +1,40 @@
 import DefaultLayout from "~/layouts/default"
+import { MinecraftServerCard, GBFCard } from "~/components/Card"
+import Timeline from "~/components/Timeline"
+import TimelineData from "~/contents/timeline.json"
+import Image from "next/image"
 
-const Home = () => {
+export default function Home({ timelineData }) {
   return (
     <DefaultLayout>
-      <div className="py-16">
-        <h1 className="text-2xl md:text-5xl font-bold ">{"Hey, I'm Calvin Leung"}</h1>
-        <p>Welcome to my page. Here is small intro of my life as a dev, student, and geek.</p>
-      </div>
-      <div className="py-8">
-        <h2 className="text-xl md:text-3xl font-bold">About me</h2>
-        <p>
-          {`I'm a final year computer science student in Hong Kong. During
-            school, I learnt a lot of computer theory, algorithm etc. At night,
-            when I am free, I also do coding for fun. Trying out new things, new
-            language to make my life easier. When I don't code, I like
-            boardgames, tabletop rpg and video games. Occasionally, I am scout
-            and outdoor sports, like hiking and camping.`}
-        </p>
-      </div>
-      <div className="py-8">
-        <h2 className="text-xl md:text-3xl font-bold">Timeline</h2>
-        {/* <Timeline theme={theme} /> */}
+      <div className="flex flex-col justify-center items-stretch max-w-3xl mx-auto mb-16">
+        <h1 className="font-bold text-3xl md:text-5xl tracking-tight mb-4">
+          <div className="avatar">
+            <div className="mb-8 rounded-full w-9 h-9 mr-4 ring-2 ring-base-content">
+              <Image alt="doggo greeting" src="/doggo.png" width="32" height="32" layout="responsive" />
+            </div>
+          </div>
+          Hello There.
+        </h1>
+        <h2 className="prose mb-16">
+          I am Kal.L 👋 . A developer, gamer and student. I do program in both end to create apps that
+          is fun and useful. Current working at Softbank @ 🇯🇵 . I sometime also records random
+          things I found interesting here. Love board game, video games, anime, crypto, and new things.
+        </h2>
+        <h3 className="font-bold text-2xl md:text-4xl tracking-tight mb-4 ">Works</h3>
+        <GBFCard />
+        <MinecraftServerCard />
+        <h3 className="font-bold text-2xl md:text-4xl tracking-tight mb-4 mt-8 ">Me</h3>
+        <Timeline data={timelineData} />
       </div>
     </DefaultLayout>
   )
 }
 
-export default Home
+export async function getStaticProps() {
+  return {
+    props: {
+      timelineData: TimelineData,
+    },
+  }
+}
