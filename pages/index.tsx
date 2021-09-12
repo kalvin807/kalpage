@@ -17,6 +17,7 @@ export default function Home({ timelineData }) {
                 width="32"
                 height="32"
                 layout="responsive"
+                className="hover:animate-spin"
               />
             </div>
           </div>
