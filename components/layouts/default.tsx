@@ -18,6 +18,7 @@ export default function DefaultLayout(props) {
     <div>
       <Head>
         <title>{meta.title}</title>
+        <meta lang="en" />
         <meta name="robots" content="follow, index" />
         <meta content={meta.description} name="description" />
         <meta property="og:url" content={`https://kalvin.io${router.asPath}`} />
