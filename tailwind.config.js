@@ -1,18 +1,14 @@
 module.exports = {
-  ...(process.env.NODE_ENV === 'production'
-    ? {
-        purge: [
-          './pages/**/*.{js,jsx,ts,tsx}',
-          './components/**/*.{js,jsx,ts,tsx}',
-        ],
-      }
-    : {}),
-  darkMode: false, // or 'media' or 'class'
+  purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
+  mode: "jit",
+  darkMode: "media",
   theme: {
-    extend: {},
+    fontFamily: {
+      sans: ["Inter", "system-ui", "sans-serif"],
+    },
   },
   variants: {
     extend: {},
   },
-  plugins: [],
-};
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
+}
