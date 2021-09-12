@@ -1,5 +1,4 @@
 import { Code, Compass } from "react-feather"
-import { useMemo } from "react"
 
 interface FeatureCardProps {
   title: string
