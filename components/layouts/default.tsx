@@ -8,8 +8,8 @@ export default function DefaultLayout(props) {
   const { children, ...customMeta } = props
   const router = useRouter()
   const meta = {
-    title: "Kal.L",
-    description: `Fullstack developer and anime geek`,
+    title: "Kalpage",
+    description: "Blog of Kal.L. A developer",
     type: "website",
     ...customMeta,
   }
@@ -30,7 +30,7 @@ export default function DefaultLayout(props) {
         <meta name="twitter:description" content={meta.description} />
         {meta.date && <meta property="article:published_time" content={meta.date} />}
       </Head>
-      {/* TODO: Until I have my blod */}
+      {/* TODO: Until I have my blog */}
       <Header />
       <main className="mt-8 flex flex-col justify-center px-8">{children}</main>
       <Footer />

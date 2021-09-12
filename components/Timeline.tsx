@@ -14,7 +14,7 @@ const Step = ({ title, children }) => {
     <li className="mb-4 ml-2">
       <div className="flex items-center mb-2 text-info">
         <span className="sr-only">Check</span>
-        <ChevronRight size="18"/>
+        <ChevronRight size="18" />
         <p className="font-medium ">{title}</p>
       </div>
       <p className="ml-6">{children}</p>

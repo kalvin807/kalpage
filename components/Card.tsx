@@ -17,7 +17,9 @@ const gradients = [
 export function FeatureCard(props: FeatureCardProps) {
   const gradient = gradients[props.gradient]
   return (
-    <div className={`card text-neutral-content mb-4 ${gradient} hover:-translate-y-1 hover:drop-shadow-lg transition ease-in-out`}>
+    <div
+      className={`card text-neutral-content mb-4 ${gradient} hover:-translate-y-1 hover:drop-shadow-lg transition ease-in-out`}
+    >
       <div className="card-content p-4 ">
         <div className="prose prose-sm">
           <h3>{props.title}</h3>
@@ -48,7 +50,7 @@ export function GBFCard() {
     description: "Granblue Fantasy raid finder written in Go and React",
     github: "https://github.com/kalvin807/gbf-raid-finder",
     web: "https://gbf.kalvin.io/",
-    gradient: 0
+    gradient: 0,
   }
   return <FeatureCard {...data} />
 }
@@ -58,7 +60,7 @@ export function MinecraftServerCard() {
     title: "Simple on-demand Minecraft server",
     description: "Script to control AWS EC2 Minecraft Server in serverless style",
     github: "https://github.com/kalvin807/Simple-on-demand-minecraft-server-login-app",
-    gradient: 1
+    gradient: 1,
   }
   return <FeatureCard {...data} />
 }
