@@ -1,5 +1,3 @@
-import * as React from "react"
-import NextLink from "next/link"
 import { Sun, Moon } from "react-feather"
 import { useTheme } from "next-themes"
 
