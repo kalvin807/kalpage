@@ -1,6 +1,7 @@
 /**
  * @type {import('next').NextConfig}
  */
+const withPreact = require('next-plugin-preact');
 
 const nextConfig = {
   webpack: function (config) {
@@ -12,4 +13,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withPreact(nextConfig);

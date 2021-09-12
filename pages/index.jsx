@@ -2,13 +2,11 @@
 import Head from 'next/head';
 import Header from '../components/Header';
 import Timeline from '../components/Timeline/Timeline';
-import { light, dark } from '../styles/theme';
 import useDarkMode from 'use-dark-mode';
 import Footer from '../components/Footer';
 
 const Home = () => {
   const darkMode = useDarkMode();
-  const theme = !darkMode.value ? light : dark;
 
   return (
     <>
@@ -21,7 +19,7 @@ const Home = () => {
         ></meta>
       </Head>
 
-      <Header theme={theme} />
+      <Header/>
       <div className="container mx-auto max-w-screen-lg p-8">
         <div className="py-16">
           <h1 className="text-2xl md:text-5xl font-bold ">
@@ -45,7 +43,7 @@ const Home = () => {
         </div>
         <div className="py-8">
           <h2 className="text-xl md:text-3xl font-bold">Timeline</h2>
-          <Timeline theme={theme} />
+          {/* <Timeline theme={theme} /> */}
         </div>
         <Footer />
       </div>

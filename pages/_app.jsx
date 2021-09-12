@@ -1,8 +1,6 @@
-import useDarkMode from 'use-dark-mode';
+import 'tailwindcss/tailwind.css';
 
-import '../styles/index.css';
-import '../styles/timeline.css';
-import '../styles/app.css';
+import useDarkMode from 'use-dark-mode';
 
 const App = ({ Component, pageProps }) => {
   useDarkMode();

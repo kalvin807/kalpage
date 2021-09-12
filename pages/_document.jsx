@@ -8,8 +8,6 @@ export default class MyDocument extends Document {
           <meta charSet="utf-8" lang="en" />
         </Head>
         <body>
-          <script data-ad-client="ca-pub-5415309581470052" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" />
-          <script async src="noflash.min.js" />
           <Main />
           <NextScript />
           <script
