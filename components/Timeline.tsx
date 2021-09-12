@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { ChevronRight } from "react-feather"
 
 const Divider = () => {
