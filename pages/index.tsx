@@ -8,7 +8,7 @@ export default function Home({ timelineData }) {
   return (
     <DefaultLayout>
       <div className="flex flex-col justify-center items-stretch max-w-3xl mx-auto mb-16">
-        <h1 className="font-bold text-3xl md:text-5xl tracking-tight mb-4">
+        <h1 className="font-bold text-4xl md:text-5xl tracking-tight mb-4">
           <div className="avatar">
             <div className="mb-8 rounded-full w-9 h-9 mr-4 ring-2 ring-base-content">
               <Image
