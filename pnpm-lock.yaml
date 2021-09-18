@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@babel/core': ^7.15.5
+  '@fontsource/inter': ^4.5.0
   '@next/bundle-analyzer': ^11.1.2
   '@prefresh/babel-plugin': ^0.4.1
   '@prefresh/next': ^1.4.7
@@ -30,6 +31,7 @@ specifiers:
   webpack: ^5.53.0
 
 dependencies:
+  '@fontsource/inter': 4.5.0
   '@tailwindcss/typography': 0.4.1_tailwindcss@2.2.15
   boring-avatars: 1.5.8
   next: 11.1.2_bf5f719cd9ba8dac8bb2296168d1f0d9
@@ -339,6 +341,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@fontsource/inter/4.5.0:
+    resolution: {integrity: sha512-2efK8Ru0LkuOYrEpiHPlV02YkTdIKGbezlxVNeA8/3c+tNt7P2aQPuiYYkVy7N4GA5LWSUVcLL/91MpCIjinOw==}
+    dev: false
 
   /@hapi/accept/5.0.2:
     resolution: {integrity: sha512-CmzBx/bXUR8451fnZRuZAJRlzgm0Jgu5dltTX/bszmR2lheb9BpyN47Q1RbaGTsvFzn0PXAEs+lXDKfshccYZw==}
