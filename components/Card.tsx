@@ -26,7 +26,7 @@ export function FeatureCard(props: FeatureCardProps) {
         </div>
         <div className="justify-end card-actions">
           <a href={props.github} target="_blank" rel="noopener noreferrer">
-            <button className="btn btn-sm btn-square btn-ghost hover:animate-bounce">
+            <button className="btn btn-sm btn-square btn-ghost">
               <Code />
             </button>
           </a>
