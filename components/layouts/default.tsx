@@ -33,7 +33,7 @@ export default function DefaultLayout(props) {
       </Head>
       {/* TODO: Until I have my blog */}
       <Header />
-      <main className="mt-8 flex flex-col justify-center px-8">{children}</main>
+      <main className="flex flex-col justify-center px-8">{children}</main>
       <Footer />
     </div>
   )
