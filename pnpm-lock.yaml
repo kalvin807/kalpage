@@ -10,6 +10,7 @@ specifiers:
   '@types/prismjs': ^1.16.6
   '@types/react': ^17.0.33
   autoprefixer: ^10.4.0
+  classnames: ^2.3.1
   daisyui: ^1.16.0
   eslint: <8.0.0
   eslint-config-next: ^12.0.1
@@ -36,6 +37,7 @@ dependencies:
   '@notionhq/client': 0.4.4
   '@tailwindcss/typography': 0.4.1_tailwindcss@2.2.19
   '@types/prismjs': 1.16.6
+  classnames: 2.3.1
   next: 12.0.1_ba099090e695274eeec1e1bb8460c739
   next-themes: 0.0.15_0372076d1358852c896b8498e97a3374
   preact: 10.5.15
@@ -1329,6 +1331,10 @@ packages:
 
   /classnames/2.2.6:
     resolution: {integrity: sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==}
+    dev: false
+
+  /classnames/2.3.1:
+    resolution: {integrity: sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==}
     dev: false
 
   /code-point-at/1.1.0:

@@ -1,8 +1,9 @@
+import Image from "next/image"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { Moon, Sun } from "react-feather"
 
-const HeaderBar = () => {
+const HeaderBar = ({ showTitle = false }: { showTitle?: boolean }) => {
   const { resolvedTheme, setTheme } = useTheme()
 
   return (
@@ -10,6 +11,19 @@ const HeaderBar = () => {
       className={`navbar top-0 sticky w-full z-30 bg-base-100 bg-opacity-70 backdrop-blur-md
       }`}
     >
+      {showTitle && (
+        <div className="navbar-start">
+          <Link href="/">
+            <a className="flex hover:-rotate-12 hover:scale-150 duration-100">
+              <div className="avatar">
+                <div className="rounded-full w-7 h-7 ring-2 ring-base-content">
+                  <Image alt="doggo greeting" src="/doggo.png" width="32" height="32" />
+                </div>
+              </div>
+            </a>
+          </Link>
+        </div>
+      )}
       <div className="navbar-end flex-1 gap-2 px-2 ">
         <Link href="/blogs">
           <a className="btn btn-ghost">Blogs</a>

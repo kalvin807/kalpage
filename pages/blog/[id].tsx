@@ -1,5 +1,5 @@
 import { Render } from "@9gustin/react-notion-render"
-import DefaultLayout from "components/layouts/default"
+import PostLayout from "layouts/Post"
 import { getBlocks, getDatabase, getPage } from "libraries/notion"
 
 import { databaseId } from "../_app"
@@ -10,11 +10,11 @@ export default function Post({ page, blocks }) {
   }
 
   return (
-    <DefaultLayout>
+    <PostLayout>
       <article>
         <Render blocks={blocks} useStyles />
       </article>
-    </DefaultLayout>
+    </PostLayout>
   )
 }
 

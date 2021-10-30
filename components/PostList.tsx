@@ -1,33 +1,23 @@
 import type { NotionBlock } from "@9gustin/react-notion-render"
-import { Render } from "@9gustin/react-notion-render"
-import Link from "next/link"
 
-interface Props {
+import BlogPostCard from "./Card"
+
+interface PostHeaders {
   posts: {
     id: string
     last_edited_time: string
-    properties: { Name: NotionBlock }
+    properties: { Name: NotionBlock; Tags: NotionBlock }
+    gradient: string
   }[]
 }
 
-function PostList({ posts }: Props) {
+function PostList({ posts }: PostHeaders) {
   return (
-    <ul>
+    <div className="w-full flex gap-6 flex-col justify-items-stretch">
       {posts.map((post) => (
-        <li key={post.id}>
-          <Link href={`/${post.id}`}>
-            <a>
-              <h3>
-                <Link passHref href={`/${post.id}`}>
-                  <Render blocks={[post.properties.Name]} />
-                </Link>
-              </h3>
-              <p>{post.last_edited_time}</p>
-            </a>
-          </Link>
-        </li>
+        <BlogPostCard key={post.id} post={post} />
       ))}
-    </ul>
+    </div>
   )
 }
 
