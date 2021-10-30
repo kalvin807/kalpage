@@ -1,5 +1,6 @@
 import { Sun, Moon } from "react-feather"
 import { useTheme } from "next-themes"
+import Link from "next/link"
 
 const HeaderBar = () => {
   const { resolvedTheme, setTheme } = useTheme()
@@ -10,6 +11,9 @@ const HeaderBar = () => {
       }`}
     >
       <div className="navbar-end flex-1 gap-2 px-2 ">
+        <Link href="/blogs">
+          <a className="btn btn-ghost">Blogs</a>
+        </Link>
         <button
           aria-label="Toggle Dark Mode"
           type="button"
