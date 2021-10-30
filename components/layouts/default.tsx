@@ -1,7 +1,7 @@
+import Footer from "components/Footer"
 import Head from "next/head"
 import { useRouter } from "next/router"
 
-import Footer from "~/components/Footer"
 import Header from "../Header"
 
 export default function DefaultLayout(props) {

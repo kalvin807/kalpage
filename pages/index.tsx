@@ -1,7 +1,7 @@
-import DefaultLayout from "~/layouts/default"
-import { MinecraftServerCard, GBFCard } from "~/components/Card"
-import Timeline from "~/components/Timeline"
-import TimelineData from "~/contents/timeline.json"
+import { GBFCard, MinecraftServerCard } from "components/Card"
+import DefaultLayout from "components/layouts/default"
+import Timeline from "components/Timeline"
+import TimelineData from "contents/timeline.json"
 import Image from "next/image"
 
 export default function Home({ timelineData }) {

@@ -1,6 +1,6 @@
-import { Sun, Moon } from "react-feather"
-import { useTheme } from "next-themes"
 import Link from "next/link"
+import { useTheme } from "next-themes"
+import { Moon, Sun } from "react-feather"
 
 const HeaderBar = () => {
   const { resolvedTheme, setTheme } = useTheme()

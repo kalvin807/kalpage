@@ -1,18 +1,19 @@
-import { getDatabase, getPage, getBlocks } from "libraries/notion/api"
-import Blocks from "libraries/notion/components/Post"
-import { databaseId } from "../blogs"
-import { Text } from "libraries/notion/components/Text"
-import DefaultLayout from "~/components/layouts/default"
+import { Render } from "@9gustin/react-notion-render"
+import DefaultLayout from "components/layouts/default"
+import { getBlocks, getDatabase, getPage } from "libraries/notion"
+
+import { databaseId } from "../_app"
+
 export default function Post({ page, blocks }) {
-  console.log(page)
+  if (!page || !blocks) {
+    return <div />
+  }
+
   return (
     <DefaultLayout>
-      <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto mb-16 mt-3">
-        <h1 className="font-bold text-4xl md:text-5xl tracking-tight mb-4">
-          <Text text={page.properties.Name.title} />
-        </h1>
-        <Blocks blocks={blocks} />
-      </div>
+      <article>
+        <Render blocks={blocks} useStyles />
+      </article>
     </DefaultLayout>
   )
 }
