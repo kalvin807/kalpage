@@ -1,10 +1,23 @@
 import Head from "next/head"
 import { useRouter } from "next/router"
+import React from "react"
 
 import Footer from "~/components/Footer"
 import Header from "~/components/Header"
 
-export default function Container(props) {
+export interface CustomMeta {
+  title?: string
+  description?: string
+  type?: string
+  date?: string
+}
+
+interface ContainerProps extends CustomMeta {
+  children: React.ReactNode
+  showTitle?: boolean
+}
+
+export default function Container(props: ContainerProps) {
   const { children, showTitle, ...customMeta } = props
   const router = useRouter()
   const meta = {
@@ -31,7 +44,6 @@ export default function Container(props) {
         <meta name="twitter:description" content={meta.description} />
         {meta.date && <meta property="article:published_time" content={meta.date} />}
       </Head>
-      {/* TODO: Until I have my blog */}
       <div className="flex flex-col justify-center px-8 mb-8">
         <Header showTitle={showTitle} />
         <main className="flex flex-col justify-center md:px-8">{children}</main>
