@@ -8,7 +8,7 @@ import { databaseId } from "./_app"
 export default function Home({ posts }) {
   return (
     <Container showTitle>
-      <div className="w-full flex flex-col justify-center items-start max-w-2xl mx-auto pb-16">
+      <div className="w-full flex flex-col items-start max-w-2xl mx-auto pb-16">
         <h1 className="font-bold text-4xl md:text-5xl tracking-tight mb-4">Blog</h1>
         <h2 className="prose mb-16">Here is my random thought.</h2>
         <PostList posts={posts} />

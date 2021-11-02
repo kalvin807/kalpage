@@ -10,9 +10,9 @@ export default function Post({ page, blocks }) {
   }
 
   return (
-    <PostLayout>
+    <PostLayout page={page}>
       <article>
-        <Render blocks={blocks} useStyles />
+        <Render blocks={blocks} />
       </article>
     </PostLayout>
   )

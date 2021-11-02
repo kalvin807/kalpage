@@ -32,10 +32,11 @@ export default function Container(props) {
         {meta.date && <meta property="article:published_time" content={meta.date} />}
       </Head>
       {/* TODO: Until I have my blog */}
-      <div className="flex flex-col justify-center px-8">
+      <div className="flex flex-col justify-center px-8 mb-8">
         <Header showTitle={showTitle} />
-        <main className="flex flex-col justify-center px-8">{children}</main>
+        <main className="flex flex-col justify-center md:px-8">{children}</main>
         <Footer />
+        <Header showTitle={showTitle} />
       </div>
     </div>
   )

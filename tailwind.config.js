@@ -1,10 +1,26 @@
+const { spacing, fontFamily } = require("tailwindcss/defaultTheme")
+
 module.exports = {
   purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   mode: "jit",
   darkMode: "media",
   theme: {
-    fontFamily: {
-      sans: ["Inter", "system-ui", "sans-serif"],
+    extend: {
+      fontFamily: {
+        sans: ["Inter", ...fontFamily.sans],
+      },
+      typography: () => ({
+        DEFAULT: {
+          css: {
+            a: {
+              "text-decoration": "none",
+            },
+            "h2,h3,h4": {
+              "scroll-margin-top": spacing[32],
+            },
+          },
+        },
+      }),
     },
   },
   variants: {
