@@ -1,4 +1,9 @@
-import { Code, Compass } from "react-feather"
+import { NotionBlock, Render } from "@9gustin/react-notion-render"
+import classnames from "classnames"
+import Link from "next/link"
+import { Calendar, Code, Compass, Tag } from "react-feather"
+
+import { dateToString } from "~/lib/helpers"
 
 interface FeatureCardProps {
   title: string
@@ -17,7 +22,10 @@ export function FeatureCard(props: FeatureCardProps) {
   const gradient = gradients[props.gradient]
   return (
     <div
-      className={`card text-neutral-content mb-4 ${gradient} hover:-translate-y-1 hover:drop-shadow-lg transition ease-in-out`}
+      className={classnames(
+        "card text-neutral-content mb-4 transform hover:scale-[1.01] transition-all",
+        gradient,
+      )}
     >
       <div className="card-content p-4 ">
         <div className="prose prose-sm">
@@ -62,4 +70,51 @@ export function MinecraftServerCard() {
     gradient: 1,
   }
   return <FeatureCard {...data} />
+}
+
+export default function BlogPostCard({
+  post,
+}: {
+  post: {
+    id: string
+    last_edited_time: string
+    properties: { Name: NotionBlock; Tags: any }
+    gradient: string
+  }
+}) {
+  const { id, last_edited_time, gradient } = post
+
+  return (
+    <Link href={`/blog/${id}`}>
+      <a
+        className={classnames(
+          "transform hover:scale-[1.01] transition-all",
+          "rounded-xl w-full p-1",
+        )}
+        style={gradient ? { backgroundImage: gradient } : {}}
+      >
+        <div className="flex flex-col justify-between h-full bg-base-200 rounded-lg p-4 gap-3">
+          <div className="flex flex-col justify-between">
+            <h4 className="text-xl md:text-2xl font-medium mb-8 w-full tracking-tight">
+              <Render blocks={[post.properties.Name]} />
+            </h4>
+          </div>
+
+          {post.properties.Tags.multi_select.length ? (
+            <div className="flex items-center">
+              <Tag size={18} />
+              <span className="ml-2 align-baseline capsize">
+                {post.properties.Tags.multi_select.map((elem) => elem.name).join(", ")}
+              </span>
+            </div>
+          ) : null}
+
+          <div className="flex items-center capsize">
+            <Calendar size={18} />
+            <span className="ml-2 align-baseline capsize">{dateToString(last_edited_time)}</span>
+          </div>
+        </div>
+      </a>
+    </Link>
+  )
 }

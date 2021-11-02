@@ -1,13 +1,14 @@
-import DefaultLayout from "~/layouts/default"
-import { MinecraftServerCard, GBFCard } from "~/components/Card"
+import Image from "next/image"
+
+import { GBFCard, MinecraftServerCard } from "~/components/Card"
+import Container from "~/components/Container"
 import Timeline from "~/components/Timeline"
 import TimelineData from "~/contents/timeline.json"
-import Image from "next/image"
 
 export default function Home({ timelineData }) {
   return (
-    <DefaultLayout>
-      <div className="flex flex-col justify-center items-stretch max-w-3xl mx-auto mb-16">
+    <Container>
+      <div className="w-full flex flex-col justify-center items-start max-w-2xl mx-auto pb-16">
         <h1 className="font-bold text-4xl md:text-5xl tracking-tight mb-4">
           <div className="avatar">
             <div className="mb-8 rounded-full w-9 h-9 mr-4 ring-2 ring-base-content">
@@ -30,12 +31,14 @@ export default function Home({ timelineData }) {
           things.
         </h2>
         <h3 className="font-bold text-2xl md:text-4xl tracking-tight mb-4 ">Works</h3>
-        <GBFCard />
-        <MinecraftServerCard />
-        <h3 className="font-bold text-2xl md:text-4xl tracking-tight mb-4 mt-8 ">Me</h3>
+        <div className="w-full flex flex-col justify-items-stretch items-stretch mb-16">
+          <GBFCard />
+          <MinecraftServerCard />
+        </div>
+        <h3 className="font-bold text-2xl md:text-4xl tracking-tight mb-4">Me</h3>
         <Timeline data={timelineData} />
       </div>
-    </DefaultLayout>
+    </Container>
   )
 }
 

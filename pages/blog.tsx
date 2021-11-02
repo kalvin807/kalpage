@@ -1,0 +1,36 @@
+import Container, { CustomMeta } from "~/components/Container"
+import PostList from "~/components/PostList"
+import { idToGradient } from "~/lib/helpers"
+import { getDatabase } from "~/lib/notion/api"
+
+import { databaseId, invalidateTime } from "./_app"
+
+export default function Home({ posts }) {
+  const meta: CustomMeta = {
+    title: "Blog | Kal.L",
+    description: "Blog of Kal.L",
+  }
+  return (
+    <Container showTitle {...meta}>
+      <div className="w-full flex flex-col items-start max-w-2xl mx-auto pb-16">
+        <h1 className="font-bold text-4xl md:text-5xl tracking-tight mb-4">Blog</h1>
+        <h2 className="prose mb-16">Here is my random thought.</h2>
+        <PostList posts={posts} />
+      </div>
+    </Container>
+  )
+}
+
+export const getStaticProps = async () => {
+  const database = await getDatabase(databaseId)
+
+  return {
+    props: {
+      posts: database.map((post) => ({
+        gradient: idToGradient(post.id),
+        ...post,
+      })),
+    },
+    revalidate: invalidateTime, // In seconds
+  }
+}
