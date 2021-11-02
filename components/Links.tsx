@@ -1,3 +1,5 @@
+import React from "react"
+
 export function ExternalLink(
   props: { href: string; children: React.ReactNode } & React.HTMLAttributes<HTMLAnchorElement>,
 ) {

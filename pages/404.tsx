@@ -1,10 +1,11 @@
-import Link from "next/link"
 import Image from "next/image"
-import Layout from "~/layouts/default"
+import Link from "next/link"
+
+import Container from "~/components/Container"
 
 export default function NotFound() {
   return (
-    <Layout title="Not Found – Kalpage">
+    <Container title="Not Found – Kalpage">
       <div className="flex flex-col justify-center items-center max-w-3xl mx-auto mb-16">
         <h1 className="font-bold text-3xl md:text-5xl tracking-tight mb-4 ">404</h1>
         <div className="p-8">
@@ -16,6 +17,6 @@ export default function NotFound() {
           <a className="btn btn-lg no-underline">Return Home</a>
         </Link>
       </div>
-    </Layout>
+    </Container>
   )
 }
