@@ -1,16 +1,14 @@
 import { Render } from "@9gustin/react-notion-render"
-import ReactDOMServer from "react-dom/server"
 
 import Container, { CustomMeta } from "~/components/Container"
 
 import FrontMatter from "./FrontMatter"
 
 export default function BlogLayout({ page, children }) {
+  const titleString = page.properties.Name.title[0].plain_text || "Article"
   const meta: CustomMeta = {
-    title: `${ReactDOMServer.renderToString(<Render blocks={[page.properties.Name]} />)} | Kal.L`,
-    description: `${ReactDOMServer.renderToString(
-      <Render blocks={[page.properties.Name]} />,
-    )} | Blog of Kal.L`,
+    title: `${titleString} | Kal.L`,
+    description: `${titleString} | Blog of Kal.L`,
     date: page.last_edited_time,
   }
   return (

@@ -3,7 +3,7 @@ import PostList from "~/components/PostList"
 import { idToGradient } from "~/lib/helpers"
 import { getDatabase } from "~/lib/notion/api"
 
-import { databaseId } from "./_app"
+import { databaseId, invalidateTime } from "./_app"
 
 export default function Home({ posts }) {
   const meta: CustomMeta = {
@@ -31,6 +31,6 @@ export const getStaticProps = async () => {
         ...post,
       })),
     },
-    revalidate: 1, // In seconds
+    revalidate: invalidateTime, // In seconds
   }
 }

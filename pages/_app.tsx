@@ -7,6 +7,7 @@ import "~/lib/notion/notion.scss"
 import { ThemeProvider } from "next-themes"
 
 export const databaseId = process.env.NOTION_DATABASE_ID
+export const invalidateTime = process.env.NODE_ENV === "development" ? 1 : 60 * 5
 
 const App = ({ Component, pageProps }) => (
   <ThemeProvider attribute="data-theme" disableTransitionOnChange>

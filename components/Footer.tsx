@@ -12,13 +12,13 @@ const FooterBar = () => (
       <div className="grid grid-flow-col gap-4">
         <ExternalLink
           href="https://github.com/kalvin807"
-          className="btn btn-square btn-ghost hover:bg-purple-500"
+          className="btn btn-square btn-ghost hover:bg-purple-500 hover:text-white"
         >
           <GitHub />
         </ExternalLink>
         <ExternalLink
           href="mailto:6q4zz1i46@relay.firefox.com"
-          className="btn btn-square btn-ghost hover:bg-red-500"
+          className="btn btn-square btn-ghost hover:bg-red-500 hover:text-white"
         >
           <Mail />
         </ExternalLink>

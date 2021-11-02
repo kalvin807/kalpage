@@ -21,6 +21,7 @@ specifiers:
   next-themes: ^0.0.15
   postcss: ^8.3.11
   preact: ^10.5.15
+  preact-render-to-string: ^5.1.19
   prettier: ^2.4.1
   prismjs: ^1.25.0
   react: ^17.0.2
@@ -42,6 +43,7 @@ dependencies:
   next: 12.0.2_ba099090e695274eeec1e1bb8460c739
   next-themes: 0.0.15_c26ef06698b9ab1b17bf6451df0179c6
   preact: 10.5.15
+  preact-render-to-string: 5.1.19_preact@10.5.15
   prismjs: 1.25.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -3419,6 +3421,15 @@ packages:
       source-map-js: 0.6.2
     dev: true
 
+  /preact-render-to-string/5.1.19_preact@10.5.15:
+    resolution: {integrity: sha512-bj8sn/oytIKO6RtOGSS/1+5CrQyRSC99eLUnEVbqUa6MzJX5dYh7wu9bmT0d6lm/Vea21k9KhCQwvr2sYN3rrQ==}
+    peerDependencies:
+      preact: '>=10'
+    dependencies:
+      preact: 10.5.15
+      pretty-format: 3.8.0
+    dev: false
+
   /preact/10.5.15:
     resolution: {integrity: sha512-5chK29n6QcJc3m1lVrKQSQ+V7K1Gb8HeQY6FViQ5AxCAEGu3DaHffWNDkC9+miZgsLvbvU9rxbV1qinGHMHzqA==}
     dev: false
@@ -3453,6 +3464,10 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
+
+  /pretty-format/3.8.0:
+    resolution: {integrity: sha1-v77VbV6ad2ZF9LH/eqGjrE+jw4U=}
+    dev: false
 
   /pretty-hrtime/1.0.3:
     resolution: {integrity: sha1-t+PqQkNaTJsnWdmeDyAesZWALuE=}

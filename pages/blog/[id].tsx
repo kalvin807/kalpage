@@ -2,7 +2,7 @@ import { Render } from "@9gustin/react-notion-render"
 
 import PostLayout from "~/components/PostLayout"
 import { getBlocks, getDatabase, getPage } from "~/lib/notion"
-import { databaseId } from "~/pages/_app"
+import { databaseId, invalidateTime } from "~/pages/_app"
 
 export default function Post({ page, blocks }) {
   if (!page || !blocks) {
@@ -56,6 +56,6 @@ export const getStaticProps = async (context) => {
       page,
       blocks: blocksWithChildren,
     },
-    revalidate: 1,
+    revalidate: invalidateTime,
   }
 }
