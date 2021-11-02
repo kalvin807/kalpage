@@ -1,4 +1,4 @@
-import { gradients } from "contents/gradients"
+import { gradients } from "~/contents/gradients"
 
 interface Gradient {
   name: string

@@ -1,8 +1,8 @@
 import { Render } from "@9gustin/react-notion-render"
-import PostLayout from "layouts/Post"
-import { getBlocks, getDatabase, getPage } from "libraries/notion"
 
-import { databaseId } from "../_app"
+import PostLayout from "~/components/PostLayout"
+import { getBlocks, getDatabase, getPage } from "~/lib/notion"
+import { databaseId } from "~/pages/_app"
 
 export default function Post({ page, blocks }) {
   if (!page || !blocks) {

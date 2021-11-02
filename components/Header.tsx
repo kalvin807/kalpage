@@ -7,10 +7,7 @@ const HeaderBar = ({ showTitle = false }: { showTitle?: boolean }) => {
   const { resolvedTheme, setTheme } = useTheme()
 
   return (
-    <nav
-      className={`navbar top-0 sticky w-full z-30 bg-base-100 bg-opacity-70 backdrop-blur-md
-      }`}
-    >
+    <nav className="navbar w-full">
       {showTitle && (
         <div className="navbar-start">
           <Link href="/">
@@ -25,8 +22,8 @@ const HeaderBar = ({ showTitle = false }: { showTitle?: boolean }) => {
         </div>
       )}
       <div className="navbar-end flex-1 gap-2 px-2 ">
-        <Link href="/blogs">
-          <a className="btn btn-ghost">Blogs</a>
+        <Link href="/blog">
+          <a className="btn btn-ghost">Blog</a>
         </Link>
         <button
           aria-label="Toggle Dark Mode"

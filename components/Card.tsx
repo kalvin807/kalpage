@@ -1,8 +1,9 @@
 import { NotionBlock, Render } from "@9gustin/react-notion-render"
 import classnames from "classnames"
-import { dateToString } from "libraries/helpers"
 import Link from "next/link"
 import { Calendar, Code, Compass, Tag } from "react-feather"
+
+import { dateToString } from "~/lib/helpers"
 
 interface FeatureCardProps {
   title: string

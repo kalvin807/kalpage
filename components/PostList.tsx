@@ -1,6 +1,6 @@
 import type { NotionBlock } from "@9gustin/react-notion-render"
 
-import BlogPostCard from "./Card"
+import BlogPostCard from "~/components/Card"
 
 interface PostHeaders {
   posts: {

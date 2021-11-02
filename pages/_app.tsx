@@ -1,8 +1,8 @@
 import "@fontsource/inter/variable.css"
 import "tailwindcss/tailwind.css"
-import "libraries/notion/notion.scss"
 import "prismjs/themes/prism-tomorrow.css"
 import "@9gustin/react-notion-render/dist/index.css"
+import "~/lib/notion/notion.scss"
 
 import { ThemeProvider } from "next-themes"
 

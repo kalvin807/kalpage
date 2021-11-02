@@ -1,6 +1,6 @@
 import { GitHub, Linkedin, Mail } from "react-feather"
 
-import { ExternalLink } from "./Links"
+import { ExternalLink } from "~/components/Links"
 
 const FooterBar = () => (
   <div>

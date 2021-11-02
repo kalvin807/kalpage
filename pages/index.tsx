@@ -1,8 +1,9 @@
-import { GBFCard, MinecraftServerCard } from "components/Card"
-import Container from "components/Container"
-import Timeline from "components/Timeline"
-import TimelineData from "contents/timeline.json"
 import Image from "next/image"
+
+import { GBFCard, MinecraftServerCard } from "~/components/Card"
+import Container from "~/components/Container"
+import Timeline from "~/components/Timeline"
+import TimelineData from "~/contents/timeline.json"
 
 export default function Home({ timelineData }) {
   return (
