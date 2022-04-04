@@ -23,13 +23,13 @@ export function FeatureCard(props: FeatureCardProps) {
   return (
     <div
       className={classnames(
-        "card text-neutral-content mb-4 transform hover:scale-[1.01] transition-all",
+        "card text-primary-content mb-4 transform hover:scale-[1.01] transition-all",
         gradient,
       )}
     >
-      <div className="card-content p-4 ">
-        <div className="prose prose-sm">
-          <h3>{props.title}</h3>
+      <div className="card-content p-4">
+        <div className="prose prose-sm text-primary-content">
+          <h3 className="text-primary-content">{props.title}</h3>
           <p>{props.description}</p>
         </div>
         <div className="justify-end card-actions">
