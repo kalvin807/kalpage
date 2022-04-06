@@ -22,9 +22,9 @@ const HeaderBar = ({ showTitle = false }: { showTitle?: boolean }) => {
         </div>
       )}
       <div className="navbar-end flex-1 gap-2 px-2 ">
-        <Link href="/blog">
+        {/* <Link href="/blog">
           <a className="btn btn-ghost">Blog</a>
-        </Link>
+        </Link> */}
         <button
           aria-label="Toggle Dark Mode"
           type="button"
