@@ -1,9 +1,7 @@
 const { spacing, fontFamily } = require("tailwindcss/defaultTheme")
 
 module.exports = {
-  purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
-  mode: "jit",
-  darkMode: "media",
+  content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       fontFamily: {
@@ -22,9 +20,6 @@ module.exports = {
         },
       }),
     },
-  },
-  variants: {
-    extend: {},
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
 }
