@@ -3,7 +3,7 @@ export default [
 		year: '2022 🗼',
 		events: [
 			{
-				title: 'Software engineer in a telecom company as  📱',
+				title: 'Software engineer in a telecom company 📱',
 				description: 'Created something to deal with enormous amount of data 📊'
 			}
 		]
@@ -12,7 +12,7 @@ export default [
 		year: '2021 💉',
 		events: [
 			{
-				title: 'Software engineer in  a fin-tech company as software engineer 💰',
+				title: 'Software engineer in a fin-tech startup 💰',
 				description: 'Created something to make bank website into api.'
 			},
 			{
@@ -33,7 +33,7 @@ export default [
 		year: '2020 😷',
 		events: [
 			{
-				title: 'Software Engineer Intern in investment bank 🏦',
+				title: 'Software Engineer Intern in an investment bank 🏦',
 				description: 'Created a flexible and fail-safe server deployment engine'
 			}
 		]
@@ -42,7 +42,7 @@ export default [
 		year: '2019 ☂️',
 		events: [
 			{
-				title: 'Huge camping festival in United State ⛺',
+				title: 'Joined a huge camping festival in United State ⛺',
 				description:
 					'Lifetime moment for me to meet so many people and friends from all over the world'
 			}
@@ -52,7 +52,7 @@ export default [
 		year: '1997',
 		events: [
 			{
-				title: 'me := Human{} 🍼',
+				title: 'me = new Human() 🍼',
 				description: 'Hello world'
 			}
 		]
