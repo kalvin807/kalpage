@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
 	import { Code2 as Code, Globe2 } from 'lucide-svelte';
 
 	export let title: string,
