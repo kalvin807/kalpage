@@ -1,5 +1,14 @@
 export default [
 	{
+		year: '2023 ⛷️',
+		events: [
+			{
+				title: 'Software engineer in a big startup 🌊',
+				description: 'Creating best experience for users and developers'
+			}
+		]
+	},
+	{
 		year: '2022 🗼',
 		events: [
 			{
