@@ -1,10 +1,6 @@
 <script lang="ts">
 	import data from './data';
 	import Experience from './experience.svelte';
-	interface Event {
-		title: string;
-		description: string;
-	}
 </script>
 
 {#each data as d}
