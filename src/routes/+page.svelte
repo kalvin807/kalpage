@@ -14,20 +14,19 @@
 			/>
 			<h1 class="text-4xl font-bold md:text-5xl">Hello There.</h1>
 		</span>
-		<h2 class="text-sm md:text-base">
-			I am Kal.L 👋 from Hong Kong. Currently a Software engineer in Tokyo, Japan. Geekly boy who
-			like to learn cool technology and build things. Also love board game, video games, anime,
-			crypto. Recently really into the coffee and tasting different beans. Welcome to my page!
-		</h2>
+		<p class="text-sm md:text-base">
+			I am Kal.L 👋. Currently a Software engineer in Tokyo, Japan. Welcome to my page. I update
+			here to show my recent works and thoughts from time to time. I hope you enjoy it.
+		</p>
 	</div>
 
 	<div class="flex flex-col gap-6">
-		<h1 class="text-3xl font-bold md:text-4xl">Some stuff I made.</h1>
+		<h2 class="text-2xl font-bold md:text-3xl">Stuff I made.</h2>
 		<Showcases />
 	</div>
 
 	<div class="flex flex-col gap-6">
-		<h1 class="text-3xl font-bold md:text-4xl">Things that happened.</h1>
+		<h2 class="text-2xl font-bold md:text-3xl">Things that happened.</h2>
 		<div class="mx-auto max-w-2xl">
 			<Experiences />
 		</div>
