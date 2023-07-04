@@ -14,7 +14,7 @@
 	<div
 		class="relative flex h-full w-full flex-col gap-2 rounded-lg bg-slate-900 px-5 py-6 text-sm hover:bg-slate-900/80"
 	>
-		<div class="flex flex-col gap-1">
+		<div class="flex flex-1 flex-col gap-1">
 			<h3 class="text-md font-bold md:text-lg">{title}</h3>
 			<p>{description}</p>
 		</div>
