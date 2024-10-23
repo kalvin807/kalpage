@@ -1,8 +1,13 @@
-<script>
+<script lang="ts">
 	import { ChevronRight } from 'lucide-svelte';
 
-	export let title = '',
-		description = '';
+	let {
+		title,
+		description
+	}: {
+		title: string;
+		description: string;
+	} = $props();
 </script>
 
 <li class="mb-4 ml-2">
