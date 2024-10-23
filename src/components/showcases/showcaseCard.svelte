@@ -1,11 +1,19 @@
 <script lang="ts">
-	import { Code2 as Code, Globe2 } from 'lucide-svelte';
+	import { Code, Globe } from 'lucide-svelte';
 
-	export let title: string,
-		description: string,
-		github: string = '',
-		web: string = '',
+	let {
+		title,
+		description,
+		github,
+		web,
+		gradient
+	}: {
+		title: string;
+		description: string;
+		github?: string;
+		web?: string;
 		gradient: string;
+	} = $props();
 </script>
 
 <div
@@ -29,7 +37,7 @@
 			{#if web}
 				<a href={web} target="_blank" rel="noopener noreferrer">
 					<button class="z-10 rounded p-2 transition-all hover:bg-white/20">
-						<Globe2 class="h-5 w-5" />
+						<Globe class="h-5 w-5" />
 					</button>
 				</a>
 			{/if}

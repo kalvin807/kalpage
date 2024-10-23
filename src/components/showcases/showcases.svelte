@@ -32,6 +32,12 @@
 
 <div id="cards" class="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
 	{#each projects as project}
-		<ShowcaseCard {...project} />
+		<ShowcaseCard
+			title={project.title}
+			description={project.description}
+			github={project.github}
+			web={project.web}
+			gradient={project.gradient}
+		/>
 	{/each}
 </div>
