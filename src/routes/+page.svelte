@@ -10,7 +10,7 @@
 			<img
 				alt="doggo spinning disk"
 				src={doggo}
-				class="h-8 w-8 rounded-full border-2 border-gray-100 shadow-sm hover:animate-spin hover:cursor-progress md:h-11 md:w-11"
+				class="h-8 w-8 rounded-full border-2 border-gray-100 shadow-xs hover:animate-spin hover:cursor-progress md:h-11 md:w-11"
 			/>
 			<h1 class="text-4xl font-bold md:text-5xl">Hello There.</h1>
 		</span>
