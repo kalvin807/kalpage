@@ -7,25 +7,25 @@
 			description: 'Granblue Fantasy raid finder written in Go and React',
 			github: 'https://github.com/kalvin807/gbf-raid-finder',
 			web: 'https://gbf.kalvin.io',
-			gradient: 'bg-linear-to-b from-sky-400 to-sky-200'
+			gradient: 'bg-linear-to-b from-sky-400/40 to-sky-300/20'
 		},
 		{
 			title: 'henkaku',
 			description: 'JS library to convert string between full-width and half-width',
 			github: 'https://github.com/kalvin807/henkaku',
-			gradient: 'bg-linear-to-br from-indigo-300 to-purple-400'
+			gradient: 'bg-linear-to-br from-indigo-400/40 to-purple-400/20'
 		},
 		{
 			title: 'guru-pu',
 			description: 'Discord bot to auto-assign roles',
 			github: 'https://github.com/kalvin807/guru-pu',
-			gradient: 'bg-linear-to-r from-teal-200 to-lime-200'
+			gradient: 'bg-linear-to-r from-teal-400/40 to-lime-400/20'
 		},
 		{
 			title: 'akaina',
 			description: 'ML model to count the number of Magikarp in a youtube live stream',
 			github: 'https://github.com/kalvin807/akaina-detector',
-			gradient: 'bg-linear-to-br from-rose-700 to-pink-600'
+			gradient: 'bg-linear-to-br from-rose-400/40 to-pink-400/20'
 		}
 	];
 </script>
