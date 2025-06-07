@@ -1,18 +1,15 @@
-<script>
+<script lang="ts">
 	import doggo from '$lib/assets/doggo.png';
 	import Experiences from '../components/experiences/experiences.svelte';
 	import Showcases from '../components/showcases/showcases.svelte';
+	import DvdBouncingAvatar from '../components/dvdBouncingAvatar.svelte';
 </script>
 
 <div class="w-full max-w-4xl flex flex-col gap-16 text-white">
 	<!-- Hero Section -->
 	<section class="flex flex-col gap-8">
 		<div class="flex flex-row items-center gap-3">
-			<img
-				alt="doggo spinning disk"
-				src={doggo}
-				class="h-10 w-10 rounded-full border-2 border-gray-100 shadow-lg hover:animate-spin hover:cursor-progress hover:shadow-xl hover:scale-110 transition-all duration-300 md:h-14 md:w-14"
-			/>
+			<DvdBouncingAvatar src={doggo} alt="doggo spinning disk" />
 			<h1 class="text-5xl font-bold tracking-tight md:text-6xl bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent hover:from-blue-200 hover:to-purple-200 transition-all duration-500 relative">
 				<span class="inline-block overflow-hidden whitespace-nowrap border-r-2 border-white w-0 animate-typewriter animate-cursor-blink">
 					Hello There.
