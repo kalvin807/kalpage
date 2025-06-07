@@ -6,8 +6,21 @@
 @plugin '@tailwindcss/container-queries';
 @plugin '@tailwindcss/aspect-ratio';
 
+html {
+	scroll-behavior: smooth;
+}
+
 @theme {
 	--animate-wiggle: wiggle 1s ease-in-out infinite;
+	--animate-fade-in: fadeIn 0.6s ease-out forwards;
+	--animate-slide-up: slideUp 0.8s ease-out forwards;
+	--animate-bounce-in: bounceIn 0.6s ease-out forwards;
+	--animate-stagger-1: fadeIn 0.6s ease-out 0.1s forwards;
+	--animate-stagger-2: fadeIn 0.6s ease-out 0.2s forwards;
+	--animate-stagger-3: fadeIn 0.6s ease-out 0.3s forwards;
+	--animate-stagger-4: fadeIn 0.6s ease-out 0.4s forwards;
+	--animate-typewriter: typewriter 2s steps(12) 0.5s forwards;
+	--animate-cursor-blink: blink 1s infinite 2.5s;
 
 	--font-sans: Inter, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
 		'Segoe UI Symbol', 'Noto Color Emoji';
@@ -19,6 +32,64 @@
 		}
 		50% {
 			transform: rotate(3deg);
+		}
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes slideUp {
+		from {
+			opacity: 0;
+			transform: translateY(40px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes bounceIn {
+		0% {
+			opacity: 0;
+			transform: scale(0.3) translateY(20px);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1.05) translateY(-5px);
+		}
+		70% {
+			transform: scale(0.98) translateY(2px);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1) translateY(0);
+		}
+	}
+
+	@keyframes typewriter {
+		0% {
+			width: 0;
+		}
+		100% {
+			width: 100%;
+		}
+	}
+
+	@keyframes blink {
+		0%, 50% {
+			border-color: transparent;
+		}
+		51%, 100% {
+			border-color: white;
 		}
 	}
 }

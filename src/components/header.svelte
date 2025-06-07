@@ -8,13 +8,13 @@
 	<div class="mx-4 py-4 text-white lg:mx-0 lg:px-8">
 		<div class="relative flex items-center justify-end gap-2">
 			<a href="https://github.com/kalvin807">
-				<button class="rounded-sm p-3 transition-all hover:bg-purple-500 hover:text-white">
-					<Github class="hover:animate-wiggle" />
+				<button class="rounded-sm p-3 transition-all duration-300 hover:bg-purple-500 hover:text-white">
+					<Github class="transition-transform duration-300 hover:animate-wiggle" />
 				</button>
 			</a>
 			<a href="mailto:6q4zz1i46@relay.firefox.com">
-				<button class="rounded-sm p-3 transition-all hover:bg-red-600 hover:text-white">
-					<Mail class="hover:animate-wiggle" />
+				<button class="rounded-sm p-3 transition-all duration-300 hover:bg-red-500 hover:text-white">
+					<Mail class="transition-transform duration-300 hover:animate-wiggle" />
 				</button>
 			</a>
 		</div>

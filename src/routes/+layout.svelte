@@ -6,7 +6,7 @@
 </script>
 
 <Header />
-<div class=" flex flex-col content-center items-center gap-1">
+<main class="min-h-screen flex flex-col content-center items-center px-4 py-8">
 	{@render children()}
-</div>
+</main>
 <Footer />
