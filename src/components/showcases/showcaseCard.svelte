@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Code, Globe } from 'lucide-svelte';
+	import { Code, Globe } from '@lucide/svelte';
 
 	let {
 		title,

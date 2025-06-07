@@ -1,5 +1,5 @@
 <script>
-	import { Github, Mail } from 'lucide-svelte';
+	import { Github, Mail } from '@lucide/svelte';
 </script>
 
 <div
