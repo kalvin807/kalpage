@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
+	import colors from 'tailwindcss/colors';
 
 	let {
 		src,
@@ -14,44 +15,87 @@
 
 	let isDvdBouncing = $state(false);
 	let avatarElement = $state<HTMLButtonElement>();
-	let animationFrame = $state<number>();
+	let animationFrame = $state<number | undefined>();
 
 	// DVD bouncing state
-	let position = $state({ x: 100, y: 100 });
-	let velocity = $state({ x: 2, y: 1.5 });
-	let hue = $state(0);
+	const SPEED = 3;
+	let position = $state({ x: 0, y: 0 });
+	let velocity = $state({ x: 0, y: 0 });
+	let currentColor = $state('');
 	let avatarSize = $state({ width: 56, height: 56 }); // Default md size
+
+	// Predefined colors for random selection from Tailwind's palette
+	const tailwindColors = [
+		colors.red[500],
+		colors.orange[500],
+		colors.amber[500],
+		colors.yellow[500],
+		colors.lime[500],
+		colors.green[500],
+		colors.emerald[500],
+		colors.teal[500],
+		colors.cyan[500],
+		colors.sky[500],
+		colors.blue[500],
+		colors.indigo[500],
+		colors.violet[500],
+		colors.purple[500],
+		colors.fuchsia[500],
+		colors.pink[500],
+		colors.rose[500]
+	];
+
+	function getRandomColor() {
+		let newColor;
+		do {
+			newColor = tailwindColors[Math.floor(Math.random() * tailwindColors.length)];
+		} while (newColor === currentColor);
+		return newColor;
+	}
+
+	function setRandomVelocity() {
+		const angle = Math.random() * 2 * Math.PI;
+		velocity = {
+			x: Math.cos(angle) * SPEED,
+			y: Math.sin(angle) * SPEED
+		};
+	}
 
 	function startDvdBounce() {
 		if (!browser || !avatarElement) return;
-		
+
 		isDvdBouncing = true;
-		
+
 		// Get current avatar size
 		const rect = avatarElement.getBoundingClientRect();
 		avatarSize = { width: rect.width, height: rect.height };
-		
-		// Set initial position (start from center of screen)
-		position = { 
-			x: window.innerWidth / 2 - avatarSize.width / 2, 
-			y: window.innerHeight / 2 - avatarSize.height / 2 
-		};
-		
+
+		// Set initial position (start from top-left)
+		position = { x: 0, y: 0 };
+
+		// Initialize direction and color
+		setRandomVelocity();
+		currentColor = getRandomColor();
+
 		// Make avatar fixed positioned from top-left (0,0)
 		avatarElement.style.position = 'fixed';
 		avatarElement.style.top = '0';
 		avatarElement.style.left = '0';
 		avatarElement.style.zIndex = '9999';
-		
+		avatarElement.style.backgroundColor = currentColor;
+		avatarElement.style.backgroundBlendMode = 'multiply';
+
+		// Start animation
 		animate();
 	}
 
 	function stopDvdBounce() {
 		if (animationFrame) {
 			cancelAnimationFrame(animationFrame);
+			animationFrame = undefined;
 		}
 		isDvdBouncing = false;
-		
+
 		if (avatarElement) {
 			// Reset avatar styles
 			avatarElement.style.position = '';
@@ -59,61 +103,46 @@
 			avatarElement.style.left = '';
 			avatarElement.style.zIndex = '';
 			avatarElement.style.transform = '';
-			avatarElement.style.filter = '';
+			avatarElement.style.backgroundColor = '';
+			avatarElement.style.backgroundBlendMode = '';
 		}
 	}
 
 	function animate() {
 		if (!browser || !isDvdBouncing) return;
-		
-		// Get viewport dimensions
+
 		const viewportWidth = window.innerWidth;
 		const viewportHeight = window.innerHeight;
-		
-		// Calculate next position
+		let bounced = false;
+
 		const nextX = position.x + velocity.x;
 		const nextY = position.y + velocity.y;
-		
-		// Track if we bounced this frame (to avoid double hue change)
-		let bounced = false;
-		
-		// Check X boundaries and bounce if needed
-		if (nextX <= 0) {
-			position.x = 0;
-			velocity.x = -velocity.x;
+
+		if (nextX <= 0 || nextX >= viewportWidth - avatarSize.width) {
+			velocity.x *= -1;
 			bounced = true;
-		} else if (nextX >= viewportWidth - avatarSize.width) {
-			position.x = viewportWidth - avatarSize.width;
-			velocity.x = -velocity.x;
-			bounced = true;
-		} else {
-			position.x = nextX;
 		}
-		
-		// Check Y boundaries and bounce if needed
-		if (nextY <= 0) {
-			position.y = 0;
-			velocity.y = -velocity.y;
+
+		if (nextY <= 0 || nextY >= viewportHeight - avatarSize.height) {
+			velocity.y *= -1;
 			bounced = true;
-		} else if (nextY >= viewportHeight - avatarSize.height) {
-			position.y = viewportHeight - avatarSize.height;
-			velocity.y = -velocity.y;
-			bounced = true;
-		} else {
-			position.y = nextY;
 		}
-		
-		// Change color only once per frame if we bounced
+
 		if (bounced) {
-			hue = (hue + 60) % 360;
+			currentColor = getRandomColor();
 		}
-		
+
+		position.x += velocity.x;
+		position.y += velocity.y;
+
 		// Apply transform and color
 		if (avatarElement) {
 			avatarElement.style.transform = `translate(${position.x}px, ${position.y}px)`;
-			avatarElement.style.filter = `hue-rotate(${hue}deg)`;
+			if (bounced) {
+				avatarElement.style.backgroundColor = currentColor;
+			}
 		}
-		
+
 		animationFrame = requestAnimationFrame(animate);
 	}
 
@@ -128,10 +157,10 @@
 	// Handle window resize
 	function handleResize() {
 		if (!browser || !isDvdBouncing || !avatarElement) return;
-		
+
 		const viewportWidth = window.innerWidth;
 		const viewportHeight = window.innerHeight;
-		
+
 		// Keep avatar within bounds after resize
 		position.x = Math.min(position.x, viewportWidth - avatarSize.width);
 		position.y = Math.min(position.y, viewportHeight - avatarSize.height);
@@ -161,7 +190,7 @@
 
 <button
 	bind:this={avatarElement}
-	class="h-10 w-10 rounded-full border-2 border-gray-100 shadow-lg hover:cursor-pointer transition-all duration-300 md:h-14 md:w-14 {isDvdBouncing ? '' : 'hover:animate-spin hover:shadow-xl hover:scale-110'} bg-cover bg-center bg-no-repeat p-0 {className}"
+	class="h-10 w-10 rounded-full border-2 border-gray-100 shadow-lg hover:cursor-pointer md:h-14 md:w-14 {isDvdBouncing ? '' : 'transition-all duration-300 hover:animate-spin hover:shadow-xl hover:scale-110'} bg-cover bg-center bg-no-repeat p-0 {className}"
 	style="background-image: url({src})"
 	aria-label="{alt} - click to activate DVD bouncing mode"
 	onclick={toggleDvdBounce}
