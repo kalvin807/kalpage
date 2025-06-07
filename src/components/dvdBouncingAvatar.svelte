@@ -5,10 +5,12 @@
 
 	let {
 		src,
+		webpSrc,
 		alt = 'Avatar',
 		class: className = ''
 	}: {
 		src: string;
+		webpSrc?: string;
 		alt?: string;
 		class?: string;
 	} = $props();
@@ -190,9 +192,15 @@
 
 <button
 	bind:this={avatarElement}
-	class="h-10 w-10 rounded-full border-2 border-gray-100 shadow-lg hover:cursor-pointer md:h-14 md:w-14 {isDvdBouncing ? '' : 'transition-all duration-300 hover:animate-spin hover:shadow-xl hover:scale-110'} bg-cover bg-center bg-no-repeat p-0 {className}"
-	style="background-image: url({src})"
+	class="h-10 w-10 rounded-full border-2 border-gray-100 shadow-lg hover:cursor-pointer md:h-14 md:w-14 {isDvdBouncing ? '' : 'transition-all duration-300 hover:animate-spin hover:shadow-xl hover:scale-110'} p-0 overflow-hidden {className}"
 	aria-label="{alt} - click to activate DVD bouncing mode"
 	onclick={toggleDvdBounce}
 	onkeydown={handleKeydown}
-></button>
+>
+	<picture>
+		{#if webpSrc}
+			<source srcset={webpSrc} type="image/webp" />
+		{/if}
+		<img {src} {alt} class="w-full h-full object-cover" />
+	</picture>
+</button>

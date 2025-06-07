@@ -1,5 +1,6 @@
 <script lang="ts">
 	import doggo from '$lib/assets/doggo.png';
+	import doggoWebp from '$lib/assets/doggo.webp';
 	import Experiences from '../components/experiences/experiences.svelte';
 	import Showcases from '../components/showcases/showcases.svelte';
 	import DvdBouncingAvatar from '../components/dvdBouncingAvatar.svelte';
@@ -9,7 +10,7 @@
 	<!-- Hero Section -->
 	<section class="flex flex-col gap-8">
 		<div class="flex flex-row items-center gap-3">
-			<DvdBouncingAvatar src={doggo} alt="doggo spinning disk" />
+			<DvdBouncingAvatar src={doggo} webpSrc={doggoWebp} alt="doggo spinning disk" />
 			<h1 class="text-5xl font-bold tracking-tight md:text-6xl text-white relative">
 				<span class="inline-block overflow-hidden whitespace-nowrap border-r-2 border-white w-0 animate-typewriter animate-cursor-blink">
 					Hello There.
