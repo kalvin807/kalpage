@@ -20,8 +20,8 @@
 		"@tailwindcss/aspect-ratio": "^0.4.2",
 		"@tailwindcss/container-queries": "^0.1.1",
 		"@tailwindcss/forms": "^0.5.10",
-		"@tailwindcss/postcss": "^4.1.8",
 		"@tailwindcss/typography": "^0.5.16",
+		"@tailwindcss/vite": "^4.1.8",
 		"@types/eslint": "^9.6.1",
 		"daisyui": "^5.0.43",
 		"eslint": "^9.28.0",
@@ -38,6 +38,7 @@
 		"vite": "^6.3.5"
 	},
 	"dependencies": {
+
 		"@vercel/analytics": "^1.5.0",
 		"lucide-svelte": "^0.513.0"
 	},
