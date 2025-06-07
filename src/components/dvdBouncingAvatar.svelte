@@ -70,24 +70,43 @@
 		const viewportWidth = window.innerWidth;
 		const viewportHeight = window.innerHeight;
 		
-		// Check boundaries BEFORE moving and bounce if needed
-		if (position.x + velocity.x <= 0 || position.x + velocity.x >= viewportWidth - avatarSize.width) {
+		// Calculate next position
+		const nextX = position.x + velocity.x;
+		const nextY = position.y + velocity.y;
+		
+		// Track if we bounced this frame (to avoid double hue change)
+		let bounced = false;
+		
+		// Check X boundaries and bounce if needed
+		if (nextX <= 0) {
+			position.x = 0;
 			velocity.x = -velocity.x;
-			hue = (hue + 60) % 360; // Change color on bounce
+			bounced = true;
+		} else if (nextX >= viewportWidth - avatarSize.width) {
+			position.x = viewportWidth - avatarSize.width;
+			velocity.x = -velocity.x;
+			bounced = true;
+		} else {
+			position.x = nextX;
 		}
 		
-		if (position.y + velocity.y <= 0 || position.y + velocity.y >= viewportHeight - avatarSize.height) {
+		// Check Y boundaries and bounce if needed
+		if (nextY <= 0) {
+			position.y = 0;
 			velocity.y = -velocity.y;
-			hue = (hue + 60) % 360; // Change color on bounce
+			bounced = true;
+		} else if (nextY >= viewportHeight - avatarSize.height) {
+			position.y = viewportHeight - avatarSize.height;
+			velocity.y = -velocity.y;
+			bounced = true;
+		} else {
+			position.y = nextY;
 		}
 		
-		// Update position after bounce check
-		position.x += velocity.x;
-		position.y += velocity.y;
-		
-		// Clamp position to stay within bounds (safety net)
-		position.x = Math.max(0, Math.min(viewportWidth - avatarSize.width, position.x));
-		position.y = Math.max(0, Math.min(viewportHeight - avatarSize.height, position.y));
+		// Change color only once per frame if we bounced
+		if (bounced) {
+			hue = (hue + 60) % 360;
+		}
 		
 		// Apply transform and color
 		if (avatarElement) {
