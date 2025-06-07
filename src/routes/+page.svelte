@@ -10,7 +10,7 @@
 	<section class="flex flex-col gap-8">
 		<div class="flex flex-row items-center gap-3">
 			<DvdBouncingAvatar src={doggo} alt="doggo spinning disk" />
-			<h1 class="text-5xl font-bold tracking-tight md:text-6xl bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent hover:from-blue-200 hover:to-purple-200 transition-all duration-500 relative">
+			<h1 class="text-5xl font-bold tracking-tight md:text-6xl text-white relative">
 				<span class="inline-block overflow-hidden whitespace-nowrap border-r-2 border-white w-0 animate-typewriter animate-cursor-blink">
 					Hello There.
 				</span>
