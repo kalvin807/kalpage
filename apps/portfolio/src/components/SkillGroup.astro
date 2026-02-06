@@ -1,0 +1,17 @@
+---
+interface Props {
+  label: string;
+  skills: string[];
+}
+
+const { label, skills } = Astro.props;
+---
+
+<div class="mb-6">
+  <p class="font-mono text-xs text-accent uppercase tracking-[0.1em] mb-3">{label}</p>
+  <div class="flex flex-wrap gap-2">
+    {skills.map((skill) => (
+      <span class="font-mono text-[0.8rem] text-text px-3 py-1.5 border border-accent-30 rounded-pill transition-colors hover:border-accent">{skill}</span>
+    ))}
+  </div>
+</div>

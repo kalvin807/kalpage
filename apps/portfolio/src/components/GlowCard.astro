@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+}
+
+const { title, description, href } = Astro.props;
+---
+
+<article class="glow-card">
+  <div class="glows"></div>
+  <h3 class="font-heading text-[1.1rem] font-semibold text-text-heading m-0">{title}</h3>
+  <p class="text-sm text-text leading-normal m-0 flex-1">{description}</p>
+  <a href={href} class="font-mono text-xs text-text no-underline opacity-50 transition-opacity inline-block self-start hover:opacity-100">View on GitHub &rarr;</a>
+</article>

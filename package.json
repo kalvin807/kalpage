@@ -13,10 +13,6 @@
 		"build:all": "bun --filter portfolio build && bun --filter home build",
 		"preview:portfolio": "bun --filter portfolio preview",
 		"test:home": "bun --filter home test",
-		"check:portfolio": "bun --filter portfolio check",
-		"check:watch:portfolio": "bun --filter portfolio check:watch",
-		"lint:portfolio": "bun --filter portfolio lint",
-		"format:portfolio": "bun --filter portfolio format",
 		"clean": "rm -rf apps/*/node_modules apps/*/.svelte-kit apps/*/dist apps/*/.tanstack"
 	},
 	"packageManager": "bun@1.2.15"

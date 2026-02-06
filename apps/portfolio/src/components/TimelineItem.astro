@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+  date: string;
+}
+
+const { title, date } = Astro.props;
+---
+
+<div class="timeline-item relative pb-8 last:pb-0">
+  <h3 class="font-heading text-base font-semibold text-text-heading m-0 mb-1">{title}</h3>
+  <span class="font-mono text-xs text-accent mb-2 inline-block">{date}</span>
+  <div class="timeline-desc text-[0.9rem] text-text leading-relaxed">
+    <slot />
+  </div>
+</div>
