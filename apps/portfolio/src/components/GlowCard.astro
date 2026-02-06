@@ -8,9 +8,9 @@ interface Props {
 const { title, description, href } = Astro.props;
 ---
 
-<article class="glow-card">
-  <div class="glows"></div>
+<article class="border border-accent-30 bg-bg-card p-4 flex flex-col gap-2 transition-colors hover:border-accent">
+  <span class="font-mono text-xs uppercase tracking-wide text-text-muted">Selected project</span>
   <h3 class="font-heading text-[1.1rem] font-semibold text-text-heading m-0">{title}</h3>
   <p class="text-sm text-text leading-normal m-0 flex-1">{description}</p>
-  <a href={href} class="font-mono text-xs text-text no-underline opacity-50 transition-opacity inline-block self-start hover:opacity-100">View on GitHub &rarr;</a>
+  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`View ${title} on GitHub`} class="inline-block w-fit border-b border-accent-30 pb-0.5 font-mono text-xs text-text no-underline transition-colors hover:border-accent">View on GitHub &rarr;</a>
 </article>

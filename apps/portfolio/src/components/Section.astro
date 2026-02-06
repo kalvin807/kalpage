@@ -7,6 +7,8 @@ const { title } = Astro.props;
 ---
 
 <section class="relative z-1 py-8">
-  <h2 class="font-heading text-[0.8rem] font-medium uppercase tracking-[0.15em] text-accent mb-8">{title}</h2>
+  <header class="mb-6">
+    <h2 class="m-0 font-mono text-xs tracking-[0.08em] text-accent">{title}</h2>
+  </header>
   <slot />
 </section>

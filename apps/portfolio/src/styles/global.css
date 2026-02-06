@@ -1,347 +1,138 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
+@import '@fontsource/jost/latin-400.css';
+@import '@fontsource/jost/latin-500.css';
+@import '@fontsource/jost/latin-600.css';
+@import '@fontsource/jost/latin-700.css';
+@import '@fontsource/space-mono/latin-400.css';
 
 @theme {
-  --color-bg: oklch(0.17 0.004 60);
-  --color-bg-card: oklch(0.24 0.004 60);
-  --color-text: oklch(0.70 0.006 60);
+  --color-bg: oklch(0.17 0.003 75);
+  --color-bg-card: oklch(0.20 0.003 75);
+  --color-text: oklch(0.84 0.004 75);
   --color-text-heading: oklch(0.95 0.008 80);
-  --color-text-muted: oklch(0.53 0.004 60);
-  --color-accent: oklch(0.56 0.004 60);
-  --color-accent-50: oklch(0.56 0.004 60 / 0.5);
-  --color-accent-30: oklch(0.56 0.004 60 / 0.3);
-  --color-accent-10: oklch(0.56 0.004 60 / 0.1);
-  --color-glow: oklch(0.58 0.006 60 / 0.08);
+  --color-text-muted: oklch(0.70 0.003 75);
+  --color-accent: oklch(0.78 0.004 78);
+  --color-accent-50: oklch(0.78 0.004 78 / 0.5);
+  --color-accent-30: oklch(0.78 0.004 78 / 0.3);
+  --color-accent-10: oklch(0.78 0.004 78 / 0.1);
+  --color-surface-soft: oklch(1 0 0 / 0.02);
+  --color-surface-raised: oklch(1 0 0 / 0.04);
+  --color-surface-raised-hover: oklch(1 0 0 / 0.08);
+  --color-surface-chip: oklch(1 0 0 / 0.03);
+  --color-surface-chip-hover: oklch(1 0 0 / 0.08);
+  --color-surface-stage: oklch(0 0 0 / 0.08);
   --color-glow-shadow: oklch(0.50 0.006 60 / 0.12);
+  --color-ring: oklch(0.82 0.01 80 / 0.8);
   --font-heading: 'Jost', 'Futura', 'Century Gothic', sans-serif;
   --font-mono: 'Space Mono', 'SF Mono', 'Fira Code', monospace;
-  --radius-card: 12px;
-  --radius-pill: 100px;
 }
 
-/* ========================================
-   Glow Card Custom Properties
-   ======================================== */
-:root {
-  --border-width: 2px;
-  --gradient: conic-gradient(
-    from 180deg at 50% 70%,
-    hsla(0, 0%, 98%, 1) 0deg,
-    #eec32d 72deg,
-    #ec4b4b 144deg,
-    #709ab9 216deg,
-    #4dffbf 288deg,
-    hsla(0, 0%, 98%, 1) 1turn
-  );
-}
-
-/* ========================================
-   @property for animated gradient
-   ======================================== */
-@media (prefers-reduced-motion: no-preference) {
-  @property --angle {
-    inherits: true;
-    initial-value: 180deg;
-    syntax: '<angle>';
-  }
-}
-
-@property --start {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 0;
-}
-
-/* ========================================
-   Base Styles
-   ======================================== */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background: var(--color-bg);
+  background:
+    radial-gradient(82rem 34rem at 10% -5%, oklch(0.34 0.02 85 / 0.11), transparent 62%),
+    radial-gradient(58rem 28rem at 92% -8%, oklch(0.30 0.015 235 / 0.07), transparent 66%),
+    var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-heading);
-  font-weight: 400;
+  line-height: 1.5;
 }
 
-/* ========================================
-   Background — atmospheric glow
-   ======================================== */
-body::after {
+body::before {
+  --grid-size: 64px;
+  --grid-line: oklch(1 0 0 / 0.045);
   content: '';
-  z-index: 0;
   position: fixed;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 600px 400px at 10% 5%, oklch(0.30 0.015 60 / 0.4), transparent),
-    radial-gradient(ellipse 500px 500px at 85% 50%, oklch(0.25 0.010 60 / 0.25), transparent);
+    linear-gradient(transparent calc(var(--grid-size) - 1px), var(--grid-line) calc(var(--grid-size) - 1px)),
+    linear-gradient(90deg, transparent calc(var(--grid-size) - 1px), var(--grid-line) calc(var(--grid-size) - 1px));
+  background-size: var(--grid-size) var(--grid-size);
+  mask-image: radial-gradient(42rem 20rem at 18% 8%, black 0%, transparent 74%);
+  opacity: 0.24;
 }
 
-/* ========================================
-   Hero Heading (gradient text animation)
-   ======================================== */
+a {
+  text-underline-offset: 0.2em;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
 .hero-heading {
+  --hero-angle: 180deg;
+  --hero-secondary: oklch(0.9 0.004 75);
+  --hero-highlight: 1;
+  --hero-spread: 0.7;
+  margin: 0;
+  display: inline-block;
   font-family: var(--font-heading);
-  font-weight: 700;
-  line-height: 1.1;
-  font-size: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  font-weight: 600;
+  font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem);
+  letter-spacing: -0.01em;
+  line-height: 1.07;
   background:
     conic-gradient(
-      from var(--angle, 180deg) at 50% 70%,
-      hsla(0, 0%, 98%, 1) 0deg,
+      from var(--hero-angle) at 50% 70%,
+      oklch(0.98 0.003 90) 0deg,
       #eec32d 72deg,
       #ec4b4b 144deg,
       #709ab9 216deg,
       #4dffbf 288deg,
-      hsla(0, 0%, 98%, 1) 1turn
+      oklch(0.98 0.003 90) 1turn
     ),
-    linear-gradient(var(--color-text-muted), var(--color-text-muted)),
-    linear-gradient(var(--color-text-muted) 0 2lh, transparent);
+    linear-gradient(var(--hero-secondary), var(--hero-secondary)),
+    linear-gradient(
+      var(--hero-secondary) 0 calc((var(--hero-highlight) + var(--hero-spread)) * 1lh),
+      transparent
+    );
   background-repeat: no-repeat;
-  background-size: 100% 1lh, 100% 2lh, 100% 100%;
+  background-size:
+    100% calc(var(--hero-highlight) * 1lh),
+    100% calc((var(--hero-highlight) + var(--hero-spread)) * 1lh),
+    100% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin: 0;
-  display: inline-block;
+}
+
+@property --hero-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 180deg;
+}
+
+@keyframes hero-gradient-rotate {
+  to {
+    --hero-angle: 540deg;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes rotate {
-    to {
-      --angle: 540deg;
-    }
-  }
-
   .hero-heading {
-    animation: rotate 6s infinite linear;
+    animation: hero-gradient-rotate 6s linear infinite;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-}
-
-/* ========================================
-   Timeline (Experience)
-   ======================================== */
-.timeline {
-  position: relative;
-  padding-left: 2rem;
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.5rem;
-  bottom: 0.5rem;
-  width: 1px;
-  background: var(--color-accent);
-  opacity: 0.4;
-}
-
-.timeline-item::before {
-  content: '';
-  position: absolute;
-  left: -2rem;
-  top: 0.55rem;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  transform: translateX(-3px);
 }
 
 .timeline-desc ul {
-  margin: 0.25rem 0 0;
-  padding-left: 1.25rem;
+  margin: 0;
+  padding-left: 0;
+  list-style-position: inside;
 }
 
 .timeline-desc li {
   margin-bottom: 0.25rem;
 }
 
-/* Scroll-driven entrance */
-@media (prefers-reduced-motion: no-preference) {
-  .timeline-item {
-    animation: fadeUp 0.5s ease both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 30%;
-  }
-}
-
-/* ========================================
-   Glow Cards (Projects) — from Pen 2
-   ======================================== */
-.card-grid {
-  --spread: 60;
-  --gap: 24;
-  --blur: 20;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: calc(var(--gap) * 1px);
-  touch-action: none;
-  position: relative;
-}
-
-@media (max-width: 640px) {
-  .card-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.glow-card {
-  --active: 0.15;
-  --start: 0;
-  background: var(--color-bg-card);
-  padding: 1.5rem;
-  border-radius: var(--radius-card);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  position: relative;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-  box-shadow:
-    inset 0 1px 0 0 oklch(1 0 0 / 0.05),
-    0 1px 3px 0 oklch(0 0 0 / 0.15),
-    0 0 0 1px oklch(1 0 0 / 0.04);
-}
-
-.glow-card:hover {
-  z-index: 2;
-  transform: translateY(-2px);
-  box-shadow:
-    inset 0 1px 0 0 oklch(1 0 0 / 0.07),
-    0 4px 16px 0 oklch(0 0 0 / 0.25),
-    0 0 0 1px oklch(1 0 0 / 0.06);
-}
-
-/* Glow pseudo-elements */
-.glow-card .glows {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  filter: blur(calc(var(--blur) * 1px));
-}
-
-.glow-card .glows::after,
-.glow-card .glows::before {
-  content: '';
-  background: var(--gradient);
-  background-attachment: fixed;
-  position: absolute;
-  inset: -5px;
-  border: 10px solid transparent;
-  border-radius: var(--radius-card);
-  mask:
-    linear-gradient(#0000, #0000),
-    conic-gradient(
-      from calc((var(--start) - (var(--spread) * 0.5)) * 1deg),
-      #000 0deg,
-      #fff,
-      #0000 calc(var(--spread) * 1deg)
-    );
-  -webkit-mask:
-    linear-gradient(#0000, #0000),
-    conic-gradient(
-      from calc((var(--start) - (var(--spread) * 0.5)) * 1deg),
-      #000 0deg,
-      #fff,
-      #0000 calc(var(--spread) * 1deg)
-    );
-  mask-clip: padding-box, border-box;
-  -webkit-mask-clip: padding-box, border-box;
-  mask-composite: intersect;
-  -webkit-mask-composite: source-in, xor;
-  opacity: var(--active);
-  transition: opacity 1s;
-}
-
-.glow-card::before {
-  position: absolute;
-  inset: 0;
-  border: var(--border-width) solid transparent;
-  content: '';
-  border-radius: var(--radius-card);
-  pointer-events: none;
-  background: var(--color-accent);
-  background-attachment: fixed;
-  mask:
-    linear-gradient(#0000, #0000),
-    conic-gradient(
-      from calc(((var(--start) + (var(--spread) * 0.25)) - (var(--spread) * 1.5)) * 1deg),
-      hsl(0 0% 100% / 0.15) 0deg,
-      white,
-      hsl(0 0% 100% / 0.15) calc(var(--spread) * 2.5deg)
-    );
-  -webkit-mask:
-    linear-gradient(#0000, #0000),
-    conic-gradient(
-      from calc(((var(--start) + (var(--spread) * 0.25)) - (var(--spread) * 1.5)) * 1deg),
-      hsl(0 0% 100% / 0.15) 0deg,
-      white,
-      hsl(0 0% 100% / 0.15) calc(var(--spread) * 2.5deg)
-    );
-  mask-clip: padding-box, border-box;
-  -webkit-mask-clip: padding-box, border-box;
-  mask-composite: intersect;
-  -webkit-mask-composite: source-in, xor;
-  opacity: var(--active);
-  transition: opacity 1s;
-}
-
-.glow-card::after {
-  content: '';
-  pointer-events: none;
-  position: absolute;
-  background: var(--gradient);
-  background-attachment: fixed;
-  border-radius: var(--radius-card);
-  opacity: var(--active, 0);
-  transition: opacity 1s;
-  inset: 0;
-  border: var(--border-width) solid transparent;
-  mask:
-    linear-gradient(#0000, #0000),
-    conic-gradient(
-      from calc(((var(--start) + (var(--spread) * 0.25)) - (var(--spread) * 0.5)) * 1deg),
-      #0000 0deg,
-      #fff,
-      #0000 calc(var(--spread) * 0.5deg)
-    );
-  -webkit-mask:
-    linear-gradient(#0000, #0000),
-    conic-gradient(
-      from calc(((var(--start) + (var(--spread) * 0.25)) - (var(--spread) * 0.5)) * 1deg),
-      #0000 0deg,
-      #fff,
-      #0000 calc(var(--spread) * 0.5deg)
-    );
-  filter: brightness(1.5);
-  mask-clip: padding-box, border-box;
-  -webkit-mask-clip: padding-box, border-box;
-  mask-composite: intersect;
-  -webkit-mask-composite: source-in, xor;
-}
-
-/* ========================================
-   Education
-   ======================================== */
 .education-item {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .education-item:last-child {
@@ -362,11 +153,6 @@ body::after {
   color: var(--color-accent);
 }
 
-/* ========================================
-   Painting Pixels
-   ======================================== */
-
-/* Grid — the artwork itself, no container */
 .painting-grid {
   display: grid;
   gap: 1px;
@@ -377,76 +163,49 @@ body::after {
   aspect-ratio: 1;
 }
 
-/* Museum wall label — quiet typography below the work */
 .painting-info {
-  margin-top: 0.75rem;
+  margin-top: 0.6rem;
+  min-height: 2rem;
 }
 
 .painting-link {
   text-decoration: none;
   color: inherit;
-  transition: opacity 0.2s ease;
 }
 
 .painting-link:hover {
-  opacity: 0.75;
+  opacity: 0.8;
 }
 
 .painting-title {
   font-family: var(--font-heading);
   font-size: 0.85rem;
-  font-weight: 500;
-  font-style: italic;
   color: var(--color-text-heading);
 }
 
 .painting-artist {
+  margin-top: 0.15rem;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   color: var(--color-text-muted);
-  margin-top: 0.15rem;
 }
 
 .painting-error {
+  margin: 0;
+  padding: 2rem 0;
   text-align: center;
   font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--color-text-muted);
-  margin: 0;
-  padding: 2rem 0;
 }
 
-/* Fallback skeleton */
 .painting-skeleton {
-  aspect-ratio: 4/5;
-  background: linear-gradient(110deg, var(--color-bg) 30%, oklch(1 0 0 / 0.03) 50%, var(--color-bg) 70%);
-  background-size: 200% 100%;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .painting-skeleton {
-    animation: shimmer 1.5s ease-in-out infinite;
-  }
-}
-
-@keyframes shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(110deg, var(--color-bg) 30%, oklch(1 0 0 / 0.04) 50%, var(--color-bg) 70%);
 }
 
 .painting-pixels-loading-text {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--color-text-muted);
-}
-
-@keyframes pulse-opacity {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .painting-pixels-loading-text {
-    animation: pulse-opacity 1.5s ease-in-out infinite;
-  }
 }
