@@ -4,16 +4,18 @@ node_modules
 .env.*
 !.env.example
 
-# Portfolio build artifacts
-/apps/portfolio/build
-/apps/portfolio/.svelte-kit
-/apps/portfolio/package
+# Build artifacts
+dist/
+.astro/
+.vercel/
 
-# Home build artifacts
-/apps/home/dist
-/apps/home/dist-ssr
-/apps/home/*.local
-/apps/home/.nitro
-/apps/home/.tanstack
-/apps/home/.output
-/apps/home/.vinxi
+# Home app specific
+*.local
+.nitro
+.tanstack
+.output
+.vinxi
+
+# Sensitive files
+resume*
+*.pdf
