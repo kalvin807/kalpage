@@ -1,8 +1,19 @@
 .DS_Store
 node_modules
-/build
-/.svelte-kit
-/package
 .env
 .env.*
 !.env.example
+
+# Portfolio build artifacts
+/apps/portfolio/build
+/apps/portfolio/.svelte-kit
+/apps/portfolio/package
+
+# Home build artifacts
+/apps/home/dist
+/apps/home/dist-ssr
+/apps/home/*.local
+/apps/home/.nitro
+/apps/home/.tanstack
+/apps/home/.output
+/apps/home/.vinxi

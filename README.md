@@ -1,38 +1,121 @@
-# create-svelte
+# Kalpage Monorepo
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Personal portfolio and home page applications managed as a Bun workspaces monorepo.
 
-## Creating a project
+## Structure
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+```
+.
+├── apps/
+│   ├── portfolio/    # SvelteKit portfolio website
+│   └── home/         # React + TanStack Router home page
+├── package.json      # Root workspace configuration
+└── README.md
 ```
 
-## Developing
+## Development
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Prerequisites
 
+- Bun 1.2.15 or higher
+
+### Setup
+
+Install all dependencies:
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun install
 ```
 
-## Building
+### Running Apps
 
-To create a production version of your app:
-
+**Portfolio (SvelteKit):**
 ```bash
-npm run build
+bun dev:portfolio
+# Runs on http://localhost:5173
 ```
 
-You can preview the production build with `npm run preview`.
+**Home (React):**
+```bash
+bun dev:home
+# Runs on http://localhost:3000
+```
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+**Both apps simultaneously:**
+```bash
+bun dev:all
+```
+
+### Building
+
+**Build portfolio:**
+```bash
+bun build:portfolio
+```
+
+**Build home:**
+```bash
+bun build:home
+```
+
+**Build all:**
+```bash
+bun build:all
+```
+
+### Testing
+
+**Run home tests:**
+```bash
+bun test:home
+```
+
+### Type Checking & Linting (Portfolio)
+
+```bash
+bun check:portfolio          # Type check
+bun check:watch:portfolio    # Type check in watch mode
+bun lint:portfolio           # Lint and format check
+bun format:portfolio         # Format code
+```
+
+## Apps
+
+### Portfolio
+
+SvelteKit 2 portfolio website with Tailwind CSS v4 and DaisyUI.
+
+- **Framework**: SvelteKit 2
+- **Styling**: Tailwind CSS v4 + DaisyUI
+- **Icons**: Lucide Svelte
+- **Analytics**: Vercel Analytics
+- **Build**: Static site generation
+
+See [apps/portfolio/](apps/portfolio/) for more details.
+
+### Home
+
+React home page with TanStack Router.
+
+- **Framework**: React 19
+- **Router**: TanStack Router
+- **Build**: Vite
+- **Testing**: Vitest
+
+See [apps/home/](apps/home/) for more details.
+
+## Deployment
+
+Both apps are configured for static site generation and can be deployed to Vercel, Netlify, or any static hosting provider.
+
+## Workspace Management
+
+**Clean all build artifacts and node_modules:**
+```bash
+bun clean
+```
+
+**Install dependencies for specific app:**
+```bash
+bun install --filter portfolio
+bun install --filter home
+```
