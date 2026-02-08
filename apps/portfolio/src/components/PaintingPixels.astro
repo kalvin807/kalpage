@@ -1,45 +1,60 @@
 ---
-import sharp from "sharp";
+export const prerender = false;
+
+import sharp from 'sharp';
 
 const MAX_COLS = 28;
 const MAX_RETRIES = 3;
-export const CACHE_TTL_SECONDS = 60 * 60 * 6;
+const CACHE_TTL_SECONDS = 60 * 60 * 6;
 const CACHE_TTL_MS = CACHE_TTL_SECONDS * 1000;
-const SEARCH_URL =
-  "https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=11&hasImages=true&q=painting";
-const OBJECT_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+const SEARCH_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=11&hasImages=true&q=painting';
+const OBJECT_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
 
-export interface PixelData {
+interface PixelData {
   readonly r: number;
   readonly g: number;
   readonly b: number;
 }
 
-export interface PaintingInfo {
+interface PaintingInfo {
   readonly title: string;
   readonly artist: string;
   readonly date: string;
   readonly url: string;
 }
 
-export interface PaintingPayload {
+interface PaintingPayload {
   readonly pixels: PixelData[];
   readonly cols: number;
   readonly info: PaintingInfo;
 }
 
-export async function fetchPaintingPixels(): Promise<PaintingPayload> {
+interface PaintingCache {
+  readonly expiresAt: number;
+  readonly payload: PaintingPayload;
+}
+
+const globalCache = globalThis as typeof globalThis & {
+  paintingPixelsCache?: PaintingCache;
+};
+
+async function fetchPaintingPixels(): Promise<PaintingPayload> {
   const now = Date.now();
+  const cached = globalCache.paintingPixelsCache;
 
   try {
+    if (cached && cached.expiresAt > now) {
+      return cached.payload;
+    }
+
     const searchRes = await fetch(SEARCH_URL);
-    if (!searchRes.ok) throw new Error("Search API failed");
+    if (!searchRes.ok) throw new Error('Search API failed');
     const searchData = (await searchRes.json()) as unknown as { objectIDs?: number[] };
     const objectIDs = searchData.objectIDs ?? [];
-    if (objectIDs.length === 0) throw new Error("No paintings found");
+    if (objectIDs.length === 0) throw new Error('No paintings found');
 
     let imageUrl: string | null = null;
-    let info: PaintingInfo = { title: "", artist: "", date: "", url: "" };
+    let info: PaintingInfo = { title: '', artist: '', date: '', url: '' };
 
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       const id = objectIDs[Math.floor(Math.random() * objectIDs.length)];
@@ -50,22 +65,22 @@ export async function fetchPaintingPixels(): Promise<PaintingPayload> {
 
       imageUrl = obj.primaryImageSmall as string;
       info = {
-        title: (obj.title as string) ?? "Untitled",
-        artist: (obj.artistDisplayName as string) ?? "Unknown",
-        date: (obj.objectDate as string) ?? "",
-        url: (obj.objectURL as string) ?? "",
+        title: (obj.title as string) ?? 'Untitled',
+        artist: (obj.artistDisplayName as string) ?? 'Unknown',
+        date: (obj.objectDate as string) ?? '',
+        url: (obj.objectURL as string) ?? '',
       };
       break;
     }
 
-    if (!imageUrl) throw new Error("All retries exhausted");
+    if (!imageUrl) throw new Error('All retries exhausted');
 
     const imageRes = await fetch(imageUrl);
-    if (!imageRes.ok) throw new Error("Image fetch failed");
+    if (!imageRes.ok) throw new Error('Image fetch failed');
     const imageBuffer = Buffer.from(await imageRes.arrayBuffer());
 
     const metadata = await sharp(imageBuffer).metadata();
-    if (!metadata.width || !metadata.height) throw new Error("Missing image dimensions");
+    if (!metadata.width || !metadata.height) throw new Error('Missing image dimensions');
 
     const cols = MAX_COLS;
     const rows = Math.round((metadata.height / metadata.width) * cols);
@@ -78,26 +93,34 @@ export async function fetchPaintingPixels(): Promise<PaintingPayload> {
       const g = rgbBuffer[i + 1];
       const b = rgbBuffer[i + 2];
       if (r === undefined || g === undefined || b === undefined) {
-        throw new Error("unreachable: rgbBuffer length not divisible by 3");
+        throw new Error('unreachable: rgbBuffer length not divisible by 3');
       }
       pixels.push({ r, g, b });
     }
 
     const payload: PaintingPayload = { pixels, cols, info };
+    globalCache.paintingPixelsCache = { expiresAt: now + CACHE_TTL_MS, payload };
     return payload;
   } catch (e) {
-    console.error("[PaintingPixels] Failed to fetch painting:", e);
+    console.error('[PaintingPixels] Failed to fetch painting:', e);
+    if (cached) {
+      return cached.payload;
+    }
     throw e;
   }
 }
+
+Astro.response.headers.set(
+  'Cache-Control',
+  `public, max-age=0, s-maxage=${CACHE_TTL_SECONDS}, stale-while-revalidate=86400`,
+);
 
 let error = false;
 let result: PaintingPayload = { pixels: [], cols: 0, info: { title: '', artist: '', date: '', url: '' } };
 
 try {
   result = await fetchPaintingPixels();
-} catch(e) {
-  console.error('Error fetching painting pixels:', e);
+} catch {
   error = true;
 }
 
