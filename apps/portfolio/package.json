@@ -6,19 +6,21 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "generate:og": "node scripts/generate-og-image.mjs"
+    "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/vercel": "^9.0.4",
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/vercel": "^10.0.0-beta.2",
     "@fontsource/jost": "^5.2.8",
     "@fontsource/space-mono": "^5.2.9",
-    "astro": "^5.17.1",
-    "sharp": "^0.34.5"
+    "astro": "^6.0.0-beta.9",
+    "sharp": "^0.34.5",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "vite": "^7.3.1"
   }
 }

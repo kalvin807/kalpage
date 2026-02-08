@@ -1,21 +1,35 @@
 {
-	"name": "kalpage-monorepo",
-	"version": "0.0.1",
-	"private": true,
-	"type": "module",
-	"workspaces": [
-		"apps/*"
-	],
-	"scripts": {
-		"dev:portfolio": "bun --filter portfolio dev",
-		"dev:home": "bun --filter home dev",
-		"dev:all": "bun --filter portfolio dev & bun --filter home dev",
-		"build:portfolio": "bun --filter portfolio build",
-		"build:home": "bun --filter home build",
-		"build:all": "bun --filter portfolio build && bun --filter home build",
-		"preview:portfolio": "bun --filter portfolio preview",
-		"test:home": "bun --filter home test",
-		"clean": "rm -rf apps/*/node_modules apps/*/.svelte-kit apps/*/dist apps/*/.tanstack"
-	},
-	"packageManager": "bun@1.3.8"
+  "name": "kalpage-monorepo",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev:portfolio": "bun --filter portfolio dev",
+    "dev:tool": "bun --filter tool dev",
+    "dev:all": "bun --filter portfolio dev & bun --filter tool dev",
+    "build:portfolio": "bun --filter portfolio build",
+    "build:tool": "bun --filter tool build",
+    "build:all": "bun --filter portfolio build && bun --filter tool build",
+    "preview:portfolio": "bun --filter portfolio preview",
+    "test:tool": "bun --filter tool test",
+    "clean": "rm -rf apps/*/node_modules apps/*/.svelte-kit apps/*/dist apps/*/.tanstack",
+    "lint": "oxlint --type-aware --type-check --fix",
+    "lint:check": "oxlint --type-aware --type-check",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "fix": "bun run lint && bun run fmt",
+    "check": "bun run lint:check && bun run fmt:check",
+    "knip": "knip"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.2",
+    "oxfmt": "^0.28.0",
+    "oxlint": "^1.43.0",
+    "oxlint-tsgolint": "^0.11.5",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "bun@1.3.9"
 }
