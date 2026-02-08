@@ -138,10 +138,14 @@ export const Route = createRootRoute({
   errorComponent: GlobalErrorComponent,
 });
 
+const PAGE_TITLES: Record<string, string> = {
+  "/tool/date": "和暦・西暦変換",
+};
+
 function RootComponent() {
   const matches = useMatches();
   const currentRoute = matches[matches.length - 1];
-  const pageTitle = currentRoute?.context?.pageTitle as string | undefined;
+  const pageTitle = currentRoute?.pathname ? PAGE_TITLES[currentRoute.pathname] : undefined;
 
   return (
     <div className="min-h-dvh">

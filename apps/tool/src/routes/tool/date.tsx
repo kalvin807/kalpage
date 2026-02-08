@@ -96,9 +96,6 @@ function maybeGetHoliday(date: Date): HolidayInfo | undefined {
 
 export const Route = createFileRoute("/tool/date")({
   component: DateConverterPage,
-  beforeLoad: () => ({
-    pageTitle: "和暦・西暦変換",
-  }),
   head: () => ({
     meta: [
       { title: "和暦・西暦変換" },
