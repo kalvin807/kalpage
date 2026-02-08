@@ -13,7 +13,10 @@ export default defineConfig({
   site,
   base,
   output: "server",
-  adapter: vercel(),
+  adapter: vercel({
+    isr: true,
+    maxDuration: 60
+  }),
   vite: {
     plugins: [tailwindcss()],
   },
