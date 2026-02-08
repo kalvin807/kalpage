@@ -238,6 +238,8 @@ function maybeParseShortDate(input: string): ParsedInput | null {
     const month = parseInt(group(match[1]), 10);
     const day = parseInt(group(match[2]), 10);
 
+    if (month < 1 || month > 12) return null;
+
     if (!isValidDate(currentYear, month, day)) {
       return {
         type: "invalid",

@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
-import { IconCopy, IconCheck, IconCalendar, IconArrowLeft } from "@tabler/icons-react";
+import { IconCopy, IconCheck, IconCalendar } from "@tabler/icons-react";
 import * as holiday_jp from "@holiday-jp/holiday_jp";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -96,6 +96,9 @@ function maybeGetHoliday(date: Date): HolidayInfo | undefined {
 
 export const Route = createFileRoute("/tool/date")({
   component: DateConverterPage,
+  beforeLoad: () => ({
+    pageTitle: "和暦・西暦変換",
+  }),
   head: () => ({
     meta: [
       { title: "和暦・西暦変換" },
@@ -104,6 +107,23 @@ export const Route = createFileRoute("/tool/date")({
         content: "西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール",
       },
       { property: "og:url", content: `${SITE_URL}/tool/date` },
+      { property: "og:title", content: "和暦・西暦変換 - tool.kalvin.io" },
+      {
+        property: "og:description",
+        content: "西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール",
+      },
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        name: "twitter:title",
+        content: "和暦・西暦変換",
+      },
+      {
+        name: "twitter:description",
+        content: "西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール",
+      },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/tool/date` }],
   }),
@@ -132,77 +152,57 @@ function DateConverterPage() {
   }, []);
 
   return (
-    <div className="min-h-dvh">
-      <div className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
-        {/* Breadcrumb */}
-        <nav className="mb-8">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <IconArrowLeft className="size-3.5" />
-            <span>Tools</span>
-          </Link>
-        </nav>
-
-        {/* Title */}
-        <header className="mb-8">
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">和暦・西暦変換</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Western and Japanese era date conversion</p>
-        </header>
-
-        {/* Input */}
-        <div className="mb-8">
-          <div
-            className={`relative flex items-center rounded-lg border bg-card shadow-sm transition-all ${isFocused ? "border-primary/60 ring-2 ring-ring" : "border-border hover:border-foreground/20"
-              }`}
-          >
-            <Input
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder="2024-01-15, 令和6年, R6..."
-              className="h-12 flex-1 border-0 bg-transparent px-4 text-base font-mono font-medium tracking-wide placeholder:font-sans placeholder:font-normal placeholder:text-muted-foreground/60 focus-visible:ring-0 sm:h-14 sm:text-lg"
-              aria-label="日付入力"
-            />
-            <Popover>
-              <PopoverTrigger
-                className="mr-2 flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                aria-label="カレンダーから選択"
-              >
-                <IconCalendar className="size-4.5" />
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  captionLayout="dropdown"
-                  selected={result.conversion?.western.date}
-                  onSelect={(date) => {
-                    if (date) {
-                      const year = date.getFullYear();
-                      const month = String(date.getMonth() + 1).padStart(2, "0");
-                      const day = String(date.getDate()).padStart(2, "0");
-                      setInput(`${year}-${month}-${day}`);
-                    }
-                  }}
-                  defaultMonth={result.conversion?.western.date ?? new Date()}
-                  className="rounded-lg"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">YYYY-MM-DD, 令和6年, R6, 19970224, etc.</p>
+    <>
+      {/* Input */}
+      <div className="mb-8">
+        <div
+          className={`relative flex items-center rounded-lg border bg-card shadow-sm transition-all ${isFocused ? "border-primary/60 ring-2 ring-ring" : "border-border hover:border-foreground/20"}`}
+        >
+          <Input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder="2024-01-15, 令和6年, R6..."
+            className="h-12 flex-1 border-0 bg-transparent px-4 text-base font-mono font-medium tracking-wide placeholder:font-sans placeholder:font-normal placeholder:text-muted-foreground/60 focus-visible:ring-0 sm:h-14 sm:text-lg"
+            aria-label="日付入力"
+          />
+          <Popover>
+            <PopoverTrigger
+              className="mr-2 flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              aria-label="カレンダーから選択"
+            >
+              <IconCalendar className="size-4.5" />
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-auto p-0">
+              <Calendar
+                mode="single"
+                captionLayout="dropdown"
+                selected={result.conversion?.western.date}
+                onSelect={(date) => {
+                  if (date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, "0");
+                    const day = String(date.getDate()).padStart(2, "0");
+                    setInput(`${year}-${month}-${day}`);
+                  }
+                }}
+                defaultMonth={result.conversion?.western.date ?? new Date()}
+                className="rounded-lg"
+              />
+            </PopoverContent>
+          </Popover>
         </div>
-
-        {/* Results */}
-        <ResultsSection result={result} />
-
-        {/* Era Reference */}
-        <EraReferenceSection />
+        <p className="mt-2 text-xs text-muted-foreground">YYYY-MM-DD, 令和6年, R6, 2025, etc.</p>
       </div>
-    </div>
+
+      {/* Results */}
+      <ResultsSection result={result} />
+
+      {/* Era Reference */}
+      <EraReferenceSection />
+    </>
   );
 }
 
@@ -308,9 +308,10 @@ function formatISO(date: Date): string {
 
 interface CopyButtonProps {
   readonly text: string;
+  readonly className?: string;
 }
 
-function CopyButton({ text }: CopyButtonProps) {
+function CopyButton({ text, className }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -329,7 +330,7 @@ function CopyButton({ text }: CopyButtonProps) {
       size="icon-xs"
       onClick={handleCopy}
       aria-label="コピー"
-      className="size-6 text-muted-foreground/50 transition-all hover:text-foreground active:scale-95"
+      className={`size-6 text-muted-foreground/50 transition-all hover:text-foreground active:scale-95 ${className ?? ""}`}
     >
       {copied ? <IconCheck className="size-3 text-emerald-600" /> : <IconCopy className="size-3" />}
     </Button>
@@ -376,26 +377,24 @@ function ErrorState({ message }: ErrorStateProps) {
   );
 }
 
-interface DataRowProps {
+interface DetailCellProps {
   readonly label: string;
   readonly value: string;
   readonly sub?: string;
   readonly mono?: boolean;
-  readonly delay?: number;
+  readonly prefix?: string;
 }
 
-function DataRow({ label, value, sub, mono = false, delay = 0 }: DataRowProps) {
+function DetailCell({ label, value, sub, mono = false, prefix }: DetailCellProps) {
   return (
-    <div
-      className="animate-in fade-in-0 slide-in-from-bottom-1 flex items-baseline justify-between gap-4 border-b border-border/60 py-3 last:border-0 duration-200"
-      style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
-    >
-      <span className="shrink-0 text-xs uppercase tracking-wider text-muted-foreground">{label}</span>
-      <span className="flex items-center gap-1.5 text-right">
+    <div className="group bg-card px-5 py-3">
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+      <div className="mt-0.5 flex items-center gap-1.5">
+        {prefix && <span>{prefix}</span>}
         <span className={`text-sm font-medium ${mono ? "font-mono tabular-nums" : ""}`}>{value}</span>
         {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
-        <CopyButton text={value} />
-      </span>
+        <CopyButton text={value} className="opacity-0 group-hover:opacity-100" />
+      </div>
     </div>
   );
 }
@@ -406,63 +405,59 @@ interface ConversionCardsProps {
 }
 
 function ConversionCards({ conversion, extras }: ConversionCardsProps) {
-  const hasHoliday = !!extras?.holiday;
-  const baseDelay = hasHoliday ? 1 : 0;
-
   return (
-    <div className="space-y-6">
-      {/* Holiday */}
+    <div className="animate-in fade-in-0 slide-in-from-bottom-1 space-y-4 duration-200">
+      {/* Holiday banner */}
       {extras?.holiday && (
-        <div
-          className="animate-in fade-in-0 slide-in-from-bottom-1 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 duration-200"
-          style={{ animationDelay: "0ms", animationFillMode: "both" }}
-        >
+        <div className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
           <span className="text-base">🎌</span>
           <div className="flex-1">
-            <span className="text-sm font-medium text-red-900">{extras.holiday.name}</span>
-            <span className="ml-2 text-xs text-red-700/70">{extras.holiday.nameEn}</span>
+            <span className="text-sm font-medium text-destructive">{extras.holiday.name}</span>
+            <span className="ml-2 text-xs text-destructive/70">{extras.holiday.nameEn}</span>
           </div>
           <CopyButton text={extras.holiday.name} />
         </div>
       )}
 
-      {/* Main conversion table */}
-      <div className="rounded-lg border border-border bg-card shadow-sm">
-        <DataRow label="西暦" value={conversion.western.formatted} delay={(baseDelay + 0) * 40} mono />
-        <DataRow label="ISO" value={conversion.western.iso} delay={(baseDelay + 1) * 40} mono />
-        <DataRow label="和暦" value={conversion.japanese.formatted} delay={(baseDelay + 2) * 40} />
-        <DataRow label="Romaji" value={conversion.japanese.formattedRomaji} delay={(baseDelay + 3) * 40} mono />
-        <DataRow
-          label="元号"
-          value={`${conversion.japanese.era.name} (${conversion.japanese.era.abbreviation})`}
-          sub={conversion.japanese.era.nameRomaji}
-          delay={(baseDelay + 4) * 40}
-        />
-      </div>
-
-      {/* Zodiac — compact row */}
-      {extras && (
-        <div
-          className="animate-in fade-in-0 slide-in-from-bottom-1 flex items-center gap-6 rounded-lg border border-border bg-card px-4 py-3 shadow-sm duration-200"
-          style={{ animationDelay: `${(baseDelay + 5) * 40}ms`, animationFillMode: "both" }}
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-base">{extras.zodiac.emoji}</span>
+      {/* Main card */}
+      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+        {/* Hero: primary conversion */}
+        <div className="border-b border-border/60 px-5 py-5">
+          <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">干支</p>
-              <p className="text-sm font-medium">{extras.zodiac.animal}</p>
+              <p className="text-2xl font-semibold tracking-tight">{conversion.japanese.formatted}</p>
+              <p className="mt-1 font-mono text-sm text-muted-foreground">{conversion.western.formatted}</p>
             </div>
-          </div>
-          <div className="h-6 w-px bg-border" />
-          <div className="flex items-center gap-2">
-            <span className="text-base">{extras.starSign.emoji}</span>
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">星座</p>
-              <p className="text-sm font-medium">{extras.starSign.name}</p>
-            </div>
+            <CopyButton text={conversion.japanese.formatted} />
           </div>
         </div>
-      )}
+
+        {/* Detail grid */}
+        <div className="grid grid-cols-2 divide-x divide-border/40">
+          <DetailCell label="ISO" value={conversion.western.iso} mono />
+          <DetailCell label="Romaji" value={conversion.japanese.formattedRomaji} mono />
+        </div>
+        <div className="grid grid-cols-2 divide-x divide-border/40 border-t border-border/40">
+          <DetailCell
+            label="元号"
+            value={`${conversion.japanese.era.name} (${conversion.japanese.era.abbreviation})`}
+            sub={conversion.japanese.era.nameRomaji}
+          />
+          {extras ? (
+            <DetailCell label="干支" value={extras.zodiac.animal} prefix={extras.zodiac.emoji} />
+          ) : (
+            <div className="bg-card px-5 py-3" />
+          )}
+        </div>
+
+        {/* Footer: star sign */}
+        {extras && (
+          <div className="flex items-center gap-2 border-t border-border/60 px-5 py-3 text-sm text-muted-foreground">
+            <span>{extras.starSign.emoji}</span>
+            <span>{extras.starSign.name}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -477,34 +472,32 @@ interface AmbiguousResultsProps {
 
 function AmbiguousResults({ alternatives }: AmbiguousResultsProps) {
   return (
-    <div className="space-y-4">
-      <div className="animate-in fade-in-0 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm duration-150">
-        <span className="font-medium text-amber-900">複数の解釈があります</span>
-        <span className="ml-1 text-amber-700/80"> — 入力された値は複数の日付として解釈できます</span>
+    <div className="animate-in fade-in-0 space-y-4 duration-200">
+      <div className="rounded-lg border border-accent bg-accent/50 px-4 py-3 text-sm">
+        <span className="font-medium text-accent-foreground">複数の解釈があります</span>
+        <span className="ml-1 text-muted-foreground"> — 入力された値は複数の日付として解釈できます</span>
       </div>
 
       {alternatives.map((alt, index) => (
         <div
           key={index}
-          className="animate-in fade-in-0 slide-in-from-bottom-1 rounded-lg border border-border bg-card shadow-sm duration-200"
+          className="animate-in fade-in-0 slide-in-from-bottom-1 overflow-hidden rounded-lg border border-border bg-card shadow-sm duration-200"
           style={{ animationDelay: `${(index + 1) * 50}ms`, animationFillMode: "both" }}
         >
-          <div className="border-b border-border/60 px-4 py-2.5">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{alt.label}</span>
-            {alt.extras?.holiday && <span className="ml-2 text-xs text-red-600">🎌 {alt.extras.holiday.name}</span>}
+          {/* Hero */}
+          <div className="border-b border-border/60 px-5 py-4">
+            <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              {alt.label}
+              {alt.extras?.holiday && <span className="ml-2 text-destructive">🎌 {alt.extras.holiday.name}</span>}
+            </p>
+            <p className="text-lg font-semibold tracking-tight">{alt.conversion.japanese.formatted}</p>
+            <p className="mt-0.5 font-mono text-sm text-muted-foreground">{alt.conversion.western.formatted}</p>
           </div>
-          <div className="grid gap-x-8 gap-y-0 px-4 sm:grid-cols-2">
-            <DataRow label="西暦" value={alt.conversion.western.formatted} mono />
-            <DataRow label="和暦" value={alt.conversion.japanese.formatted} />
-          </div>
+          {/* Footer */}
           {alt.extras && (
-            <div className="flex gap-4 border-t border-border/60 px-4 py-2.5 text-xs text-muted-foreground">
-              <span>
-                {alt.extras.zodiac.emoji} {alt.extras.zodiac.animal}
-              </span>
-              <span>
-                {alt.extras.starSign.emoji} {alt.extras.starSign.name}
-              </span>
+            <div className="flex gap-4 px-5 py-2.5 text-xs text-muted-foreground">
+              <span>{alt.extras.zodiac.emoji} {alt.extras.zodiac.animal}</span>
+              <span>{alt.extras.starSign.emoji} {alt.extras.starSign.name}</span>
             </div>
           )}
         </div>

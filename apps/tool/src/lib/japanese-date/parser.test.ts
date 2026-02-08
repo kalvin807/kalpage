@@ -33,6 +33,11 @@ describe("parseInput", () => {
     ["19970224", 1997, 1, 24, "YYYYMMDD"],
     ["１９９７０２２４", 1997, 1, 24, "YYYYMMDD fullwidth"],
 
+    // Year only
+    ["2025", 2025, 0, 1, "Year only"],
+    ["1990", 1990, 0, 1, "Year only 1990"],
+    ["1868", 1868, 0, 1, "Year only Meiji start"],
+
     // ISO format
     ["2024-01-15", 2024, 0, 15, "ISO format"],
     ["2024/12/31", 2024, 11, 31, "ISO with slash"],
