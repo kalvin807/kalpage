@@ -12,6 +12,7 @@ const base = process.env.BASE ?? "/";
 export default defineConfig({
   site,
   base,
+  output: "server",
   adapter: vercel(),
   vite: {
     plugins: [tailwindcss()],
