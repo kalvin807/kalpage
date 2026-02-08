@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { IconCalendar } from "@tabler/icons-react";
+import { IconCalendar, IconArrowRight } from "@tabler/icons-react";
 
 export const Route = createFileRoute("/")({
   component: ToolsIndexPage,
@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
 
 const tools = [
   {
-    to: "/tool/date" as const, // TanStack Router requires literal type for type-safe links
+    to: "/tool/date" as const,
     icon: <IconCalendar className="size-5" />,
     title: "和暦・西暦変換",
     titleEn: "Japanese Date Converter",
@@ -17,34 +17,33 @@ const tools = [
 
 function ToolsIndexPage() {
   return (
-    <div className="space-y-0">
-      {tools.map((tool) => (
-        <Link
-          key={tool.to}
-          to={tool.to}
-          className="group flex items-center gap-4 border-b border-border py-4 transition-colors hover:bg-muted/40"
-        >
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/8 text-primary transition-colors group-hover:bg-primary/12">
-            {tool.icon}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="mb-0.5 flex items-baseline gap-2">
-              <span className="font-semibold tracking-tight">{tool.title}</span>
-              <span className="text-xs text-muted-foreground">{tool.titleEn}</span>
-            </div>
-            <p className="text-sm text-muted-foreground">{tool.description}</p>
-          </div>
-          <svg
-            className="size-4 shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
+    <div className="space-y-6">
+      <div className="mb-8">
+        <h1 className="mb-2 text-4xl font-light tracking-tight">ツール集</h1>
+        <p className="text-muted-foreground">Utility tools for everyday use</p>
+      </div>
+
+      <div className="space-y-3">
+        {tools.map((tool) => (
+          <Link
+            key={tool.to}
+            to={tool.to}
+            className="group flex items-center gap-4 rounded-lg border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
-      ))}
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-md bg-primary/8 text-primary transition-colors group-hover:bg-primary/15">
+              {tool.icon}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="mb-0.5 flex items-baseline gap-2">
+                <span className="font-semibold tracking-tight">{tool.title}</span>
+                <span className="text-xs text-muted-foreground">{tool.titleEn}</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{tool.description}</p>
+            </div>
+            <IconArrowRight className="size-4 shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
