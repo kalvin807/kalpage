@@ -493,8 +493,12 @@ function AmbiguousResults({ alternatives }: AmbiguousResultsProps) {
           {/* Footer */}
           {alt.extras && (
             <div className="flex gap-4 px-5 py-2.5 text-xs text-muted-foreground">
-              <span>{alt.extras.zodiac.emoji} {alt.extras.zodiac.animal}</span>
-              <span>{alt.extras.starSign.emoji} {alt.extras.starSign.name}</span>
+              <span>
+                {alt.extras.zodiac.emoji} {alt.extras.zodiac.animal}
+              </span>
+              <span>
+                {alt.extras.starSign.emoji} {alt.extras.starSign.name}
+              </span>
             </div>
           )}
         </div>

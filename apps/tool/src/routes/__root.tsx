@@ -25,7 +25,8 @@ export const Route = createRootRoute({
       },
       {
         name: "keywords",
-        content: "年号, Japanese date converter, 和暦, 西暦, era conversion, Reiwa, Heisei, Showa, date tool, 令和, 平成, 昭和",
+        content:
+          "年号, Japanese date converter, 和暦, 西暦, era conversion, Reiwa, Heisei, Showa, date tool, 令和, 平成, 昭和",
       },
       {
         name: "author",
@@ -153,12 +154,13 @@ function RootComponent() {
         <header className="mb-8">
           <div className="flex items-start justify-between">
             <div>
-              <Link to="/" className="font-mono text-sm font-medium tracking-tight text-foreground transition-colors hover:text-primary">
+              <Link
+                to="/"
+                className="font-mono text-sm font-medium tracking-tight text-foreground transition-colors hover:text-primary"
+              >
                 tool.kalvin.io
               </Link>
-              {pageTitle && (
-                <h1 className="mt-1 text-lg font-semibold tracking-tight">{pageTitle}</h1>
-              )}
+              {pageTitle && <h1 className="mt-1 text-lg font-semibold tracking-tight">{pageTitle}</h1>}
             </div>
             <ThemeToggle />
           </div>

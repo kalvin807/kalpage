@@ -8,79 +8,77 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ToolDateRouteImport } from './routes/tool/date'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as ToolDateRouteImport } from "./routes/tool/date";
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ToolDateRoute = ToolDateRouteImport.update({
-  id: '/tool/date',
-  path: '/tool/date',
+  id: "/tool/date",
+  path: "/tool/date",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/tool/date': typeof ToolDateRoute
+  "/": typeof IndexRoute;
+  "/tool/date": typeof ToolDateRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/tool/date': typeof ToolDateRoute
+  "/": typeof IndexRoute;
+  "/tool/date": typeof ToolDateRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/tool/date': typeof ToolDateRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/tool/date": typeof ToolDateRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/tool/date'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/tool/date'
-  id: '__root__' | '/' | '/tool/date'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: "/" | "/tool/date";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/tool/date";
+  id: "__root__" | "/" | "/tool/date";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ToolDateRoute: typeof ToolDateRoute
+  IndexRoute: typeof IndexRoute;
+  ToolDateRoute: typeof ToolDateRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tool/date': {
-      id: '/tool/date'
-      path: '/tool/date'
-      fullPath: '/tool/date'
-      preLoaderRoute: typeof ToolDateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/tool/date": {
+      id: "/tool/date";
+      path: "/tool/date";
+      fullPath: "/tool/date";
+      preLoaderRoute: typeof ToolDateRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ToolDateRoute: ToolDateRoute,
-}
-export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+};
+export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { createStart } from "@tanstack/react-start";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }
