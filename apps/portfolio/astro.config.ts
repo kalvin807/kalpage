@@ -2,6 +2,10 @@ import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import vercel from "@astrojs/vercel";
 
+import type { AstroUserConfig } from "astro";
+
+type VitePlugins = NonNullable<NonNullable<AstroUserConfig["vite"]>["plugins"]>;
+
 const site = process.env.VERCEL
   ? process.env.VERCEL_ENV === "production"
     ? "https://kalvin.io"
@@ -14,10 +18,18 @@ export default defineConfig({
   base,
   output: "server",
   adapter: vercel({
-    isr: true,
-    maxDuration: 60
+    // Vercel ISR strips search params from requests, but server islands receive their
+    // encrypted props via search params, so island routes must bypass the ISR cache.
+    // The island response still gets CDN caching from its own s-maxage header.
+    isr: {
+      exclude: [/^\/_server-islands\//],
+    },
+    maxDuration: 60,
   }),
   vite: {
-    plugins: [tailwindcss()],
+    // @tailwindcss/vite types against the workspace-hoisted vite 8 while astro bundles its own
+    // vite 7. The plugin object is runtime-compatible; the cast only reconciles the two type
+    // identities of `Plugin` across duplicated vite installs.
+    plugins: [tailwindcss()] as unknown as VitePlugins,
   },
 });
