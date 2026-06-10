@@ -11,9 +11,16 @@ import {
   parseInput,
   maybeToJapanese,
   maybeToWestern,
+  maybeFindEraForDate,
+  getEraYear,
+  formatJapanese,
+  formatRomaji,
+  formatWestern,
   JAPANESE_ERAS,
   type ParsedInput,
   type ConversionResult,
+  type DatePrecision,
+  type JapaneseDateParts,
 } from "@/lib/japanese-date";
 
 interface HolidayInfo {
@@ -94,6 +101,58 @@ function maybeGetHoliday(date: Date): HolidayInfo | undefined {
   return undefined;
 }
 
+const WEEKDAYS = [
+  { jp: "日曜日", en: "Sunday" },
+  { jp: "月曜日", en: "Monday" },
+  { jp: "火曜日", en: "Tuesday" },
+  { jp: "水曜日", en: "Wednesday" },
+  { jp: "木曜日", en: "Thursday" },
+  { jp: "金曜日", en: "Friday" },
+  { jp: "土曜日", en: "Saturday" },
+] as const;
+
+interface WeekdayInfo {
+  readonly jp: string;
+  readonly en: string;
+}
+
+function getWeekday(date: Date): WeekdayInfo {
+  const weekday = WEEKDAYS[date.getDay()];
+  if (!weekday) throw new Error(`unreachable: invalid weekday index ${date.getDay()}`);
+  return weekday;
+}
+
+interface RelativeInfo {
+  readonly label: string;
+  readonly age?: string;
+}
+
+function startOfDay(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function getRelativeInfo(date: Date): RelativeInfo {
+  const today = startOfDay(new Date());
+  const target = startOfDay(date);
+  const diffDays = Math.round((target.getTime() - today.getTime()) / 86_400_000);
+
+  let label: string;
+  if (diffDays === 0) label = "今日";
+  else if (diffDays === 1) label = "明日";
+  else if (diffDays === -1) label = "昨日";
+  else if (diffDays > 0) label = `${diffDays.toLocaleString()}日後`;
+  else label = `${(-diffDays).toLocaleString()}日前`;
+
+  // Age in full years (birthday semantics), shown only for past dates
+  if (diffDays >= 0) return { label };
+  let age = today.getFullYear() - target.getFullYear();
+  const beforeBirthday =
+    today.getMonth() < target.getMonth() ||
+    (today.getMonth() === target.getMonth() && today.getDate() < target.getDate());
+  if (beforeBirthday) age -= 1;
+  return { label, age: `満${age}歳` };
+}
+
 export const Route = createFileRoute("/tool/date")({
   component: DateConverterPage,
   head: () => ({
@@ -125,6 +184,9 @@ export const Route = createFileRoute("/tool/date")({
     links: [{ rel: "canonical", href: `${SITE_URL}/tool/date` }],
   }),
 });
+
+const QUICK_INPUTS = ["今日", "昨日", "明日"] as const;
+const EXAMPLE_INPUTS = ["令和6年1月15日", "R6.1.15", "2024年1月15日", "19970224"] as const;
 
 function getTodayISO(): string {
   const today = new Date();
@@ -191,7 +253,29 @@ function DateConverterPage() {
             </PopoverContent>
           </Popover>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">YYYY-MM-DD, 令和6年, R6, 2025, etc.</p>
+        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+          {QUICK_INPUTS.map((quick) => (
+            <button
+              key={quick}
+              type="button"
+              onClick={() => setInput(quick)}
+              className="rounded-full border border-border bg-card px-2.5 py-1 text-xs text-foreground transition-colors hover:bg-secondary"
+            >
+              {quick}
+            </button>
+          ))}
+          <span className="mx-1 h-3.5 w-px bg-border" aria-hidden="true" />
+          {EXAMPLE_INPUTS.map((example) => (
+            <button
+              key={example}
+              type="button"
+              onClick={() => setInput(example)}
+              className="rounded-full border border-transparent px-2 py-1 font-mono text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground"
+            >
+              {example}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Results */}
@@ -203,17 +287,20 @@ function DateConverterPage() {
   );
 }
 
-// --- Data processing (unchanged logic) ---
+// --- Data processing ---
 
 interface DateExtras {
   readonly holiday?: HolidayInfo;
   readonly zodiac: ZodiacInfo;
-  readonly starSign: StarSignInfo;
+  readonly starSign?: StarSignInfo;
+  readonly weekday?: WeekdayInfo;
+  readonly relative?: RelativeInfo;
 }
 
 interface ProcessedResult {
   type: ParsedInput["type"];
   conversion?: ConversionResult;
+  precision?: DatePrecision;
   extras?: DateExtras;
   alternatives?: Array<{
     label: string;
@@ -223,12 +310,74 @@ interface ProcessedResult {
   error?: string;
 }
 
-function getDateExtras(date: Date): DateExtras {
+/** Day-dependent extras (weekday, holiday, star sign) only exist at day precision. */
+function getDateExtras(date: Date, precision: DatePrecision): DateExtras {
+  if (precision !== "day") {
+    return { zodiac: getChineseZodiac(date.getFullYear()) };
+  }
   return {
     holiday: maybeGetHoliday(date),
     zodiac: getChineseZodiac(date.getFullYear()),
     starSign: getStarSign(date.getMonth() + 1, date.getDate()),
+    weekday: getWeekday(date),
+    relative: getRelativeInfo(date),
   };
+}
+
+/**
+ * Era label for a western date at a given precision. Transition periods are
+ * labelled with both eras (e.g. 2019 -> 平成31年 / 令和元年).
+ */
+function maybeJapaneseForWestern(date: Date, precision: DatePrecision): ConversionResult["japanese"] | null {
+  if (precision === "day") return maybeToJapanese(date);
+
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const rangeStart = precision === "year" ? new Date(year, 0, 1) : new Date(year, month, 1);
+  const rangeEnd = precision === "year" ? new Date(year, 11, 31) : new Date(year, month + 1, 0);
+
+  const endEra = maybeFindEraForDate(rangeEnd);
+  if (!endEra) return null;
+  const startEra = maybeFindEraForDate(rangeStart);
+
+  const monthPart = precision === "month" ? date.getMonth() + 1 : undefined;
+  const format = (era: typeof endEra) => formatJapanese(era, getEraYear(rangeEnd, era), monthPart);
+  const formatR = (era: typeof endEra) => formatRomaji(era, getEraYear(rangeEnd, era), monthPart);
+
+  const isTransition = startEra !== null && startEra !== endEra;
+  return {
+    era: endEra,
+    year: getEraYear(rangeEnd, endEra),
+    month: monthPart,
+    formatted: isTransition ? `${format(startEra)} / ${format(endEra)}` : format(endEra),
+    formattedRomaji: isTransition ? `${formatR(startEra)} / ${formatR(endEra)}` : formatR(endEra),
+  };
+}
+
+function japaneseFromParts(parts: JapaneseDateParts): ConversionResult["japanese"] {
+  return {
+    era: parts.era,
+    year: parts.year,
+    month: parts.month,
+    day: parts.day,
+    formatted: formatJapanese(parts.era, parts.year, parts.month, parts.day),
+    formattedRomaji: formatRomaji(parts.era, parts.year, parts.month, parts.day),
+  };
+}
+
+function precisionOfParts(parts: JapaneseDateParts): DatePrecision {
+  if (parts.day !== undefined) return "day";
+  if (parts.month !== undefined) return "month";
+  return "year";
+}
+
+function formatISOWithPrecision(date: Date, precision: DatePrecision): string {
+  const year = date.getFullYear();
+  if (precision === "year") return `${year}`;
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  if (precision === "month") return `${year}-${month}`;
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function processResult(parsed: ParsedInput): ProcessedResult {
@@ -236,31 +385,33 @@ function processResult(parsed: ParsedInput): ProcessedResult {
   if (parsed.type === "invalid") return { type: "invalid", error: parsed.error };
 
   if (parsed.type === "western" && parsed.westernDate) {
-    const japanese = maybeToJapanese(parsed.westernDate);
+    const precision = parsed.precision ?? "day";
+    const japanese = maybeJapaneseForWestern(parsed.westernDate, precision);
     if (!japanese) return { type: "invalid", error: "明治以前の日付は対応していません" };
     return {
       type: "western",
+      precision,
       conversion: {
         western: {
           date: parsed.westernDate,
-          formatted: formatWesternDate(parsed.westernDate),
-          iso: formatISO(parsed.westernDate),
+          formatted: formatWestern(parsed.westernDate, precision !== "year", precision === "day"),
+          iso: formatISOWithPrecision(parsed.westernDate, precision),
         },
         japanese,
       },
-      extras: getDateExtras(parsed.westernDate),
+      extras: getDateExtras(parsed.westernDate, precision),
     };
   }
 
   if (parsed.type === "japanese" && parsed.japaneseDate) {
     const western = maybeToWestern(parsed.japaneseDate);
     if (!western) return { type: "invalid", error: "無効な年号と年の組み合わせです" };
-    const japanese = maybeToJapanese(western.date);
-    if (!japanese) return { type: "invalid", error: "変換エラー" };
+    const precision = precisionOfParts(parsed.japaneseDate);
     return {
       type: "japanese",
-      conversion: { western, japanese },
-      extras: getDateExtras(western.date),
+      precision,
+      conversion: { western, japanese: japaneseFromParts(parsed.japaneseDate) },
+      extras: getDateExtras(western.date, precision),
     };
   }
 
@@ -268,19 +419,18 @@ function processResult(parsed: ParsedInput): ProcessedResult {
     const alternatives = parsed.alternativeInterpretations
       .map((alt) => {
         if (!alt.western || !alt.japanese) return null;
-        const japanese = maybeToJapanese(alt.western);
-        if (!japanese) return null;
+        const precision = precisionOfParts(alt.japanese);
         return {
           label: alt.label,
           conversion: {
             western: {
               date: alt.western,
-              formatted: formatWesternDate(alt.western),
-              iso: formatISO(alt.western),
+              formatted: formatWestern(alt.western, precision !== "year", precision === "day"),
+              iso: formatISOWithPrecision(alt.western, precision),
             },
-            japanese,
+            japanese: japaneseFromParts(alt.japanese),
           },
-          extras: getDateExtras(alt.western),
+          extras: getDateExtras(alt.western, precision),
         };
       })
       .filter((alt): alt is NonNullable<typeof alt> => alt !== null);
@@ -288,17 +438,6 @@ function processResult(parsed: ParsedInput): ProcessedResult {
   }
 
   return { type: "invalid", error: "不明なエラー" };
-}
-
-function formatWesternDate(date: Date): string {
-  return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-}
-
-function formatISO(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
 }
 
 // --- UI Components ---
@@ -446,9 +585,15 @@ function ConversionCards({ conversion, extras }: ConversionCardsProps) {
             <div className="bg-card px-5 py-3" />
           )}
         </div>
+        {extras?.weekday && extras.relative && (
+          <div className="grid grid-cols-2 divide-x divide-border/40 border-t border-border/40">
+            <DetailCell label="曜日" value={extras.weekday.jp} sub={extras.weekday.en} />
+            <DetailCell label="今日から" value={extras.relative.label} sub={extras.relative.age} />
+          </div>
+        )}
 
         {/* Footer: star sign */}
-        {extras && (
+        {extras?.starSign && (
           <div className="flex items-center gap-2 border-t border-border/60 px-5 py-3 text-sm text-muted-foreground">
             <span>{extras.starSign.emoji}</span>
             <span>{extras.starSign.name}</span>
@@ -496,9 +641,11 @@ function AmbiguousResults({ alternatives }: AmbiguousResultsProps) {
               <span>
                 {alt.extras.zodiac.emoji} {alt.extras.zodiac.animal}
               </span>
-              <span>
-                {alt.extras.starSign.emoji} {alt.extras.starSign.name}
-              </span>
+              {alt.extras.starSign && (
+                <span>
+                  {alt.extras.starSign.emoji} {alt.extras.starSign.name}
+                </span>
+              )}
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import type { ConversionResult, JapaneseDateParts } from "./types";
-import { maybeFindEraForDate, getEraYear } from "./eras";
+import { maybeFindEraForDate, getEraYear, isEraYearValid } from "./eras";
 import { formatJapanese, formatRomaji, formatWestern } from "./formatter";
 
 export function maybeToJapanese(date: Date): ConversionResult["japanese"] | null {
@@ -23,15 +23,20 @@ export function maybeToJapanese(date: Date): ConversionResult["japanese"] | null
 export function maybeToWestern(japaneseDate: JapaneseDateParts): ConversionResult["western"] | null {
   const { era, year, month, day } = japaneseDate;
 
+  // Era years are calendar-year based, so a partial date like 令和元年 is valid
+  // even though its representative date (Jan 1, 2019) precedes the era start.
+  // Only fully-specified dates are checked against the exact era boundaries.
+  if (!isEraYearValid(era, year)) return null;
+
   const westernYear = era.startDate.getFullYear() + year - 1;
   const date = new Date(westernYear, (month ?? 1) - 1, day ?? 1);
 
-  // Validate the date falls within the era
-  const afterStart = date >= era.startDate;
-  const beforeEnd = !era.endDate || date <= era.endDate;
-
-  if (!afterStart || !beforeEnd) {
-    return null;
+  if (month !== undefined && day !== undefined) {
+    const afterStart = date >= era.startDate;
+    const beforeEnd = !era.endDate || date <= era.endDate;
+    if (!afterStart || !beforeEnd) {
+      return null;
+    }
   }
 
   return {

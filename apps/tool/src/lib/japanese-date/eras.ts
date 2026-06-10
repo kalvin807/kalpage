@@ -66,3 +66,19 @@ export function maybeFindEraByName(input: string): JapaneseEra | null {
 export function getEraYear(date: Date, era: JapaneseEra): number {
   return date.getFullYear() - era.startDate.getFullYear() + 1;
 }
+
+/** Last era year (e.g. 31 for 平成, 64 for 昭和). Null for the ongoing era. */
+export function maybeGetEraMaxYear(era: JapaneseEra): number | null {
+  if (!era.endDate) return null;
+  return era.endDate.getFullYear() - era.startDate.getFullYear() + 1;
+}
+
+/**
+ * Era years are calendar-year based (平成元年 = 1989 even though the era starts
+ * Jan 8), so validity must be checked on the year number, not a Jan 1 date.
+ */
+export function isEraYearValid(era: JapaneseEra, year: number): boolean {
+  if (year < 1) return false;
+  const max = maybeGetEraMaxYear(era);
+  return max === null || year <= max;
+}
