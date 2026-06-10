@@ -3,14 +3,17 @@ interface Props {
   title: string;
   description: string;
   href: string;
+  index: string;
 }
 
-const { title, description, href } = Astro.props;
+const { title, description, href, index } = Astro.props;
 ---
 
-<article class="border border-accent-30 bg-bg-card p-4 flex flex-col gap-2 transition-colors hover:border-accent">
-  <span class="font-mono text-xs uppercase tracking-wide text-text-muted">Selected project</span>
-  <h3 class="font-heading text-[1.1rem] font-semibold text-text-heading m-0">{title}</h3>
-  <p class="text-sm text-text leading-normal m-0 flex-1">{description}</p>
-  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`View ${title} on GitHub`} class="inline-block w-fit border-b border-accent-30 pb-0.5 font-mono text-xs text-text no-underline transition-colors hover:border-accent">View on GitHub &rarr;</a>
+<article class="crop-marks group relative flex flex-col gap-2 border border-accent-30 bg-bg-card p-4 transition-colors hover:border-accent">
+  <span class="font-mono text-xs uppercase tracking-wide text-text-muted tabular-nums">Project {index}</span>
+  <h3 class="m-0 font-heading text-[1.1rem] font-semibold text-balance text-text-heading">{title}</h3>
+  <p class="m-0 flex-1 text-sm leading-normal text-pretty text-text">{description}</p>
+  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`View ${title} on GitHub`} class="inline-block w-fit font-mono text-xs text-text no-underline transition-colors group-hover:text-text-heading after:absolute after:inset-0 after:content-['']">
+    View on GitHub <span class="inline-block transition-transform duration-150 ease-out group-hover:translate-x-0.5" aria-hidden="true">&rarr;</span>
+  </a>
 </article>

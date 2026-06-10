@@ -13,80 +13,86 @@ export const prerender = true;
   <Hero
     avatar="/doggo.webp"
     heading="Hello There."
-    tagline="I'm Calvin (Kal) — a fullstack engineer in Tokyo, Japan. I work on AI agents, speech systems, and high-performance web apps."
+    tagline="I'm Calvin (Kal), a fullstack engineer in Tokyo. I build AI agents, speech systems, and fast web apps."
   />
 
-  <Section title="Experience">
-    <div class="grid gap-3">
+  <Section title="Experience" index="01">
+    <div>
       <TimelineItem title="Fullstack Engineer at an AI voice company" date="2025 — Present · Tokyo">
         <ul>
-          <li>Building AI agent and voice products.</li>
+          <li>Building AI agent and voice products end to end, from the model layer to the user interface.</li>
         </ul>
       </TimelineItem>
       <TimelineItem title="Speech Team Lead at an ad-tech company" date="2024 — 2025 · Tokyo">
         <ul>
-          <li>Led development of low-latency conversational agents for enterprise partners.</li>
-          <li>Built speech-to-text ML pipelines and transcription systems at scale.</li>
+          <li>Led the team building low-latency conversational agents for enterprise partners.</li>
+          <li>Took speech-to-text pipelines and transcription systems from prototype to production scale.</li>
         </ul>
       </TimelineItem>
       <TimelineItem title="Software Engineer at a social hiring platform" date="2023 — 2024 · Tokyo">
         <ul>
           <li>Built high-performance enterprise SaaS interfaces with Next.js and Rails.</li>
-          <li>Architected loyalty point system and executed zero-downtime data migrations.</li>
+          <li>Architected a loyalty point system and ran data migrations with zero downtime.</li>
         </ul>
       </TimelineItem>
       <TimelineItem title="Software Engineer at a telecom company" date="2022 · Tokyo">
         <ul>
-          <li>Led a team to deliver an award-winning internal career platform.</li>
-          <li>Optimized distributed database query performance.</li>
+          <li>Led a small team to deliver an internal career platform that won a company-wide award.</li>
+          <li>Tuned query performance across a distributed database.</li>
         </ul>
       </TimelineItem>
       <TimelineItem title="Software Engineer at a fintech startup" date="2021 — 2022 · Hong Kong">
         <ul>
-          <li>Built Go/Python microservices to analyze bank statements.</li>
-          <li>Improved testing infrastructure, cutting time and memory usage significantly.</li>
+          <li>Built Go and Python microservices that parsed and analyzed bank statements.</li>
+          <li>Rebuilt the testing infrastructure, cutting run time and memory usage.</li>
         </ul>
       </TimelineItem>
     </div>
   </Section>
 
-  <Section title="Education">
-    <div class="education-item">
-      <h3 class="education-title">M.S. in Computer Science (Machine Learning)</h3>
-      <span class="education-school">Georgia Institute of Technology · 2023 — 2026</span>
-    </div>
-    <div class="education-item">
-      <h3 class="education-title">B.Eng. in Computer Science</h3>
-      <span class="education-school">The University of Hong Kong · 2017 — 2021</span>
+  <Section title="Education" index="02">
+    <div class="grid gap-4">
+      <div class="border-l border-accent-30 pl-4">
+        <h3 class="m-0 mb-0.5 font-heading text-base font-semibold text-balance text-text-heading">M.S. in Computer Science (Machine Learning)</h3>
+        <span class="font-mono text-xs text-accent tabular-nums">Georgia Institute of Technology · 2023 — 2026</span>
+      </div>
+      <div class="border-l border-accent-30 pl-4">
+        <h3 class="m-0 mb-0.5 font-heading text-base font-semibold text-balance text-text-heading">B.Eng. in Computer Science</h3>
+        <span class="font-mono text-xs text-accent tabular-nums">The University of Hong Kong · 2017 — 2021</span>
+      </div>
     </div>
   </Section>
 
-  <Section title="Projects">
+  <Section title="Projects" index="03">
     <div class="grid gap-4 sm:grid-cols-2">
       <GlowCard
+        index="01"
         title="GBFinder Omega"
-        description="Real-time raid finder for Granblue Fantasy. Written in Go, designed for high volume sub-second message delivery."
+        description="Realtime raid finder for Granblue Fantasy, written in Go. Delivers high volumes of raid signals in under a second."
         href="https://github.com/kalvin807/gbf-raid-finder"
       />
       <GlowCard
+        index="02"
         title="henkaku"
-        description="JS library to convert strings between full-width and half-width characters."
+        description="Small JS library that converts strings between full-width and half-width characters."
         href="https://github.com/kalvin807/henkaku"
       />
       <GlowCard
+        index="03"
         title="guru-pu"
-        description="Discord bot to auto-assign roles."
+        description="Discord bot that assigns server roles automatically."
         href="https://github.com/kalvin807/guru-pu"
       />
       <GlowCard
+        index="04"
         title="akaina"
-        description="ML model to count Magikarp in a YouTube live stream."
+        description="Computer vision model that counts Magikarp in a YouTube live stream."
         href="https://github.com/kalvin807/akaina-detector"
       />
     </div>
   </Section>
 
-  <Section title="Skills">
+  <Section title="Skills" index="04">
     <SkillGroup label="Languages" skills={['Cantonese', 'Mandarin', 'English', 'Japanese']} />
     <SkillGroup
       label="Technical"
