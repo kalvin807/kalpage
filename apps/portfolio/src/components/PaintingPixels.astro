@@ -1,7 +1,10 @@
 ---
 export const prerender = false;
 
-import sharp from 'sharp';
+// jpeg-js keeps this island free of native binaries: sharp's libvips .so does
+// not survive Vercel's file tracing under Bun's isolated node_modules layout.
+// Met's primaryImageSmall is always a JPEG, so a pure-JS decoder is enough.
+import { decode } from 'jpeg-js';
 
 const MAX_COLS = 28;
 const MAX_RETRIES = 3;
@@ -37,6 +40,33 @@ interface PaintingCache {
 const globalCache = globalThis as typeof globalThis & {
   paintingPixelsCache?: PaintingCache;
 };
+
+/** Box-average downsample of RGBA data into a cols x rows grid of RGB cells. */
+function downsamplePixels(data: Uint8Array, width: number, height: number, cols: number, rows: number): PixelData[] {
+  const pixels: PixelData[] = [];
+  for (let row = 0; row < rows; row++) {
+    const y0 = Math.floor((row * height) / rows);
+    const y1 = Math.max(y0 + 1, Math.floor(((row + 1) * height) / rows));
+    for (let col = 0; col < cols; col++) {
+      const x0 = Math.floor((col * width) / cols);
+      const x1 = Math.max(x0 + 1, Math.floor(((col + 1) * width) / cols));
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      const count = (y1 - y0) * (x1 - x0);
+      for (let y = y0; y < y1; y++) {
+        for (let x = x0; x < x1; x++) {
+          const i = (y * width + x) * 4;
+          r += data[i] ?? 0;
+          g += data[i + 1] ?? 0;
+          b += data[i + 2] ?? 0;
+        }
+      }
+      pixels.push({ r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) });
+    }
+  }
+  return pixels;
+}
 
 async function fetchPaintingPixels(): Promise<PaintingPayload> {
   const now = Date.now();
@@ -79,24 +109,13 @@ async function fetchPaintingPixels(): Promise<PaintingPayload> {
     if (!imageRes.ok) throw new Error('Image fetch failed');
     const imageBuffer = Buffer.from(await imageRes.arrayBuffer());
 
-    const metadata = await sharp(imageBuffer).metadata();
-    if (!metadata.width || !metadata.height) throw new Error('Missing image dimensions');
+    const { data, width, height } = decode(imageBuffer, { useTArray: true, formatAsRGBA: true });
+    if (!width || !height) throw new Error('Missing image dimensions');
 
     const cols = MAX_COLS;
-    const rows = Math.round((metadata.height / metadata.width) * cols);
+    const rows = Math.round((height / width) * cols);
 
-    const rgbBuffer = await sharp(imageBuffer).resize(cols, rows).removeAlpha().raw().toBuffer();
-
-    const pixels: PixelData[] = [];
-    for (let i = 0; i < rgbBuffer.length; i += 3) {
-      const r = rgbBuffer[i];
-      const g = rgbBuffer[i + 1];
-      const b = rgbBuffer[i + 2];
-      if (r === undefined || g === undefined || b === undefined) {
-        throw new Error('unreachable: rgbBuffer length not divisible by 3');
-      }
-      pixels.push({ r, g, b });
-    }
+    const pixels = downsamplePixels(data, width, height, cols, rows);
 
     const payload: PaintingPayload = { pixels, cols, info };
     globalCache.paintingPixelsCache = { expiresAt: now + CACHE_TTL_MS, payload };
