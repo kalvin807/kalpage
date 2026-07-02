@@ -56,17 +56,3 @@ function formatISO(date: Date, includeMonth: boolean, includeDay: boolean): stri
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
-
-export function maybeConvert(date: Date): ConversionResult | null {
-  const japanese = maybeToJapanese(date);
-  if (!japanese) return null;
-
-  return {
-    western: {
-      date,
-      formatted: formatWestern(date, true, true),
-      iso: formatISO(date, true, true),
-    },
-    japanese,
-  };
-}
