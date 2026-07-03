@@ -1,16 +1,9 @@
-export type { JapaneseEra, JapaneseDateParts, ParsedInput, ConversionResult, DatePrecision } from "./types";
+export type { JapaneseDateParts, ParsedInput, ConversionResult, DatePrecision } from "./types";
 
-export {
-  JAPANESE_ERAS,
-  maybeFindEraForDate,
-  maybeFindEraByName,
-  getEraYear,
-  maybeGetEraMaxYear,
-  isEraYearValid,
-} from "./eras";
+export { JAPANESE_ERAS, maybeFindEraForDate, getEraYear } from "./eras";
 
 export { parseInput } from "./parser";
 
-export { maybeToJapanese, maybeToWestern, maybeConvert } from "./converter";
+export { maybeToJapanese, maybeToWestern } from "./converter";
 
 export { formatJapanese, formatRomaji, formatWestern } from "./formatter";

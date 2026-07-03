@@ -32,7 +32,8 @@ const structuredData = [
   },
 ];
 
-export const prerender = true
+/** Astro routing directive, consumed by the framework. @public */
+export const prerender = true;
 ---
 
 <!doctype html>
@@ -75,7 +76,7 @@ export const prerender = true
 
     <meta name="theme-color" content="#23211d" />
     <meta name="msapplication-TileColor" content="#23211d" />
-    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
   </head>
   <body>
     <!-- Main content -->
