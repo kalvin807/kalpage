@@ -14,10 +14,10 @@ export interface JapaneseDateParts {
 }
 
 /** How much of the date the user actually specified. */
-export type DatePrecision = "year" | "month" | "day";
+export type DatePrecision = 'year' | 'month' | 'day';
 
 export interface ParsedInput {
-  type: "western" | "japanese" | "ambiguous" | "invalid" | "empty";
+  type: 'western' | 'japanese' | 'ambiguous' | 'invalid' | 'empty';
   westernDate?: Date;
   /** Set for "western" results. "japanese" results derive it from month/day presence. */
   precision?: DatePrecision;

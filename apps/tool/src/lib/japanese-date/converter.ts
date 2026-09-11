@@ -1,8 +1,8 @@
-import type { ConversionResult, JapaneseDateParts } from "./types";
-import { maybeFindEraForDate, getEraYear, isEraYearValid } from "./eras";
-import { formatJapanese, formatRomaji, formatWestern } from "./formatter";
+import type { ConversionResult, JapaneseDateParts } from './types';
+import { maybeFindEraForDate, getEraYear, isEraYearValid } from './eras';
+import { formatJapanese, formatRomaji, formatWestern } from './formatter';
 
-export function maybeToJapanese(date: Date): ConversionResult["japanese"] | null {
+export function maybeToJapanese(date: Date): ConversionResult['japanese'] | null {
   const era = maybeFindEraForDate(date);
   if (!era) return null;
 
@@ -20,7 +20,7 @@ export function maybeToJapanese(date: Date): ConversionResult["japanese"] | null
   };
 }
 
-export function maybeToWestern(japaneseDate: JapaneseDateParts): ConversionResult["western"] | null {
+export function maybeToWestern(japaneseDate: JapaneseDateParts): ConversionResult['western'] | null {
   const { era, year, month, day } = japaneseDate;
 
   // Era years are calendar-year based, so a partial date like 令和元年 is valid
@@ -50,9 +50,9 @@ function formatISO(date: Date, includeMonth: boolean, includeDay: boolean): stri
   const year = date.getFullYear();
   if (!includeMonth) return `${year}`;
 
-  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, '0');
   if (!includeDay) return `${year}-${month}`;
 
-  const day = String(date.getDate()).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }

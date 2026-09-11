@@ -32,7 +32,6 @@ const structuredData = [
   },
 ];
 
-/** Astro routing directive, consumed by the framework. @public */
 export const prerender = true;
 ---
 
@@ -51,7 +50,6 @@ export const prerender = true;
     <meta name="author" content="Kal.L" />
     <link rel="canonical" href={SITE_URL} />
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={SITE_URL} />
     <meta property="og:title" content={PAGE_TITLE} />
@@ -65,7 +63,6 @@ export const prerender = true;
     <meta property="og:site_name" content="Kal.L Portfolio" />
     <meta property="og:locale" content="en_US" />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={SITE_URL} />
     <meta name="twitter:title" content={PAGE_TITLE} />
@@ -79,32 +76,31 @@ export const prerender = true;
     <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
   </head>
   <body>
-    <!-- Main content -->
-    <main class="mx-auto max-w-6xl px-6 py-8 xl:grid xl:grid-cols-[minmax(0,1fr)_20rem] xl:gap-10">
-      <div class="max-w-3xl">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-bg-card focus:p-3">Skip to content</a>
+    <main id="main-content" class="mx-auto max-w-6xl px-6 py-8 sm:px-8 sm:py-12 xl:grid xl:grid-cols-[minmax(0,1fr)_20rem] xl:gap-16">
+      <div class="min-w-0 max-w-3xl">
         <slot />
       </div>
-      <aside class="mt-10 xl:mt-0">
-        <div class="crop-marks border border-accent-30 bg-bg-card p-4 xl:sticky xl:top-8">
+      <aside class="mt-10 max-w-sm xl:mt-8">
+        <div class="rounded-lg border border-accent-10 bg-bg-card p-5">
           <div>
-            <p class="m-0 font-mono text-[0.68rem] uppercase tracking-[0.12em] text-accent">Column Note</p>
-            <h2 class="mt-3 mb-0 font-heading text-xl leading-tight text-text-heading">Daily Pixel Study</h2>
-            <p class="mt-3 mb-0 text-[0.82rem] leading-relaxed text-pretty text-text-muted">
-              One public-domain painting from the Met collection, redrawn as a grid of pixels.
+            <h2 class="m-0 font-heading text-xl leading-tight text-text-heading">Daily Pixel Study</h2>
+            <p class="mt-3 mb-0 text-sm leading-relaxed text-text-muted">
+              A public-domain painting from the Met, translated into pixel blocks.
             </p>
           </div>
-          <div class="mt-4 border border-accent-30 bg-surface-stage p-3">
+          <div class="mt-5 mb-4">
             <PaintingPixels server:defer>
               <div slot="fallback">
                 <div class="painting-skeleton"></div>
                 <div class="painting-info">
-                  <span class="painting-pixels-loading-text">Loading a painting from the Met…</span>
+                  <span class="painting-pixels-loading-text">Loading a painting…</span>
                 </div>
               </div>
             </PaintingPixels>
           </div>
-          <p class="mx-0 mt-4 mb-0 border-t border-accent-10 pt-3 font-mono text-[0.68rem] uppercase tracking-[0.09em] text-text-muted">
-            A new painting every six hours
+          <p class="m-0 border-t border-accent-10 pt-3 font-mono text-xs text-text-muted">
+            Updated every 6 hours
           </p>
         </div>
       </aside>

@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
 import TimelineItem from '../components/TimelineItem.astro';
-import GlowCard from '../components/GlowCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import SkillGroup from '../components/SkillGroup.astro';
 
 export const prerender = true;
@@ -16,8 +16,8 @@ export const prerender = true;
     tagline="I'm Calvin (Kal), a fullstack engineer in Tokyo. I build AI agents, speech systems, and fast web apps."
   />
 
-  <Section title="Experience" index="01">
-    <div>
+  <Section title="Experience">
+    <div class="grid gap-6">
       <TimelineItem title="Fullstack Engineer at an AI voice company" date="2025 — Present · Tokyo">
         <ul>
           <li>Building AI agent and voice products end to end, from the model layer to the user interface.</li>
@@ -50,7 +50,7 @@ export const prerender = true;
     </div>
   </Section>
 
-  <Section title="Education" index="02">
+  <Section title="Education">
     <div class="grid gap-4">
       <div class="border-l border-accent-30 pl-4">
         <h3 class="m-0 mb-0.5 font-heading text-base font-semibold text-balance text-text-heading">M.S. in Computer Science (Machine Learning)</h3>
@@ -63,28 +63,24 @@ export const prerender = true;
     </div>
   </Section>
 
-  <Section title="Projects" index="03">
+  <Section title="Projects">
     <div class="grid gap-4 sm:grid-cols-2">
-      <GlowCard
-        index="01"
+      <ProjectCard
         title="GBFinder Omega"
         description="Realtime raid finder for Granblue Fantasy, written in Go. Delivers high volumes of raid signals in under a second."
         href="https://github.com/kalvin807/gbf-raid-finder"
       />
-      <GlowCard
-        index="02"
+      <ProjectCard
         title="henkaku"
         description="Small JS library that converts strings between full-width and half-width characters."
         href="https://github.com/kalvin807/henkaku"
       />
-      <GlowCard
-        index="03"
+      <ProjectCard
         title="guru-pu"
         description="Discord bot that assigns server roles automatically."
         href="https://github.com/kalvin807/guru-pu"
       />
-      <GlowCard
-        index="04"
+      <ProjectCard
         title="akaina"
         description="Computer vision model that counts Magikarp in a YouTube live stream."
         href="https://github.com/kalvin807/akaina-detector"
@@ -92,7 +88,7 @@ export const prerender = true;
     </div>
   </Section>
 
-  <Section title="Skills" index="04">
+  <Section title="Skills">
     <SkillGroup label="Languages" skills={['Cantonese', 'Mandarin', 'English', 'Japanese']} />
     <SkillGroup
       label="Technical"

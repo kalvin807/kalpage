@@ -1,16 +1,11 @@
-"use client";
+'use client';
 
-import { Link } from "@tanstack/react-router";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { IconAlertCircle, IconHome, IconRefresh } from "@tabler/icons-react";
+import { Link, type ErrorComponentProps } from '@tanstack/react-router';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { IconAlertCircle, IconHome, IconRefresh } from '@tabler/icons-react';
 
-interface GlobalErrorComponentProps {
-  readonly error: Error;
-  readonly reset: () => void;
-}
-
-export function GlobalErrorComponent({ error, reset }: GlobalErrorComponentProps) {
+export function GlobalErrorComponent({ error, reset }: ErrorComponentProps) {
   return (
     <div className="min-h-dvh flex items-center justify-center p-6">
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
@@ -25,8 +20,7 @@ export function GlobalErrorComponent({ error, reset }: GlobalErrorComponentProps
           <details className="mb-4">
             <summary className="cursor-pointer text-sm text-muted-foreground mb-2">Error details (dev)</summary>
             <pre className="mt-2 p-3 bg-muted rounded-md text-xs overflow-auto max-h-48">
-              {error.message}
-              {error.stack && `\n\n${error.stack}`}
+              {error instanceof Error ? (error.stack ?? error.message) : String(error)}
             </pre>
           </details>
         )}
@@ -37,7 +31,7 @@ export function GlobalErrorComponent({ error, reset }: GlobalErrorComponentProps
           </Button>
           <Link
             to="/"
-            className={cn(buttonVariants({ variant: "default" }), "flex-1 sm:flex-initial items-center gap-2")}
+            className={cn(buttonVariants({ variant: 'default' }), 'flex-1 sm:flex-initial items-center gap-2')}
           >
             <IconHome className="size-4" aria-hidden="true" />
             Home

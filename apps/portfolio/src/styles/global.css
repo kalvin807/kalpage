@@ -1,10 +1,7 @@
-@import "tailwindcss";
-@plugin '@tailwindcss/typography';
-@import "@fontsource/jost/latin-400.css";
-@import "@fontsource/jost/latin-500.css";
-@import "@fontsource/jost/latin-600.css";
-@import "@fontsource/jost/latin-700.css";
-@import "@fontsource/space-mono/latin-400.css";
+@import 'tailwindcss';
+@import '@fontsource/jost/latin-400.css';
+@import '@fontsource/jost/latin-600.css';
+@import '@fontsource/space-mono/latin-400.css';
 
 @theme {
   --color-bg: oklch(0.17 0.003 75);
@@ -16,20 +13,15 @@
   --color-accent-50: oklch(0.78 0.004 78 / 0.5);
   --color-accent-30: oklch(0.78 0.004 78 / 0.3);
   --color-accent-10: oklch(0.78 0.004 78 / 0.1);
-  --color-surface-soft: oklch(1 0 0 / 0.02);
   --color-surface-raised: oklch(1 0 0 / 0.04);
   --color-surface-raised-hover: oklch(1 0 0 / 0.08);
-  --color-surface-chip: oklch(1 0 0 / 0.03);
-  --color-surface-chip-hover: oklch(1 0 0 / 0.08);
-  --color-surface-stage: oklch(0 0 0 / 0.08);
-  --color-glow-shadow: oklch(0.5 0.006 60 / 0.12);
   --color-ring: oklch(0.82 0.01 80 / 0.8);
-  --font-heading: "Jost", "Futura", "Century Gothic", sans-serif;
-  --font-mono: "Space Mono", "SF Mono", "Fira Code", monospace;
+  --font-heading: 'Jost', 'Futura', 'Century Gothic', sans-serif;
+  --font-mono: 'Space Mono', 'SF Mono', 'Fira Code', monospace;
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-padding-top: 2rem;
 }
 
 ::selection {
@@ -38,27 +30,21 @@ html {
 }
 
 body {
-  background:
-    radial-gradient(82rem 34rem at 10% -5%, oklch(0.34 0.02 85 / 0.11), transparent 62%),
-    radial-gradient(58rem 28rem at 92% -8%, oklch(0.3 0.015 235 / 0.07), transparent 66%), var(--color-bg);
+  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-heading);
   line-height: 1.5;
 }
 
-body::before {
-  --grid-size: 64px;
-  --grid-line: oklch(1 0 0 / 0.045);
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(transparent calc(var(--grid-size) - 1px), var(--grid-line) calc(var(--grid-size) - 1px)),
-    linear-gradient(90deg, transparent calc(var(--grid-size) - 1px), var(--grid-line) calc(var(--grid-size) - 1px));
-  background-size: var(--grid-size) var(--grid-size);
-  mask-image: radial-gradient(42rem 20rem at 18% 8%, black 0%, transparent 74%);
-  opacity: 0.24;
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
 }
 
 a {
@@ -67,59 +53,16 @@ a {
 
 a:focus-visible {
   outline: 2px solid var(--color-ring);
-  outline-offset: 2px;
+  outline-offset: 4px;
 }
 
 .hero-heading {
-  --hero-angle: 180deg;
-  --hero-secondary: oklch(0.9 0.004 75);
-  --hero-highlight: 1;
-  --hero-spread: 0.7;
   margin: 0;
-  display: inline-block;
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem);
-  letter-spacing: -0.01em;
-  line-height: 1.07;
-  background:
-    conic-gradient(
-      from var(--hero-angle) at 50% 70%,
-      oklch(0.98 0.003 90) 0deg,
-      #eec32d 72deg,
-      #ec4b4b 144deg,
-      #709ab9 216deg,
-      #4dffbf 288deg,
-      oklch(0.98 0.003 90) 1turn
-    ),
-    linear-gradient(var(--hero-secondary), var(--hero-secondary)),
-    linear-gradient(var(--hero-secondary) 0 calc((var(--hero-highlight) + var(--hero-spread)) * 1lh), transparent);
-  background-repeat: no-repeat;
-  background-size:
-    100% calc(var(--hero-highlight) * 1lh),
-    100% calc((var(--hero-highlight) + var(--hero-spread)) * 1lh),
-    100% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-@property --hero-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 180deg;
-}
-
-@keyframes hero-gradient-rotate {
-  to {
-    --hero-angle: 540deg;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero-heading {
-    animation: hero-gradient-rotate 6s linear infinite;
-  }
+  font-size: clamp(2.5rem, 1.4rem + 3vw, 3.4rem);
+  line-height: 1.1;
+  color: var(--color-text-heading);
 }
 
 /* Print-style crop marks on two opposing corners, tying cards to the zine layout. */
@@ -129,7 +72,7 @@ a:focus-visible {
 
 .crop-marks::before,
 .crop-marks::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 0.5rem;
   height: 0.5rem;
@@ -159,8 +102,8 @@ a:focus-visible {
 
 .timeline-desc ul {
   margin: 0;
-  padding-left: 0;
-  list-style-position: inside;
+  padding-left: 1rem;
+  list-style-position: outside;
 }
 
 .timeline-desc li {
@@ -216,7 +159,7 @@ a:focus-visible {
 
 .painting-skeleton {
   aspect-ratio: 4 / 5;
-  background: linear-gradient(110deg, var(--color-bg) 30%, oklch(1 0 0 / 0.04) 50%, var(--color-bg) 70%);
+  background: var(--color-surface-raised);
 }
 
 .painting-pixels-loading-text {

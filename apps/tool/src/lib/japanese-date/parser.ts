@@ -1,5 +1,5 @@
-import type { DatePrecision, JapaneseEra, ParsedInput } from "./types";
-import { isEraYearValid, JAPANESE_ERAS, maybeFindEraByName, maybeFindEraForDate, maybeGetEraMaxYear } from "./eras";
+import type { DatePrecision, JapaneseEra, ParsedInput } from './types';
+import { isEraYearValid, JAPANESE_ERAS, maybeFindEraByName, maybeFindEraForDate, maybeGetEraMaxYear } from './eras';
 
 // ---------------------------------------------------------------------------
 // The parser is a pipeline of small matchers tried in order of specificity.
@@ -8,16 +8,16 @@ import { isEraYearValid, JAPANESE_ERAS, maybeFindEraByName, maybeFindEraForDate,
 // ---------------------------------------------------------------------------
 
 const ERR = {
-  invalidDate: "無効な日付です。正しい日付を入力してください。",
-  invalidMonthDay: "無効な日付です。正しい月日を入力してください。",
-  invalidMonth: "無効な月です。1から12の間で入力してください。",
-  preMeiji: "明治以前の日付には対応していません。1868年以降の日付を入力してください。",
-  unparsable: "入力を日付として解釈できませんでした。形式を確認してください。",
+  invalidDate: '無効な日付です。正しい日付を入力してください。',
+  invalidMonthDay: '無効な日付です。正しい月日を入力してください。',
+  invalidMonth: '無効な月です。1から12の間で入力してください。',
+  preMeiji: '明治以前の日付には対応していません。1868年以降の日付を入力してください。',
+  unparsable: '入力を日付として解釈できませんでした。形式を確認してください。',
 } as const;
 
 // Regex capture groups are guaranteed non-undefined after a successful match
 function group(value: string | undefined): string {
-  if (value === undefined) throw new Error("unreachable: missing regex capture group");
+  if (value === undefined) throw new Error('unreachable: missing regex capture group');
   return value;
 }
 
@@ -32,12 +32,12 @@ function normalizeInput(raw: string): string {
   return raw
     .trim()
     .replace(/[０-９Ａ-Ｚａ-ｚ]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
-    .replace(/／/g, "/")
-    .replace(/．/g, ".")
-    .replace(/[－−‐]/g, "-")
-    .replace(/[、，]/g, ",")
-    .replace(/^西暦\s*/, "")
-    .replace(/[\s\u3000]+/g, " ");
+    .replace(/／/g, '/')
+    .replace(/．/g, '.')
+    .replace(/[－−‐]/g, '-')
+    .replace(/[、，]/g, ',')
+    .replace(/^西暦\s*/, '')
+    .replace(/[\s\u3000]+/g, ' ');
 }
 
 // --- Kanji numerals --------------------------------------------------------
@@ -62,9 +62,9 @@ const KANJI_DIGITS: Readonly<Record<string, number>> = {
  */
 function maybeTokenToNumber(token: string): number | null {
   if (/^\d+$/.test(token)) return parseInt(token, 10);
-  if (token === "元") return 1;
+  if (token === '元') return 1;
 
-  if (token.includes("十")) {
+  if (token.includes('十')) {
     const match = token.match(/^([一二三四五六七八九])?十([一二三四五六七八九])?$/);
     if (!match) return null;
     const tens = match[1] ? (KANJI_DIGITS[match[1]] ?? 1) : 1;
@@ -113,7 +113,7 @@ const MONTH_NAMES: Readonly<Record<string, number>> = {
 };
 
 function maybeParseMonthName(monthStr: string): number | null {
-  return MONTH_NAMES[monthStr.toLowerCase().replace(/\.$/, "")] ?? null;
+  return MONTH_NAMES[monthStr.toLowerCase().replace(/\.$/, '')] ?? null;
 }
 
 function isValidDate(year: number, month: number, day: number): boolean {
@@ -122,7 +122,7 @@ function isValidDate(year: number, month: number, day: number): boolean {
 }
 
 function invalid(rawInput: string, error: string): ParsedInput {
-  return { type: "invalid", rawInput, error };
+  return { type: 'invalid', rawInput, error };
 }
 
 /**
@@ -131,7 +131,7 @@ function invalid(rawInput: string, error: string): ParsedInput {
  * same way the previous implementation did, so 1868 stays accepted as a year.
  */
 function buildWestern(rawInput: string, year: number, month?: number, day?: number): ParsedInput {
-  const precision: DatePrecision = day !== undefined ? "day" : month !== undefined ? "month" : "year";
+  const precision: DatePrecision = day !== undefined ? 'day' : month !== undefined ? 'month' : 'year';
 
   if (month !== undefined && (month < 1 || month > 12)) {
     return invalid(rawInput, ERR.invalidMonth);
@@ -140,16 +140,16 @@ function buildWestern(rawInput: string, year: number, month?: number, day?: numb
     return invalid(rawInput, ERR.invalidDate);
   }
 
-  if (precision === "year") {
+  if (precision === 'year') {
     if (year < 1868) return invalid(rawInput, ERR.preMeiji);
-    return { type: "western", westernDate: new Date(year, 0, 1), precision, rawInput };
+    return { type: 'western', westernDate: new Date(year, 0, 1), precision, rawInput };
   }
 
   const date = new Date(year, (month ?? 1) - 1, day ?? 1);
   if (!maybeFindEraForDate(date)) {
     return invalid(rawInput, ERR.preMeiji);
   }
-  return { type: "western", westernDate: date, precision, rawInput };
+  return { type: 'western', westernDate: date, precision, rawInput };
 }
 
 /**
@@ -189,11 +189,11 @@ function buildJapanese(rawInput: string, era: JapaneseEra, year: number, month?:
     const monthStart = new Date(westernYear, month - 1, 1);
     const monthEnd = new Date(westernYear, month, 0);
     if (monthEnd < era.startDate || (era.endDate && monthStart > era.endDate)) {
-      return invalid(rawInput, `${era.name}${year === 1 ? "元" : year}年に${month}月はありません。`);
+      return invalid(rawInput, `${era.name}${year === 1 ? '元' : year}年に${month}月はありません。`);
     }
   }
 
-  return { type: "japanese", japaneseDate: { era, year, month, day }, rawInput };
+  return { type: 'japanese', japaneseDate: { era, year, month, day }, rawInput };
 }
 
 // --- Matchers --------------------------------------------------------------
@@ -226,7 +226,7 @@ const matchRelativeKeyword: Matcher = (input, ctx) => {
   const offset = RELATIVE_KEYWORDS[input.toLowerCase()];
   if (offset === undefined) return null;
   const date = new Date(ctx.today.getFullYear(), ctx.today.getMonth(), ctx.today.getDate() + offset);
-  return { type: "western", westernDate: date, precision: "day", rawInput: input };
+  return { type: 'western', westernDate: date, precision: 'day', rawInput: input };
 };
 
 // MMDD compact: 0225 -> Feb 25 of the current year.
@@ -346,7 +346,7 @@ const matchWesternMonthYear: Matcher = (input) => {
 const ERA_YEAR = String.raw`元|\d{1,2}|[〇零一二三四五六七八九十]{1,4}`;
 const ERA_PATTERN = new RegExp(
   `^(令和|平成|昭和|大正|明治|reiwa|heisei|showa|taisho|meiji|[RHSTM])[.\\s]*(${ERA_YEAR})(?:年|[./-])?(?:\\s*(${NUM})(?:月|[./-])?(?:\\s*(${NUM})日?)?)?$`,
-  "i",
+  'i',
 );
 
 const matchEraDate: Matcher = (input) => {
@@ -380,7 +380,7 @@ function maybeEraInterpretation(
   year: number,
   month?: number,
   day?: number,
-): NonNullable<ParsedInput["alternativeInterpretations"]>[number] | null {
+): NonNullable<ParsedInput['alternativeInterpretations']>[number] | null {
   if (!isEraYearValid(era, year)) return null;
 
   const westernYear = era.startDate.getFullYear() + year - 1;
@@ -398,8 +398,8 @@ function maybeEraInterpretation(
     date = era.startDate;
   }
 
-  const yearLabel = year === 1 ? "元" : String(year);
-  const label = `${era.name}${yearLabel}年${month !== undefined ? `${month}月` : ""}${day !== undefined ? `${day}日` : ""}`;
+  const yearLabel = year === 1 ? '元' : String(year);
+  const label = `${era.name}${yearLabel}年${month !== undefined ? `${month}月` : ''}${day !== undefined ? `${day}日` : ''}`;
   return { label, western: date, japanese: { era, year, month, day } };
 }
 
@@ -430,7 +430,7 @@ const matchAmbiguousEraYear: Matcher = (input) => {
   );
 
   if (interpretations.length === 0) return null;
-  return { type: "ambiguous", alternativeInterpretations: interpretations, rawInput: input };
+  return { type: 'ambiguous', alternativeInterpretations: interpretations, rawInput: input };
 };
 
 // --- Entry point -----------------------------------------------------------
@@ -457,7 +457,7 @@ export function parseInput(input: string, today: Date = new Date()): ParsedInput
   const normalized = normalizeInput(input);
 
   if (!normalized) {
-    return { type: "empty", rawInput: input };
+    return { type: 'empty', rawInput: input };
   }
 
   const ctx: ParseContext = { today };

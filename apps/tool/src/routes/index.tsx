@@ -1,17 +1,17 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { IconCalendar, IconArrowRight } from "@tabler/icons-react";
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { IconCalendar, IconArrowRight } from '@tabler/icons-react';
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   component: ToolsIndexPage,
 });
 
 const tools = [
   {
-    to: "/tool/date" as const,
+    to: '/tool/date' as const,
     icon: <IconCalendar className="size-5" />,
-    title: "和暦・西暦変換",
-    titleEn: "Japanese Date Converter",
-    description: "西暦と和暦（令和・平成・昭和・大正・明治）を相互変換",
+    title: '和暦・西暦変換',
+    titleEn: 'Japanese Date Converter',
+    description: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換',
   },
 ];
 

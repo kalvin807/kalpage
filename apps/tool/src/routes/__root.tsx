@@ -1,133 +1,133 @@
-import { HeadContent, Link, Outlet, Scripts, createRootRoute, useMatches } from "@tanstack/react-router";
-import { SITE_URL } from "@/lib/site";
-import { GlobalErrorComponent } from "@/components/error-boundary";
-import { ThemeProvider } from "@/lib/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { HeadContent, Link, Outlet, Scripts, createRootRoute, useMatches } from '@tanstack/react-router';
+import { SITE_URL } from '@/lib/site';
+import { GlobalErrorComponent } from '@/components/error-boundary';
+import { ThemeProvider } from '@/lib/theme-provider';
+import { ThemeToggle } from '@/components/theme-toggle';
 
-import appCss from "../styles.css?url";
+import appCss from '../styles.css?url';
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       {
-        charSet: "utf-8",
+        charSet: 'utf-8',
       },
       {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
       },
       {
-        title: "tool.kalvin.io",
+        title: 'tool.kalvin.io',
       },
       {
-        name: "description",
-        content: "Japanese date converter and other useful tools",
+        name: 'description',
+        content: 'Japanese date converter and other useful tools',
       },
       {
-        name: "keywords",
+        name: 'keywords',
         content:
-          "年号, Japanese date converter, 和暦, 西暦, era conversion, Reiwa, Heisei, Showa, date tool, 令和, 平成, 昭和",
+          '年号, Japanese date converter, 和暦, 西暦, era conversion, Reiwa, Heisei, Showa, date tool, 令和, 平成, 昭和',
       },
       {
-        name: "author",
-        content: "Kal.L",
+        name: 'author',
+        content: 'Kal.L',
       },
       {
-        name: "robots",
-        content: "index,follow,max-image-preview:large",
+        name: 'robots',
+        content: 'index,follow,max-image-preview:large',
       },
       {
-        name: "theme-color",
-        content: "#f5f4f1",
+        name: 'theme-color',
+        content: '#f5f4f1',
       },
       {
-        property: "og:type",
-        content: "website",
+        property: 'og:type',
+        content: 'website',
       },
       {
-        property: "og:title",
-        content: "tool.kalvin.io",
+        property: 'og:title',
+        content: 'tool.kalvin.io',
       },
       {
-        property: "og:description",
-        content: "Japanese date converter and other useful tools",
+        property: 'og:description',
+        content: 'Japanese date converter and other useful tools',
       },
       {
-        property: "og:site_name",
-        content: "tool.kalvin.io",
+        property: 'og:site_name',
+        content: 'tool.kalvin.io',
       },
       {
-        property: "og:locale",
-        content: "ja_JP",
+        property: 'og:locale',
+        content: 'ja_JP',
       },
       {
-        property: "og:url",
+        property: 'og:url',
         content: SITE_URL,
       },
       {
-        name: "twitter:card",
-        content: "summary_large_image",
+        name: 'twitter:card',
+        content: 'summary_large_image',
       },
       {
-        name: "twitter:url",
+        name: 'twitter:url',
         content: SITE_URL,
       },
       {
-        name: "twitter:title",
-        content: "tool.kalvin.io",
+        name: 'twitter:title',
+        content: 'tool.kalvin.io',
       },
       {
-        name: "twitter:description",
-        content: "いまは何の年を解決する",
+        name: 'twitter:description',
+        content: 'いまは何の年を解決する',
       },
       {
-        name: "twitter:image",
+        name: 'twitter:image',
         content: `${SITE_URL}/og-image.png`,
       },
       {
-        name: "twitter:image:alt",
-        content: "tool.kalvin.io - Japanese Date Converter",
+        name: 'twitter:image:alt',
+        content: 'tool.kalvin.io - Japanese Date Converter',
       },
       {
-        name: "twitter:domain",
-        content: "tool.kalvin.io",
+        name: 'twitter:domain',
+        content: 'tool.kalvin.io',
       },
     ],
     links: [
       {
-        rel: "canonical",
+        rel: 'canonical',
         href: SITE_URL,
       },
       {
-        rel: "icon",
-        href: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>",
+        rel: 'icon',
+        href: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>',
       },
       {
-        rel: "stylesheet",
+        rel: 'stylesheet',
         href: appCss,
       },
     ],
     scripts: [
       {
-        type: "application/ld+json",
+        type: 'application/ld+json',
         children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          name: "tool.kalvin.io",
-          applicationCategory: "UtilitiesApplication",
-          operatingSystem: "Web Browser",
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          name: 'tool.kalvin.io',
+          applicationCategory: 'UtilitiesApplication',
+          operatingSystem: 'Web Browser',
           offers: {
-            "@type": "Offer",
-            price: "0",
-            priceCurrency: "USD",
+            '@type': 'Offer',
+            price: '0',
+            priceCurrency: 'USD',
           },
           url: SITE_URL,
-          description: "Japanese date converter and other useful tools",
-          inLanguage: "ja",
+          description: 'Japanese date converter and other useful tools',
+          inLanguage: 'ja',
           author: {
-            "@type": "Person",
-            name: "Kal.L",
-            url: "https://www.kalvin.io",
+            '@type': 'Person',
+            name: 'Kal.L',
+            url: 'https://www.kalvin.io',
           },
         }),
       },
@@ -140,7 +140,7 @@ export const Route = createRootRoute({
 });
 
 const PAGE_TITLES: Record<string, string> = {
-  "/tool/date": "和暦・西暦変換",
+  '/tool/date': '和暦・西暦変換',
 };
 
 function RootComponent() {

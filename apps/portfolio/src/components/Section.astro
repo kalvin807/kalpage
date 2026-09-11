@@ -1,17 +1,14 @@
 ---
 interface Props {
   title: string;
-  index: string;
 }
 
-const { title, index } = Astro.props;
+const { title } = Astro.props;
 ---
 
-<section class="relative z-1 py-8">
-  <header class="mb-6 flex items-center gap-3">
-    <span class="font-mono text-xs text-text-muted tabular-nums" aria-hidden="true">{index}</span>
-    <h2 class="m-0 font-mono text-xs uppercase tracking-[0.08em] text-accent">{title}</h2>
-    <span class="h-px flex-1 bg-accent-10" aria-hidden="true"></span>
+<section class="border-t border-accent-10 py-8 sm:py-10">
+  <header class="mb-6">
+    <h2 class="m-0 font-mono text-sm text-text-muted">{title}</h2>
   </header>
   <slot />
 </section>

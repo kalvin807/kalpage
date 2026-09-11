@@ -1,23 +1,23 @@
-import type { JapaneseEra } from "./types";
+import type { JapaneseEra } from './types';
 
 const MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 export function formatJapanese(era: JapaneseEra, year: number, month?: number, day?: number): string {
   // Use 元年 (gannen) for year 1
-  const yearStr = year === 1 ? "元" : String(year);
+  const yearStr = year === 1 ? '元' : String(year);
   let result = `${era.name}${yearStr}年`;
 
   if (month !== undefined) {

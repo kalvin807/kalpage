@@ -1,12 +1,12 @@
-import { useState, useMemo, useRef, useEffect } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { SITE_URL } from "@/lib/site";
-import { IconCopy, IconCheck, IconCalendar } from "@tabler/icons-react";
-import * as holiday_jp from "@holiday-jp/holiday_jp";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
+import { SITE_URL } from '@/lib/site';
+import { IconCopy, IconCheck, IconCalendar } from '@tabler/icons-react';
+import * as holiday_jp from '@holiday-jp/holiday_jp';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   parseInput,
   maybeToJapanese,
@@ -21,7 +21,7 @@ import {
   type ConversionResult,
   type DatePrecision,
   type JapaneseDateParts,
-} from "@/lib/japanese-date";
+} from '@/lib/japanese-date';
 
 interface HolidayInfo {
   readonly name: string;
@@ -41,33 +41,33 @@ interface StarSignInfo {
 }
 
 const CHINESE_ZODIAC = [
-  { name: "子（ねずみ）", nameEn: "Rat", emoji: "🐀" },
-  { name: "丑（うし）", nameEn: "Ox", emoji: "🐂" },
-  { name: "寅（とら）", nameEn: "Tiger", emoji: "🐅" },
-  { name: "卯（うさぎ）", nameEn: "Rabbit", emoji: "🐇" },
-  { name: "辰（たつ）", nameEn: "Dragon", emoji: "🐉" },
-  { name: "巳（へび）", nameEn: "Snake", emoji: "🐍" },
-  { name: "午（うま）", nameEn: "Horse", emoji: "🐎" },
-  { name: "未（ひつじ）", nameEn: "Goat", emoji: "🐐" },
-  { name: "申（さる）", nameEn: "Monkey", emoji: "🐒" },
-  { name: "酉（とり）", nameEn: "Rooster", emoji: "🐓" },
-  { name: "戌（いぬ）", nameEn: "Dog", emoji: "🐕" },
-  { name: "亥（いのしし）", nameEn: "Boar", emoji: "🐗" },
+  { name: '子（ねずみ）', nameEn: 'Rat', emoji: '🐀' },
+  { name: '丑（うし）', nameEn: 'Ox', emoji: '🐂' },
+  { name: '寅（とら）', nameEn: 'Tiger', emoji: '🐅' },
+  { name: '卯（うさぎ）', nameEn: 'Rabbit', emoji: '🐇' },
+  { name: '辰（たつ）', nameEn: 'Dragon', emoji: '🐉' },
+  { name: '巳（へび）', nameEn: 'Snake', emoji: '🐍' },
+  { name: '午（うま）', nameEn: 'Horse', emoji: '🐎' },
+  { name: '未（ひつじ）', nameEn: 'Goat', emoji: '🐐' },
+  { name: '申（さる）', nameEn: 'Monkey', emoji: '🐒' },
+  { name: '酉（とり）', nameEn: 'Rooster', emoji: '🐓' },
+  { name: '戌（いぬ）', nameEn: 'Dog', emoji: '🐕' },
+  { name: '亥（いのしし）', nameEn: 'Boar', emoji: '🐗' },
 ] as const;
 
 const STAR_SIGNS = [
-  { name: "山羊座", nameEn: "Capricorn", emoji: "♑", startMonth: 12, startDay: 22, endMonth: 1, endDay: 19 },
-  { name: "水瓶座", nameEn: "Aquarius", emoji: "♒", startMonth: 1, startDay: 20, endMonth: 2, endDay: 18 },
-  { name: "魚座", nameEn: "Pisces", emoji: "♓", startMonth: 2, startDay: 19, endMonth: 3, endDay: 20 },
-  { name: "牡羊座", nameEn: "Aries", emoji: "♈", startMonth: 3, startDay: 21, endMonth: 4, endDay: 19 },
-  { name: "牡牛座", nameEn: "Taurus", emoji: "♉", startMonth: 4, startDay: 20, endMonth: 5, endDay: 20 },
-  { name: "双子座", nameEn: "Gemini", emoji: "♊", startMonth: 5, startDay: 21, endMonth: 6, endDay: 21 },
-  { name: "蟹座", nameEn: "Cancer", emoji: "♋", startMonth: 6, startDay: 22, endMonth: 7, endDay: 22 },
-  { name: "獅子座", nameEn: "Leo", emoji: "♌", startMonth: 7, startDay: 23, endMonth: 8, endDay: 22 },
-  { name: "乙女座", nameEn: "Virgo", emoji: "♍", startMonth: 8, startDay: 23, endMonth: 9, endDay: 22 },
-  { name: "天秤座", nameEn: "Libra", emoji: "♎", startMonth: 9, startDay: 23, endMonth: 10, endDay: 23 },
-  { name: "蠍座", nameEn: "Scorpio", emoji: "♏", startMonth: 10, startDay: 24, endMonth: 11, endDay: 22 },
-  { name: "射手座", nameEn: "Sagittarius", emoji: "♐", startMonth: 11, startDay: 23, endMonth: 12, endDay: 21 },
+  { name: '山羊座', nameEn: 'Capricorn', emoji: '♑', startMonth: 12, startDay: 22, endMonth: 1, endDay: 19 },
+  { name: '水瓶座', nameEn: 'Aquarius', emoji: '♒', startMonth: 1, startDay: 20, endMonth: 2, endDay: 18 },
+  { name: '魚座', nameEn: 'Pisces', emoji: '♓', startMonth: 2, startDay: 19, endMonth: 3, endDay: 20 },
+  { name: '牡羊座', nameEn: 'Aries', emoji: '♈', startMonth: 3, startDay: 21, endMonth: 4, endDay: 19 },
+  { name: '牡牛座', nameEn: 'Taurus', emoji: '♉', startMonth: 4, startDay: 20, endMonth: 5, endDay: 20 },
+  { name: '双子座', nameEn: 'Gemini', emoji: '♊', startMonth: 5, startDay: 21, endMonth: 6, endDay: 21 },
+  { name: '蟹座', nameEn: 'Cancer', emoji: '♋', startMonth: 6, startDay: 22, endMonth: 7, endDay: 22 },
+  { name: '獅子座', nameEn: 'Leo', emoji: '♌', startMonth: 7, startDay: 23, endMonth: 8, endDay: 22 },
+  { name: '乙女座', nameEn: 'Virgo', emoji: '♍', startMonth: 8, startDay: 23, endMonth: 9, endDay: 22 },
+  { name: '天秤座', nameEn: 'Libra', emoji: '♎', startMonth: 9, startDay: 23, endMonth: 10, endDay: 23 },
+  { name: '蠍座', nameEn: 'Scorpio', emoji: '♏', startMonth: 10, startDay: 24, endMonth: 11, endDay: 22 },
+  { name: '射手座', nameEn: 'Sagittarius', emoji: '♐', startMonth: 11, startDay: 23, endMonth: 12, endDay: 21 },
 ] as const;
 
 function getChineseZodiac(year: number): ZodiacInfo {
@@ -102,13 +102,13 @@ function maybeGetHoliday(date: Date): HolidayInfo | undefined {
 }
 
 const WEEKDAYS = [
-  { jp: "日曜日", en: "Sunday" },
-  { jp: "月曜日", en: "Monday" },
-  { jp: "火曜日", en: "Tuesday" },
-  { jp: "水曜日", en: "Wednesday" },
-  { jp: "木曜日", en: "Thursday" },
-  { jp: "金曜日", en: "Friday" },
-  { jp: "土曜日", en: "Saturday" },
+  { jp: '日曜日', en: 'Sunday' },
+  { jp: '月曜日', en: 'Monday' },
+  { jp: '火曜日', en: 'Tuesday' },
+  { jp: '水曜日', en: 'Wednesday' },
+  { jp: '木曜日', en: 'Thursday' },
+  { jp: '金曜日', en: 'Friday' },
+  { jp: '土曜日', en: 'Saturday' },
 ] as const;
 
 interface WeekdayInfo {
@@ -137,9 +137,9 @@ function getRelativeInfo(date: Date): RelativeInfo {
   const diffDays = Math.round((target.getTime() - today.getTime()) / 86_400_000);
 
   let label: string;
-  if (diffDays === 0) label = "今日";
-  else if (diffDays === 1) label = "明日";
-  else if (diffDays === -1) label = "昨日";
+  if (diffDays === 0) label = '今日';
+  else if (diffDays === 1) label = '明日';
+  else if (diffDays === -1) label = '昨日';
   else if (diffDays > 0) label = `${diffDays.toLocaleString()}日後`;
   else label = `${(-diffDays).toLocaleString()}日前`;
 
@@ -153,46 +153,46 @@ function getRelativeInfo(date: Date): RelativeInfo {
   return { label, age: `満${age}歳` };
 }
 
-export const Route = createFileRoute("/tool/date")({
+export const Route = createFileRoute('/tool/date')({
   component: DateConverterPage,
   head: () => ({
     meta: [
-      { title: "和暦・西暦変換" },
+      { title: '和暦・西暦変換' },
       {
-        name: "description",
-        content: "西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール",
+        name: 'description',
+        content: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール',
       },
-      { property: "og:url", content: `${SITE_URL}/tool/date` },
-      { property: "og:title", content: "和暦・西暦変換 - tool.kalvin.io" },
+      { property: 'og:url', content: `${SITE_URL}/tool/date` },
+      { property: 'og:title', content: '和暦・西暦変換 - tool.kalvin.io' },
       {
-        property: "og:description",
-        content: "西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール",
-      },
-      {
-        name: "twitter:card",
-        content: "summary_large_image",
+        property: 'og:description',
+        content: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール',
       },
       {
-        name: "twitter:title",
-        content: "和暦・西暦変換",
+        name: 'twitter:card',
+        content: 'summary_large_image',
       },
       {
-        name: "twitter:description",
-        content: "西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール",
+        name: 'twitter:title',
+        content: '和暦・西暦変換',
+      },
+      {
+        name: 'twitter:description',
+        content: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール',
       },
     ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/tool/date` }],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/tool/date` }],
   }),
 });
 
-const QUICK_INPUTS = ["今日", "昨日", "明日"] as const;
-const EXAMPLE_INPUTS = ["令和6年1月15日", "R6.1.15", "2024年1月15日", "19970224"] as const;
+const QUICK_INPUTS = ['今日', '昨日', '明日'] as const;
+const EXAMPLE_INPUTS = ['令和6年1月15日', 'R6.1.15', '2024年1月15日', '19970224'] as const;
 
 function getTodayISO(): string {
   const today = new Date();
   const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
@@ -215,7 +215,7 @@ function DateConverterPage() {
       {/* Input */}
       <div className="mb-8">
         <div
-          className={`relative flex items-center rounded-lg border bg-card shadow-sm transition-all ${isFocused ? "border-primary/60 ring-2 ring-ring" : "border-border hover:border-foreground/20"}`}
+          className={`relative flex items-center rounded-lg border bg-card shadow-sm transition-all ${isFocused ? 'border-primary/60 ring-2 ring-ring' : 'border-border hover:border-foreground/20'}`}
         >
           <Input
             ref={inputRef}
@@ -242,8 +242,8 @@ function DateConverterPage() {
                 onSelect={(date) => {
                   if (date) {
                     const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, "0");
-                    const day = String(date.getDate()).padStart(2, "0");
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
                     setInput(`${year}-${month}-${day}`);
                   }
                 }}
@@ -298,7 +298,7 @@ interface DateExtras {
 }
 
 interface ProcessedResult {
-  type: ParsedInput["type"];
+  type: ParsedInput['type'];
   conversion?: ConversionResult;
   precision?: DatePrecision;
   extras?: DateExtras;
@@ -312,7 +312,7 @@ interface ProcessedResult {
 
 /** Day-dependent extras (weekday, holiday, star sign) only exist at day precision. */
 function getDateExtras(date: Date, precision: DatePrecision): DateExtras {
-  if (precision !== "day") {
+  if (precision !== 'day') {
     return { zodiac: getChineseZodiac(date.getFullYear()) };
   }
   return {
@@ -328,19 +328,19 @@ function getDateExtras(date: Date, precision: DatePrecision): DateExtras {
  * Era label for a western date at a given precision. Transition periods are
  * labelled with both eras (e.g. 2019 -> 平成31年 / 令和元年).
  */
-function maybeJapaneseForWestern(date: Date, precision: DatePrecision): ConversionResult["japanese"] | null {
-  if (precision === "day") return maybeToJapanese(date);
+function maybeJapaneseForWestern(date: Date, precision: DatePrecision): ConversionResult['japanese'] | null {
+  if (precision === 'day') return maybeToJapanese(date);
 
   const year = date.getFullYear();
   const month = date.getMonth();
-  const rangeStart = precision === "year" ? new Date(year, 0, 1) : new Date(year, month, 1);
-  const rangeEnd = precision === "year" ? new Date(year, 11, 31) : new Date(year, month + 1, 0);
+  const rangeStart = precision === 'year' ? new Date(year, 0, 1) : new Date(year, month, 1);
+  const rangeEnd = precision === 'year' ? new Date(year, 11, 31) : new Date(year, month + 1, 0);
 
   const endEra = maybeFindEraForDate(rangeEnd);
   if (!endEra) return null;
   const startEra = maybeFindEraForDate(rangeStart);
 
-  const monthPart = precision === "month" ? date.getMonth() + 1 : undefined;
+  const monthPart = precision === 'month' ? date.getMonth() + 1 : undefined;
   const format = (era: typeof endEra) => formatJapanese(era, getEraYear(rangeEnd, era), monthPart);
   const formatR = (era: typeof endEra) => formatRomaji(era, getEraYear(rangeEnd, era), monthPart);
 
@@ -354,7 +354,7 @@ function maybeJapaneseForWestern(date: Date, precision: DatePrecision): Conversi
   };
 }
 
-function japaneseFromParts(parts: JapaneseDateParts): ConversionResult["japanese"] {
+function japaneseFromParts(parts: JapaneseDateParts): ConversionResult['japanese'] {
   return {
     era: parts.era,
     year: parts.year,
@@ -366,35 +366,35 @@ function japaneseFromParts(parts: JapaneseDateParts): ConversionResult["japanese
 }
 
 function precisionOfParts(parts: JapaneseDateParts): DatePrecision {
-  if (parts.day !== undefined) return "day";
-  if (parts.month !== undefined) return "month";
-  return "year";
+  if (parts.day !== undefined) return 'day';
+  if (parts.month !== undefined) return 'month';
+  return 'year';
 }
 
 function formatISOWithPrecision(date: Date, precision: DatePrecision): string {
   const year = date.getFullYear();
-  if (precision === "year") return `${year}`;
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  if (precision === "month") return `${year}-${month}`;
-  const day = String(date.getDate()).padStart(2, "0");
+  if (precision === 'year') return `${year}`;
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  if (precision === 'month') return `${year}-${month}`;
+  const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
 function processResult(parsed: ParsedInput): ProcessedResult {
-  if (parsed.type === "empty") return { type: "empty" };
-  if (parsed.type === "invalid") return { type: "invalid", error: parsed.error };
+  if (parsed.type === 'empty') return { type: 'empty' };
+  if (parsed.type === 'invalid') return { type: 'invalid', error: parsed.error };
 
-  if (parsed.type === "western" && parsed.westernDate) {
-    const precision = parsed.precision ?? "day";
+  if (parsed.type === 'western' && parsed.westernDate) {
+    const precision = parsed.precision ?? 'day';
     const japanese = maybeJapaneseForWestern(parsed.westernDate, precision);
-    if (!japanese) return { type: "invalid", error: "明治以前の日付は対応していません" };
+    if (!japanese) return { type: 'invalid', error: '明治以前の日付は対応していません' };
     return {
-      type: "western",
+      type: 'western',
       precision,
       conversion: {
         western: {
           date: parsed.westernDate,
-          formatted: formatWestern(parsed.westernDate, precision !== "year", precision === "day"),
+          formatted: formatWestern(parsed.westernDate, precision !== 'year', precision === 'day'),
           iso: formatISOWithPrecision(parsed.westernDate, precision),
         },
         japanese,
@@ -403,19 +403,19 @@ function processResult(parsed: ParsedInput): ProcessedResult {
     };
   }
 
-  if (parsed.type === "japanese" && parsed.japaneseDate) {
+  if (parsed.type === 'japanese' && parsed.japaneseDate) {
     const western = maybeToWestern(parsed.japaneseDate);
-    if (!western) return { type: "invalid", error: "無効な年号と年の組み合わせです" };
+    if (!western) return { type: 'invalid', error: '無効な年号と年の組み合わせです' };
     const precision = precisionOfParts(parsed.japaneseDate);
     return {
-      type: "japanese",
+      type: 'japanese',
       precision,
       conversion: { western, japanese: japaneseFromParts(parsed.japaneseDate) },
       extras: getDateExtras(western.date, precision),
     };
   }
 
-  if (parsed.type === "ambiguous" && parsed.alternativeInterpretations) {
+  if (parsed.type === 'ambiguous' && parsed.alternativeInterpretations) {
     const alternatives = parsed.alternativeInterpretations
       .map((alt) => {
         if (!alt.western || !alt.japanese) return null;
@@ -425,7 +425,7 @@ function processResult(parsed: ParsedInput): ProcessedResult {
           conversion: {
             western: {
               date: alt.western,
-              formatted: formatWestern(alt.western, precision !== "year", precision === "day"),
+              formatted: formatWestern(alt.western, precision !== 'year', precision === 'day'),
               iso: formatISOWithPrecision(alt.western, precision),
             },
             japanese: japaneseFromParts(alt.japanese),
@@ -434,10 +434,10 @@ function processResult(parsed: ParsedInput): ProcessedResult {
         };
       })
       .filter((alt): alt is NonNullable<typeof alt> => alt !== null);
-    return { type: "ambiguous", alternatives };
+    return { type: 'ambiguous', alternatives };
   }
 
-  return { type: "invalid", error: "不明なエラー" };
+  return { type: 'invalid', error: '不明なエラー' };
 }
 
 // --- UI Components ---
@@ -456,7 +456,7 @@ function CopyButton({ text, className }: CopyButtonProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch (e) {
-      console.error("Clipboard write failed:", e);
+      console.error('Clipboard write failed:', e);
     }
   };
 
@@ -466,7 +466,7 @@ function CopyButton({ text, className }: CopyButtonProps) {
       size="icon-xs"
       onClick={handleCopy}
       aria-label="コピー"
-      className={`size-6 text-muted-foreground/50 transition-all hover:text-foreground active:scale-95 ${className ?? ""}`}
+      className={`size-6 text-muted-foreground/50 transition-all hover:text-foreground active:scale-95 ${className ?? ''}`}
     >
       {copied ? <IconCheck className="size-3 text-emerald-600" /> : <IconCopy className="size-3" />}
     </Button>
@@ -478,13 +478,13 @@ interface ResultsSectionProps {
 }
 
 function ResultsSection({ result }: ResultsSectionProps) {
-  if (result.type === "empty") {
+  if (result.type === 'empty') {
     return <EmptyState />;
   }
-  if (result.type === "invalid") {
-    return <ErrorState message={result.error ?? "無効な入力"} />;
+  if (result.type === 'invalid') {
+    return <ErrorState message={result.error ?? '無効な入力'} />;
   }
-  if (result.type === "ambiguous" && result.alternatives) {
+  if (result.type === 'ambiguous' && result.alternatives) {
     return <AmbiguousResults alternatives={result.alternatives} />;
   }
   if (result.conversion) {
@@ -527,7 +527,7 @@ function DetailCell({ label, value, sub, mono = false, prefix }: DetailCellProps
       <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
       <div className="mt-0.5 flex items-center gap-1.5">
         {prefix && <span>{prefix}</span>}
-        <span className={`text-sm font-medium ${mono ? "font-mono tabular-nums" : ""}`}>{value}</span>
+        <span className={`text-sm font-medium ${mono ? 'font-mono tabular-nums' : ''}`}>{value}</span>
         {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
         <CopyButton text={value} className="opacity-0 group-hover:opacity-100" />
       </div>
@@ -624,7 +624,7 @@ function AmbiguousResults({ alternatives }: AmbiguousResultsProps) {
         <div
           key={index}
           className="animate-in fade-in-0 slide-in-from-bottom-1 overflow-hidden rounded-lg border border-border bg-card shadow-sm duration-200"
-          style={{ animationDelay: `${(index + 1) * 50}ms`, animationFillMode: "both" }}
+          style={{ animationDelay: `${(index + 1) * 50}ms`, animationFillMode: 'both' }}
         >
           {/* Hero */}
           <div className="border-b border-border/60 px-5 py-4">
@@ -663,7 +663,7 @@ function EraReferenceSection() {
           <div
             key={era.name}
             className="animate-in fade-in-0 flex items-baseline gap-2.5 border-b border-border/40 py-2.5 duration-200"
-            style={{ animationDelay: `${i * 25}ms`, animationFillMode: "both" }}
+            style={{ animationDelay: `${i * 25}ms`, animationFillMode: 'both' }}
           >
             <span className="font-mono text-xs font-medium text-primary">{era.abbreviation}</span>
             <span className="text-sm font-medium">{era.name}</span>
