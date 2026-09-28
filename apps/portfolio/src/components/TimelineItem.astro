@@ -1,18 +1,31 @@
 ---
 interface Props {
+  period: string;
   title: string;
-  date: string;
+  org: string;
+  place: string;
 }
 
-const { title, date } = Astro.props;
+const { period, title, org, place } = Astro.props;
+const hasDetails = Astro.slots.has('default');
 ---
 
-<div class="timeline-item border-b border-accent-10 pb-6 last:border-0 last:pb-0">
-  <article>
-    <span class="mb-2 block font-mono text-xs tabular-nums text-text-muted">{date}</span>
-    <h3 class="font-heading text-base font-semibold text-text-heading m-0 mb-1">{title}</h3>
-    <div class="timeline-desc text-sm text-text leading-relaxed">
-      <slot />
-    </div>
-  </article>
-</div>
+<li class="grid grid-cols-[6rem_minmax(0,1fr)] border-x border-b border-line sm:grid-cols-[7.5rem_minmax(0,1fr)_7.5rem]">
+  <div class="px-3 py-2.5 text-sm text-text-muted tabular-nums">
+    {period}
+    <span class="block sm:hidden">{place}</span>
+  </div>
+  <div class="border-l border-line px-3 py-2.5">
+    <h3 class="m-0 text-[0.9375rem] font-normal text-text-heading">
+      {title}<span class="text-text-muted">&nbsp;· {org}</span>
+    </h3>
+    {
+      hasDetails && (
+        <ul class="mt-1.5 mb-0 list-disc space-y-1 pl-4 text-sm text-text-muted marker:text-line">
+          <slot />
+        </ul>
+      )
+    }
+  </div>
+  <div class="hidden border-l border-line px-3 py-2.5 text-sm text-text-muted sm:block">{place}</div>
+</li>

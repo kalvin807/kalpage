@@ -1,19 +1,25 @@
 ---
+import { Font, Image } from 'astro:assets';
 import '../styles/global.css';
 import PaintingPixels from '../components/PaintingPixels.astro';
+import avatar from '../assets/avatar.webp';
 
-const SITE_URL = 'https://www.kalvin.io';
+const site = Astro.site;
+if (!site) {
+  throw new Error('`site` must be set in astro.config.ts to build canonical and Open Graph URLs.');
+}
+const SITE_URL = new URL('/', site).href;
 const PAGE_TITLE = 'Kal.L | Fullstack Engineer in Tokyo';
 const PAGE_DESCRIPTION =
   'Calvin (Kal) is a fullstack engineer in Tokyo building AI agents, speech systems, and fast web apps.';
-const OG_IMAGE_URL = `${SITE_URL}/og-image.png`;
+const OG_IMAGE_URL = new URL('/og-image.png', site).href;
 const OG_IMAGE_ALT = 'Kal.L, fullstack engineer in Tokyo';
 
 const structuredData = [
   {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: 'Kalvin (Kal)',
+    name: 'Calvin (Kal)',
     url: SITE_URL,
     jobTitle: 'Fullstack Engineer',
     address: {
@@ -31,14 +37,13 @@ const structuredData = [
     url: SITE_URL,
   },
 ];
-
-export const prerender = true;
 ---
 
 <!doctype html>
 <html lang="en" class="min-h-full" style="color-scheme: dark">
   <head>
     <meta charset="utf-8" />
+    <Font cssVariable="--font-geist-mono" preload />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -69,47 +74,47 @@ export const prerender = true;
     <meta name="twitter:description" content={PAGE_DESCRIPTION} />
     <meta name="twitter:image" content={OG_IMAGE_URL} />
     <meta name="twitter:image:alt" content={OG_IMAGE_ALT} />
-    <meta name="twitter:domain" content="www.kalvin.io" />
+    <meta name="twitter:domain" content={site.hostname} />
 
-    <meta name="theme-color" content="#23211d" />
-    <meta name="msapplication-TileColor" content="#23211d" />
+    <meta name="theme-color" content="#121212" />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
   </head>
   <body>
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-bg-card focus:p-3">Skip to content</a>
-    <main id="main-content" class="mx-auto max-w-6xl px-6 py-8 sm:px-8 sm:py-12 xl:grid xl:grid-cols-[minmax(0,1fr)_20rem] xl:gap-16">
-      <div class="min-w-0 max-w-3xl">
-        <slot />
-      </div>
-      <aside class="mt-10 max-w-sm xl:mt-8">
-        <div class="rounded-lg border border-accent-10 bg-bg-card p-5">
-          <div>
-            <h2 class="m-0 font-heading text-xl leading-tight text-text-heading">Daily Pixel Study</h2>
-            <p class="mt-3 mb-0 text-sm leading-relaxed text-text-muted">
-              A public-domain painting from the Met, translated into pixel blocks.
-            </p>
-          </div>
-          <div class="mt-5 mb-4">
-            <PaintingPixels server:defer>
-              <div slot="fallback">
-                <div class="painting-skeleton"></div>
-                <div class="painting-info">
-                  <span class="painting-pixels-loading-text">Loading a painting…</span>
-                </div>
-              </div>
-            </PaintingPixels>
-          </div>
-          <p class="m-0 border-t border-accent-10 pt-3 font-mono text-xs text-text-muted">
-            Updated every 6 hours
-          </p>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-bg focus:p-3">Skip to content</a>
+    <header class="border-b border-line">
+      <div class="mx-auto flex max-w-2xl items-center gap-5 px-5 py-3">
+        <a href="/" class="flex items-center gap-2.5 text-text-heading hover:no-underline">
+          <Image src={avatar} alt="" width={24} height={24} loading="eager" class="size-6 [image-rendering:pixelated]" />
+          kalvin.io
+        </a>
+        <nav aria-label="Sections" class="hidden gap-3 text-sm sm:flex">
+          <a href="#work" class="text-text-muted hover:text-text-heading">Work</a>
+          <a href="#projects" class="text-text-muted hover:text-text-heading">Projects</a>
+          <a href="#skills" class="text-text-muted hover:text-text-heading">Skills</a>
+        </nav>
+        <div class="ml-auto flex gap-2 text-sm">
+          <a href="https://github.com/kalvin807" class="inline-flex min-h-9 items-center border border-line px-3 text-text-heading hover:border-text-muted hover:no-underline">GitHub</a>
+          <a href="mailto:6q4zz1i46@relay.firefox.com" class="inline-flex min-h-9 items-center bg-text px-3 text-bg hover:bg-text-heading hover:no-underline">Email</a>
         </div>
-      </aside>
+      </div>
+    </header>
+
+    <main id="main-content" class="mx-auto max-w-2xl px-5">
+      <slot />
     </main>
 
-    <footer class="relative z-1 mx-auto max-w-6xl px-6 pt-4 pb-8">
-      <div class="flex flex-wrap items-baseline justify-between gap-2 border-t border-accent-10 pt-4 font-mono text-[0.68rem] uppercase tracking-[0.09em] text-text-muted">
-        <span>&copy; {new Date().getFullYear()} Kal.L</span>
-        <span class="tabular-nums">Tokyo &middot; 35.6762&deg; N, 139.6503&deg; E</span>
+    <footer class="mt-20 border-t border-line">
+      <PaintingPixels server:defer>
+        <div slot="fallback">
+          <div class="aspect-[64/10] w-full bg-surface-hover"></div>
+          <p class="mx-auto my-0 max-w-2xl px-5 py-2.5 text-xs text-text-muted">Loading a painting…</p>
+        </div>
+      </PaintingPixels>
+      <div class="border-t border-line">
+        <div class="mx-auto flex max-w-2xl flex-wrap justify-between gap-2 px-5 py-4 text-xs text-text-muted">
+          <span>&copy; {new Date().getFullYear()} Kal.L</span>
+          <span class="tabular-nums">35.6762&deg; N, 139.6503&deg; E</span>
+        </div>
       </div>
     </footer>
   </body>

@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://www.kalvin.io/sitemap.xml
-Host: www.kalvin.io

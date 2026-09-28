@@ -1,14 +1,13 @@
 ---
 interface Props {
+  id: string;
   title: string;
 }
 
-const { title } = Astro.props;
+const { id, title } = Astro.props;
 ---
 
-<section class="border-t border-accent-10 py-8 sm:py-10">
-  <header class="mb-6">
-    <h2 class="m-0 font-mono text-sm text-text-muted">{title}</h2>
-  </header>
+<section id={id} class="mt-14">
+  <h2 class="pixel-heading m-0 mb-4 text-[0.9375rem] font-semibold text-text-heading">{title}</h2>
   <slot />
 </section>

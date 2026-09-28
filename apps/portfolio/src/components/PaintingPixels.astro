@@ -1,13 +1,12 @@
 ---
-/** Astro routing directive: keeps this server island out of prerendering. @public */
-export const prerender = false;
-
 // jpeg-js keeps this island free of native binaries: sharp's libvips .so does
 // not survive Vercel's file tracing under Bun's isolated node_modules layout.
 // Met's primaryImageSmall is always a JPEG, so a pure-JS decoder is enough.
 import { decode } from 'jpeg-js';
 
-const MAX_COLS = 28;
+// The footer strip is a fixed 64x10 grid of roughly square cells.
+const STRIP_COLS = 64;
+const STRIP_ROWS = 10;
 const MAX_RETRIES = 3;
 const CACHE_TTL_SECONDS = 60 * 60 * 6;
 const CACHE_TTL_MS = CACHE_TTL_SECONDS * 1000;
@@ -29,8 +28,12 @@ interface PaintingInfo {
 
 interface PaintingPayload {
   readonly pixels: PixelData[];
-  readonly cols: number;
   readonly info: PaintingInfo;
+}
+
+interface VerticalBand {
+  readonly top: number;
+  readonly height: number;
 }
 
 interface PaintingCache {
@@ -42,12 +45,21 @@ const globalCache = globalThis as typeof globalThis & {
   paintingPixelsCache?: PaintingCache;
 };
 
-/** Box-average downsample of RGBA data into a cols x rows grid of RGB cells. */
-function downsamplePixels(data: Uint8Array, width: number, height: number, cols: number, rows: number): PixelData[] {
+/**
+ * Picks the horizontal band through the middle of the image whose aspect ratio matches the
+ * strip, so cells stay square. Very wide images fall back to their full height.
+ */
+function centerBand(width: number, height: number): VerticalBand {
+  const bandHeight = Math.min(height, Math.round((width * STRIP_ROWS) / STRIP_COLS));
+  return { top: Math.floor((height - bandHeight) / 2), height: bandHeight };
+}
+
+/** Box-average downsample of an RGBA band into a cols x rows grid of RGB cells. */
+function downsamplePixels(data: Uint8Array, width: number, band: VerticalBand, cols: number, rows: number): PixelData[] {
   const pixels: PixelData[] = [];
   for (let row = 0; row < rows; row++) {
-    const y0 = Math.floor((row * height) / rows);
-    const y1 = Math.max(y0 + 1, Math.floor(((row + 1) * height) / rows));
+    const y0 = band.top + Math.floor((row * band.height) / rows);
+    const y1 = Math.max(y0 + 1, band.top + Math.floor(((row + 1) * band.height) / rows));
     for (let col = 0; col < cols; col++) {
       const x0 = Math.floor((col * width) / cols);
       const x1 = Math.max(x0 + 1, Math.floor(((col + 1) * width) / cols));
@@ -79,10 +91,14 @@ async function fetchPaintingPixels(): Promise<PaintingPayload> {
     }
 
     const searchRes = await fetch(SEARCH_URL);
-    if (!searchRes.ok) throw new Error('Search API failed');
+    if (!searchRes.ok) {
+      throw new Error('Search API failed');
+    }
     const searchData = (await searchRes.json()) as unknown as { objectIDs?: number[] };
     const objectIDs = searchData.objectIDs ?? [];
-    if (objectIDs.length === 0) throw new Error('No paintings found');
+    if (objectIDs.length === 0) {
+      throw new Error('No paintings found');
+    }
 
     let imageUrl: string | null = null;
     let info: PaintingInfo = { title: '', artist: '', date: '', url: '' };
@@ -90,9 +106,13 @@ async function fetchPaintingPixels(): Promise<PaintingPayload> {
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       const id = objectIDs[Math.floor(Math.random() * objectIDs.length)];
       const objRes = await fetch(OBJECT_URL + id);
-      if (!objRes.ok) continue;
+      if (!objRes.ok) {
+        continue;
+      }
       const obj = (await objRes.json()) as unknown as Record<string, unknown>;
-      if (!obj.isPublicDomain || !obj.primaryImageSmall) continue;
+      if (!obj.isPublicDomain || !obj.primaryImageSmall) {
+        continue;
+      }
 
       imageUrl = obj.primaryImageSmall as string;
       info = {
@@ -104,21 +124,24 @@ async function fetchPaintingPixels(): Promise<PaintingPayload> {
       break;
     }
 
-    if (!imageUrl) throw new Error('All retries exhausted');
+    if (!imageUrl) {
+      throw new Error('All retries exhausted');
+    }
 
     const imageRes = await fetch(imageUrl);
-    if (!imageRes.ok) throw new Error('Image fetch failed');
+    if (!imageRes.ok) {
+      throw new Error('Image fetch failed');
+    }
     const imageBuffer = Buffer.from(await imageRes.arrayBuffer());
 
     const { data, width, height } = decode(imageBuffer, { useTArray: true, formatAsRGBA: true });
-    if (!width || !height) throw new Error('Missing image dimensions');
+    if (!width || !height) {
+      throw new Error('Missing image dimensions');
+    }
 
-    const cols = MAX_COLS;
-    const rows = Math.round((height / width) * cols);
+    const pixels = downsamplePixels(data, width, centerBand(width, height), STRIP_COLS, STRIP_ROWS);
 
-    const pixels = downsamplePixels(data, width, height, cols, rows);
-
-    const payload: PaintingPayload = { pixels, cols, info };
+    const payload: PaintingPayload = { pixels, info };
     globalCache.paintingPixelsCache = { expiresAt: now + CACHE_TTL_MS, payload };
     return payload;
   } catch (e) {
@@ -136,7 +159,7 @@ Astro.response.headers.set(
 );
 
 let error = false;
-let result: PaintingPayload = { pixels: [], cols: 0, info: { title: '', artist: '', date: '', url: '' } };
+let result: PaintingPayload = { pixels: [], info: { title: '', artist: '', date: '', url: '' } };
 
 try {
   result = await fetchPaintingPixels();
@@ -144,21 +167,29 @@ try {
   error = true;
 }
 
-const { pixels, cols, info } = result;
+const { pixels, info } = result;
 ---
 
-{error ? (
-  <p class="painting-error">Could not load a painting. Check back later.</p>
-) : (
-  <Fragment>
-    <div class="painting-grid" style={`grid-template-columns:repeat(${cols},1fr)`}>
-      {pixels.map(px => <div class="painting-pixel" style={`background:rgb(${px.r},${px.g},${px.b})`} />)}
-    </div>
-    <div class="painting-info">
-      <a href={info.url} target="_blank" rel="noopener noreferrer" class="painting-link">
-        <div class="painting-title">{info.title}</div>
-        <div class="painting-artist">{[info.artist, info.date].filter(Boolean).join(' \u00b7 ')}</div>
-      </a>
-    </div>
-  </Fragment>
-)}
+{
+  error ? (
+    <p class="mx-auto my-0 max-w-2xl px-5 py-2.5 text-xs text-text-muted">Couldn't load today's painting.</p>
+  ) : (
+    <Fragment>
+      <div
+        aria-hidden="true"
+        class="grid aspect-[64/10] w-full gap-px bg-bg"
+        style={`grid-template-columns:repeat(${STRIP_COLS},1fr);grid-template-rows:repeat(${STRIP_ROWS},1fr)`}
+      >
+        {pixels.map((px) => (
+          <div style={`background:rgb(${px.r},${px.g},${px.b})`} />
+        ))}
+      </div>
+      <p class="mx-auto my-0 max-w-2xl px-5 py-2.5 text-xs text-text-muted">
+        <a href={info.url} target="_blank" rel="noopener noreferrer" class="text-text hover:text-text-heading">
+          {info.title}
+        </a>
+        {[info.artist, info.date].filter(Boolean).map((part) => `\u00a0· ${part}`)}
+      </p>
+    </Fragment>
+  )
+}

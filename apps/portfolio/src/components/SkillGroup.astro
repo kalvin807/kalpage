@@ -5,13 +5,10 @@ interface Props {
 }
 
 const { label, skills } = Astro.props;
+// The non-breaking space keeps each separator on the same line as the skill before it.
 ---
 
-<div class="mb-6 last:mb-0">
-  <p class="mb-2.5 font-mono text-xs text-accent">{label}</p>
-  <div class="flex flex-wrap gap-2">
-    {skills.map((skill) => (
-      <span class="rounded-md bg-surface-raised px-3 py-1.5 font-mono text-xs text-text">{skill}</span>
-    ))}
-  </div>
+<div class="grid grid-cols-[6rem_minmax(0,1fr)] border-x border-b border-line sm:grid-cols-[7.5rem_minmax(0,1fr)]">
+  <dt class="px-3 py-2.5 text-sm text-text-muted">{label}</dt>
+  <dd class="m-0 border-l border-line px-3 py-2.5">{skills.join('\u00a0· ')}</dd>
 </div>

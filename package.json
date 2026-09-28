@@ -22,23 +22,17 @@
     "fmt:check": "oxfmt --check",
     "fix": "bun run lint && bun run fmt",
     "check:portfolio": "bun --filter portfolio check",
-    "check": "bun run lint:check && bun run fmt:check && bun run check:portfolio",
+    "check:tool": "bun --filter tool typecheck",
+    "check": "bun run lint:check && bun run fmt:check && bun run check:portfolio && bun run check:tool && bun run test:tool",
     "knip": "knip"
   },
   "devDependencies": {
-    "@types/node": "^26.1.0",
-    "knip": "^6.35.1",
-    "oxfmt": "^0.67.0",
-    "oxlint": "^1.82.0",
-    "oxlint-tsgolint": "^7.0.2001",
+    "@types/node": "^26.6.3",
+    "knip": "^6.38.0",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
+    "oxlint-tsgolint": "^7.0.2003",
     "typescript": "^6.0.3"
   },
-  "packageManager": "bun@1.4.0",
-  "knip": {
-    "ignoreIssues": {
-      "apps/**/*.astro": [
-        "exports"
-      ]
-    }
-  }
+  "packageManager": "bun@1.4.2"
 }

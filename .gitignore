@@ -3,19 +3,15 @@ node_modules
 .env
 .env.*
 !.env.example
+*.local
 
 # Build artifacts
 dist/
 .astro/
 .vercel/
 .tanstack/
-
-# Home app specific
-*.local
-.nitro
-.tanstack
-.output
-.vinxi
+.nitro/
+.output/
 
 # Sensitive files
 resume*

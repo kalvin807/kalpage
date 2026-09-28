@@ -5,66 +5,44 @@ import Section from '../components/Section.astro';
 import TimelineItem from '../components/TimelineItem.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import SkillGroup from '../components/SkillGroup.astro';
-
-export const prerender = true;
 ---
 
 <Layout>
-  <Hero
-    avatar="/doggo.webp"
-    heading="Hello There."
-    tagline="I'm Calvin (Kal), a fullstack engineer in Tokyo. I build AI agents, speech systems, and fast web apps."
-  />
+  <Hero heading="Fullstack engineer in Tokyo">
+    <p class="m-0">
+      I'm Calvin (Kal). I build AI agents, speech systems, and fast web apps, from the model layer to the user
+      interface.
+    </p>
+  </Hero>
 
-  <Section title="Experience">
-    <div class="grid gap-6">
-      <TimelineItem title="Fullstack Engineer at an AI voice company" date="2025 — Present · Tokyo">
-        <ul>
-          <li>Building AI agent and voice products end to end, from the model layer to the user interface.</li>
-        </ul>
+  <Section id="work" title="Experience">
+    <ol class="m-0 list-none border-t border-line p-0">
+      <TimelineItem period="2025 — now" title="Fullstack Engineer" org="AI voice company" place="Tokyo">
+        <li>Building AI agent and voice products end to end, from the model layer to the user interface.</li>
       </TimelineItem>
-      <TimelineItem title="Speech Team Lead at an ad-tech company" date="2024 — 2025 · Tokyo">
-        <ul>
-          <li>Led the team building low-latency conversational agents for enterprise partners.</li>
-          <li>Took speech-to-text pipelines and transcription systems from prototype to production scale.</li>
-        </ul>
+      <TimelineItem period="2024 — 2025" title="Speech Team Lead" org="ad-tech company" place="Tokyo">
+        <li>Led the team building low-latency conversational agents for enterprise partners.</li>
+        <li>Took speech-to-text pipelines and transcription systems from prototype to production scale.</li>
       </TimelineItem>
-      <TimelineItem title="Software Engineer at a social hiring platform" date="2023 — 2024 · Tokyo">
-        <ul>
-          <li>Built high-performance enterprise SaaS interfaces with Next.js and Rails.</li>
-          <li>Architected a loyalty point system and ran data migrations with zero downtime.</li>
-        </ul>
+      <TimelineItem period="2023 — 2026" title="M.S. Computer Science (Machine Learning)" org="Georgia Tech" place="—" />
+      <TimelineItem period="2023 — 2024" title="Software Engineer" org="social hiring platform" place="Tokyo">
+        <li>Built high-performance enterprise SaaS interfaces with Next.js and Rails.</li>
+        <li>Architected a loyalty point system and ran data migrations with zero downtime.</li>
       </TimelineItem>
-      <TimelineItem title="Software Engineer at a telecom company" date="2022 · Tokyo">
-        <ul>
-          <li>Led a small team to deliver an internal career platform that won a company-wide award.</li>
-          <li>Tuned query performance across a distributed database.</li>
-        </ul>
+      <TimelineItem period="2022" title="Software Engineer" org="telecom company" place="Tokyo">
+        <li>Led a small team to deliver an internal career platform that won a company-wide award.</li>
+        <li>Tuned query performance across a distributed database.</li>
       </TimelineItem>
-      <TimelineItem title="Software Engineer at a fintech startup" date="2021 — 2022 · Hong Kong">
-        <ul>
-          <li>Built Go and Python microservices that parsed and analyzed bank statements.</li>
-          <li>Rebuilt the testing infrastructure, cutting run time and memory usage.</li>
-        </ul>
+      <TimelineItem period="2021 — 2022" title="Software Engineer" org="fintech startup" place="Hong Kong">
+        <li>Built Go and Python microservices that parsed and analyzed bank statements.</li>
+        <li>Rebuilt the testing infrastructure, cutting run time and memory usage.</li>
       </TimelineItem>
-    </div>
+      <TimelineItem period="2017 — 2021" title="B.Eng. Computer Science" org="The University of Hong Kong" place="Hong Kong" />
+    </ol>
   </Section>
 
-  <Section title="Education">
-    <div class="grid gap-4">
-      <div class="border-l border-accent-30 pl-4">
-        <h3 class="m-0 mb-0.5 font-heading text-base font-semibold text-balance text-text-heading">M.S. in Computer Science (Machine Learning)</h3>
-        <span class="font-mono text-xs text-accent tabular-nums">Georgia Institute of Technology · 2023 — 2026</span>
-      </div>
-      <div class="border-l border-accent-30 pl-4">
-        <h3 class="m-0 mb-0.5 font-heading text-base font-semibold text-balance text-text-heading">B.Eng. in Computer Science</h3>
-        <span class="font-mono text-xs text-accent tabular-nums">The University of Hong Kong · 2017 — 2021</span>
-      </div>
-    </div>
-  </Section>
-
-  <Section title="Projects">
-    <div class="grid gap-4 sm:grid-cols-2">
+  <Section id="projects" title="Projects">
+    <ul class="m-0 grid list-none border-t border-l border-line p-0 sm:grid-cols-2">
       <ProjectCard
         title="GBFinder Omega"
         description="Realtime raid finder for Granblue Fantasy, written in Go. Delivers high volumes of raid signals in under a second."
@@ -85,14 +63,16 @@ export const prerender = true;
         description="Computer vision model that counts Magikarp in a YouTube live stream."
         href="https://github.com/kalvin807/akaina-detector"
       />
-    </div>
+    </ul>
   </Section>
 
-  <Section title="Skills">
-    <SkillGroup label="Languages" skills={['Cantonese', 'Mandarin', 'English', 'Japanese']} />
-    <SkillGroup
-      label="Technical"
-      skills={['TypeScript', 'JavaScript', 'Python', 'Go', 'Ruby', 'React', 'Next.js', 'PyTorch', 'LLM/GenAI']}
-    />
+  <Section id="skills" title="Skills">
+    <dl class="m-0 border-t border-line">
+      <SkillGroup
+        label="Technical"
+        skills={['TypeScript', 'JavaScript', 'Python', 'Go', 'Ruby', 'React', 'Next.js', 'PyTorch', 'LLM/GenAI']}
+      />
+      <SkillGroup label="Languages" skills={['Cantonese', 'Mandarin', 'English', 'Japanese']} />
+    </dl>
   </Section>
 </Layout>

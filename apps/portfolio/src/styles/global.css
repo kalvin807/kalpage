@@ -1,169 +1,69 @@
 @import 'tailwindcss';
-@import '@fontsource/jost/latin-400.css';
-@import '@fontsource/jost/latin-600.css';
-@import '@fontsource/space-mono/latin-400.css';
 
 @theme {
-  --color-bg: oklch(0.17 0.003 75);
-  --color-bg-card: oklch(0.2 0.003 75);
-  --color-text: oklch(0.84 0.004 75);
-  --color-text-heading: oklch(0.95 0.008 80);
-  --color-text-muted: oklch(0.7 0.003 75);
-  --color-accent: oklch(0.78 0.004 78);
-  --color-accent-50: oklch(0.78 0.004 78 / 0.5);
-  --color-accent-30: oklch(0.78 0.004 78 / 0.3);
-  --color-accent-10: oklch(0.78 0.004 78 / 0.1);
-  --color-surface-raised: oklch(1 0 0 / 0.04);
-  --color-surface-raised-hover: oklch(1 0 0 / 0.08);
-  --color-ring: oklch(0.82 0.01 80 / 0.8);
-  --font-heading: 'Jost', 'Futura', 'Century Gothic', sans-serif;
-  --font-mono: 'Space Mono', 'SF Mono', 'Fira Code', monospace;
+  --color-bg: oklch(0.18 0 0);
+  --color-text: oklch(0.9 0 0);
+  --color-text-heading: oklch(0.98 0 0);
+  --color-text-muted: oklch(0.66 0 0);
+  --color-line: oklch(0.33 0 0);
+  --color-surface-hover: oklch(1 0 0 / 0.04);
+  --color-link: oklch(0.76 0.11 238);
+  --color-ring: oklch(0.76 0.11 238 / 0.8);
+  --font-mono: var(--font-geist-mono);
 }
 
-html {
-  scroll-padding-top: 2rem;
+@layer base {
+  html {
+    scroll-padding-top: 2rem;
+  }
+
+  ::selection {
+    background: var(--color-text-heading);
+    color: var(--color-bg);
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
 }
 
-::selection {
-  background: var(--color-accent);
-  color: var(--color-bg);
-}
-
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-heading);
-  line-height: 1.5;
-}
-
-h1,
-h2,
-h3 {
-  text-wrap: balance;
-}
-
-p,
-li {
-  text-wrap: pretty;
-}
-
-a {
-  text-underline-offset: 0.2em;
-}
-
-a:focus-visible {
-  outline: 2px solid var(--color-ring);
-  outline-offset: 4px;
-}
-
-.hero-heading {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: clamp(2.5rem, 1.4rem + 3vw, 3.4rem);
-  line-height: 1.1;
-  color: var(--color-text-heading);
-}
-
-/* Print-style crop marks on two opposing corners, tying cards to the zine layout. */
-.crop-marks {
-  position: relative;
-}
-
-.crop-marks::before,
-.crop-marks::after {
+/* Pixel-square heading marker; echoes the painting strip in the footer. */
+.pixel-heading::before {
   content: '';
-  position: absolute;
-  width: 0.5rem;
-  height: 0.5rem;
-  border: 0 solid var(--color-accent-50);
-  transition: border-color 150ms ease-out;
-  pointer-events: none;
-}
-
-.crop-marks::before {
-  top: -1px;
-  left: -1px;
-  border-top-width: 1px;
-  border-left-width: 1px;
-}
-
-.crop-marks::after {
-  right: -1px;
-  bottom: -1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-}
-
-.crop-marks:hover::before,
-.crop-marks:hover::after {
-  border-color: var(--color-accent);
-}
-
-.timeline-desc ul {
-  margin: 0;
-  padding-left: 1rem;
-  list-style-position: outside;
-}
-
-.timeline-desc li {
-  margin-bottom: 0.25rem;
-}
-
-.painting-grid {
-  display: grid;
-  gap: 1px;
-  background: oklch(0 0 0 / 0.3);
-}
-
-.painting-pixel {
-  aspect-ratio: 1;
-}
-
-.painting-info {
-  margin-top: 0.6rem;
-  min-height: 2rem;
-}
-
-.painting-link {
-  text-decoration: none;
-  color: inherit;
-  transition: opacity 150ms ease-out;
-}
-
-.painting-link:hover {
-  opacity: 0.8;
-}
-
-.painting-title {
-  font-family: var(--font-heading);
-  font-size: 0.85rem;
-  color: var(--color-text-heading);
-}
-
-.painting-artist {
-  margin-top: 0.15rem;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-}
-
-.painting-error {
-  margin: 0;
-  padding: 2rem 0;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-}
-
-.painting-skeleton {
-  aspect-ratio: 4 / 5;
-  background: var(--color-surface-raised);
-}
-
-.painting-pixels-loading-text {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.6rem;
+  vertical-align: 0.15em;
+  background: var(--color-text-heading);
 }

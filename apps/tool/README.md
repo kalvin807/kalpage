@@ -17,4 +17,4 @@ The dev server runs on port 3001.
 - `src/lib/japanese-date/`: era definitions, parsing, conversion, formatting, and parser tests.
 - `src/components/ui/`: shared UI components.
 
-Run `bun run check` for lint, type, and formatting checks. Run `bun run fix` to apply Oxlint fixes and Oxfmt formatting.
+Run `bun run check` for lint, formatting, type checks, and tests across both apps. Run `bun run fix` to apply Oxlint fixes and Oxfmt formatting.
