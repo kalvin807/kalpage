@@ -116,6 +116,21 @@ describe('parseInput', () => {
     ],
     ['unparseable link', 'http://[', { type: 'invalid', error: 'リンクを読み取れませんでした' }],
     [
+      'unescaped Japanese in a google link',
+      'https://www.google.com/maps/place/東京タワー/@35.6586,139.7454,17z',
+      { type: 'point', point: { lat: 35.6586, lng: 139.7454 }, label: '東京タワー' },
+    ],
+    [
+      'apple search centre is not the result',
+      'https://maps.apple.com/search?query=Tokyo%20Tower&center=35.6812,139.7671',
+      { type: 'query', text: 'Tokyo Tower', fromGoogle: false },
+    ],
+    [
+      'apple search location alone',
+      'https://maps.apple.com/?sll=35.6812,139.7671',
+      { type: 'point', point: { lat: 35.6812, lng: 139.7671 } },
+    ],
+    [
       'malformed escape in a google path',
       'https://www.google.com/maps/place/100%',
       { type: 'invalid', error: 'このGoogleマップのリンクから場所を読み取れませんでした' },

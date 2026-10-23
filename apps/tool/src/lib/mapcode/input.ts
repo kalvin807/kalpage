@@ -52,8 +52,9 @@ export interface RomanizedAddress {
 const JAPAN_BOUNDS = { minLat: 20, maxLat: 46, minLng: 122, maxLng: 154 } as const;
 
 const LAT_LNG_PATTERN = /^\s*(-?\d{1,3}(?:\.\d+)?)\s*[,\s]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/;
-// ASCII only, so surrounding Japanese punctuation ("（https://…）", "https://…、見てね") isn't swallowed.
-const URL_PATTERN = /https?:\/\/[\x21-\x7e]+/;
+// Stops at Japanese punctuation ("https://…、見てね") but keeps unescaped Japanese path text
+// (`/maps/place/東京タワー/@…`). Full-width brackets are ASCII after NFKC and trimmed below.
+const URL_PATTERN = /https?:\/\/[^\s<>"、。「」『』【】]+/;
 const URL_TRAILING_PUNCTUATION = /[).,!?'"]+$/;
 // Matched after NFKC, which turns full-width digits and hyphens into ASCII. Google writes some
 // hyphens as U+2212 ("1 Chome−5−5"), which NFKC leaves alone. Without 〒 the hyphen is required,
@@ -69,8 +70,10 @@ const GOOGLE_HOST_PATTERN = /^(?:www\.|maps\.)?google\.(?:com|co\.jp)$/;
 
 const GOOGLE_POINT_PARAMS = ['q', 'query', 'll', 'sll', 'daddr', 'destination', 'center'] as const;
 const GOOGLE_TEXT_PARAMS = ['q', 'query', 'daddr', 'destination'] as const;
-const APPLE_POINT_PARAMS = ['coordinate', 'll', 'daddr', 'destination', 'q', 'sll', 'center', 'near'] as const;
-const APPLE_TEXT_PARAMS = ['address', 'q', 'name', 'daddr', 'destination'] as const;
+const APPLE_POINT_PARAMS = ['coordinate', 'll', 'daddr', 'destination', 'q'] as const;
+// Where a search started, not its result (Apple's unified Maps URLs), so only used without search text.
+const APPLE_SEARCH_BIAS_PARAMS = ['sll', 'center', 'near'] as const;
+const APPLE_TEXT_PARAMS = ['address', 'q', 'query', 'name', 'daddr', 'destination'] as const;
 
 export function isInJapan({ lat, lng }: LatLng): boolean {
   return (
@@ -224,6 +227,10 @@ function parseAppleUrl(url: URL): ParsedInput {
   const text = maybeParamText(params, APPLE_TEXT_PARAMS);
   if (text) {
     return { type: 'query', text, fromGoogle: false };
+  }
+  const searchBias = maybeParamPoint(params, APPLE_SEARCH_BIAS_PARAMS);
+  if (searchBias) {
+    return { type: 'point', point: searchBias };
   }
   return { type: 'invalid', error: 'このAppleマップのリンクから場所を読み取れませんでした' };
 }
