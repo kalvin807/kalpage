@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  isPreciseGsiMatch,
   maybeParseApplePlaceHtml,
   maybeParseGoogleGeocodeResponse,
   maybeParseGsiResponse,
@@ -133,5 +134,18 @@ describe('resolveShortLink', () => {
 
   it('fails on dead links', async () => {
     await expect(resolveShortLink('https://maps.app.goo.gl/gone', fakeRedirects({}))).rejects.toThrow(/404/);
+  });
+});
+
+describe('isPreciseGsiMatch', () => {
+  it.each<[string, string | undefined, boolean]>([
+    ['東京都渋谷区千駄ヶ谷1-5-5', '東京都渋谷区千駄ケ谷一丁目５番５号', true],
+    ['あざみ野2丁目9-13', '神奈川県横浜市青葉区あざみ野二丁目９番', true],
+    ['東京都新宿区西新宿6-8-1', '東京都新宿区西新宿六丁目', true],
+    ['長野県松本市安曇4462-52', '長野県松本市安曇', false],
+    ['東京都渋谷区', '東京都渋谷区', true],
+    ['長野県松本市安曇4462-52', undefined, false],
+  ])('%s -> %s', (query, title, expected) => {
+    expect(isPreciseGsiMatch(query, title)).toBe(expected);
   });
 });

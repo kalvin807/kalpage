@@ -162,10 +162,24 @@ export async function maybeGetMapcode(point: LatLng, fetchFn: Fetch): Promise<st
   return maybeParseMapcodeResponse(await fetchJson(fetchFn, url));
 }
 
+/**
+ * GSI has no lot-level data in many rural areas and silently falls back to the town centroid
+ * (長野県松本市安曇4462-52 -> 長野県松本市安曇, ~7 km off). If the query named a block but the match
+ * has no numbers or 丁目 at all, the pin would be wrong, so treat it as not found.
+ */
+export function isPreciseGsiMatch(query: string, matchedTitle?: string): boolean {
+  if (!/[0-9０-９]/.test(query)) {
+    return true;
+  }
+  return matchedTitle != null && /[0-9０-９]|丁目/.test(matchedTitle);
+}
+
 async function maybeGeocodeGsi(text: string, fetchFn: Fetch): Promise<Place | undefined> {
+  const query = cleanAddress(text);
   const url = new URL(GSI_API);
-  url.searchParams.set('q', cleanAddress(text));
-  return maybeParseGsiResponse(await fetchJson(fetchFn, url));
+  url.searchParams.set('q', query);
+  const place = maybeParseGsiResponse(await fetchJson(fetchFn, url));
+  return place && isPreciseGsiMatch(query, place.label) ? place : undefined;
 }
 
 async function maybeGeocodeGoogle(text: string, apiKey: string, fetchFn: Fetch): Promise<Place | undefined> {
