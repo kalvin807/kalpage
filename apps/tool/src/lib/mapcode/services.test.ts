@@ -4,6 +4,7 @@ import {
   maybeParseGoogleGeocodeResponse,
   maybeParseGsiResponse,
   maybeParseMapcodeResponse,
+  maybeParseZipcloudResponse,
   resolveShortLink,
 } from './services';
 
@@ -68,6 +69,27 @@ describe('maybeParseGoogleGeocodeResponse', () => {
     expect(() =>
       maybeParseGoogleGeocodeResponse({ status: 'REQUEST_DENIED', error_message: 'The provided API key is invalid.' }),
     ).toThrow(/REQUEST_DENIED/);
+  });
+});
+
+describe('maybeParseZipcloudResponse', () => {
+  it('joins prefecture, city and town', () => {
+    const body = {
+      message: null,
+      results: [{ address1: '東京都', address2: '世田谷区', address3: '松原', zipcode: '1560043' }],
+      status: 200,
+    };
+    expect(maybeParseZipcloudResponse(body)).toBe('東京都世田谷区松原');
+  });
+
+  it('returns undefined for unknown postal codes', () => {
+    expect(maybeParseZipcloudResponse({ message: null, results: null, status: 200 })).toBeUndefined();
+  });
+
+  it('throws on API errors', () => {
+    expect(() =>
+      maybeParseZipcloudResponse({ message: 'パラメータ「郵便番号」の桁数が不正です。', results: null, status: 400 }),
+    ).toThrow(/桁数/);
   });
 });
 

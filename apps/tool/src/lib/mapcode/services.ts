@@ -1,4 +1,11 @@
-import { isMapHost, parseInput, type LatLng, type ParsedInput } from './input';
+import {
+  cleanAddress,
+  isMapHost,
+  maybeParseRomanizedAddress,
+  parseInput,
+  type LatLng,
+  type ParsedInput,
+} from './input';
 
 type Fetch = typeof fetch;
 
@@ -17,6 +24,8 @@ export interface ResolveDeps {
 const MAPCODE_API = 'https://api.japanmapcode.com/mapcode';
 const GSI_API = 'https://msearch.gsi.go.jp/address-search/AddressSearch';
 const GOOGLE_GEOCODE_API = 'https://maps.googleapis.com/maps/api/geocode/json';
+// Free Japan Post postal code lookup; answers in kanji, which is what GSI needs.
+const ZIPCLOUD_API = 'https://zipcloud.ibsnet.co.jp/api/search';
 const MAX_REDIRECTS = 5;
 
 const APPLE_LAT_PATTERN = /<meta property="place:location:latitude" content="(-?\d+(?:\.\d+)?)"/;
@@ -84,6 +93,25 @@ export function maybeParseGoogleGeocodeResponse(body: unknown): Place | undefine
   return { point: { lat, lng }, label };
 }
 
+/** Joins prefecture, city and town (東京都 + 世田谷区 + 松原) for the first match. */
+export function maybeParseZipcloudResponse(body: unknown): string | undefined {
+  if (!isRecord(body) || body.status !== 200) {
+    throw new Error(`Postal code lookup error: ${describe(body)}`);
+  }
+  const first: unknown = Array.isArray(body.results) ? body.results[0] : undefined;
+  if (first == null) {
+    return undefined;
+  }
+  if (!isRecord(first)) {
+    throw new Error(`Unexpected postal code result: ${describe(first)}`);
+  }
+  const parts = [first.address1, first.address2, first.address3];
+  if (!parts.every((part) => typeof part === 'string')) {
+    throw new Error(`Unexpected postal code result: ${describe(first)}`);
+  }
+  return parts.join('');
+}
+
 export function maybeParseApplePlaceHtml(html: string): Place | undefined {
   const lat = html.match(APPLE_LAT_PATTERN)?.[1];
   const lng = html.match(APPLE_LNG_PATTERN)?.[1];
@@ -136,7 +164,7 @@ export async function maybeGetMapcode(point: LatLng, fetchFn: Fetch): Promise<st
 
 async function maybeGeocodeGsi(text: string, fetchFn: Fetch): Promise<Place | undefined> {
   const url = new URL(GSI_API);
-  url.searchParams.set('q', text);
+  url.searchParams.set('q', cleanAddress(text));
   return maybeParseGsiResponse(await fetchJson(fetchFn, url));
 }
 
@@ -149,15 +177,29 @@ async function maybeGeocodeGoogle(text: string, apiKey: string, fetchFn: Fetch):
   return maybeParseGoogleGeocodeResponse(await fetchJson(fetchFn, url));
 }
 
+async function maybeGeocodeRomanized(text: string, fetchFn: Fetch): Promise<Place | undefined> {
+  const address = maybeParseRomanizedAddress(text);
+  if (!address) {
+    return undefined;
+  }
+  const url = new URL(ZIPCLOUD_API);
+  url.searchParams.set('zipcode', address.postalCode);
+  // zipcloud labels its JSON as text/plain, so this skips fetchJson's content-type check.
+  const town = maybeParseZipcloudResponse(await (await fetchFn(url)).json());
+  return town ? maybeGeocodeGsi(`${town}${address.block}`, fetchFn) : undefined;
+}
+
 /**
  * GSI is free and exact for Japanese addresses but fuzzy-matches anything else (東京タワー lands in
- * Sapporo), so text that came from a Google link goes to Google first when a key is configured.
+ * Sapporo), so text that came from a Google link goes to Google first when a key is configured,
+ * then to the romanised-address rebuild, which only fires on text with a postal code and chōme.
  */
 async function maybeGeocode(text: string, fromGoogle: boolean, deps: ResolveDeps): Promise<Place | undefined> {
   const { fetchFn, googleApiKey } = deps;
   const google = googleApiKey ? () => maybeGeocodeGoogle(text, googleApiKey, fetchFn) : undefined;
+  const romanized = () => maybeGeocodeRomanized(text, fetchFn);
   const gsi = () => maybeGeocodeGsi(text, fetchFn);
-  const geocoders = fromGoogle ? [google, gsi] : [gsi, google];
+  const geocoders = fromGoogle ? [google, romanized, gsi] : [gsi, romanized, google];
   for (const geocode of geocoders) {
     const place = await geocode?.();
     if (place) {

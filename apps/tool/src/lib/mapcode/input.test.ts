@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { cleanAddress, isInJapan, parseInput, type ParsedInput } from './input';
+import { cleanAddress, isInJapan, maybeParseRomanizedAddress, parseInput, type ParsedInput } from './input';
 
 const APPLE_SHARE_LINK =
   "https://maps.apple.com/place?address=%E3%80%92225-0011%0A%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E9%9D%92%E8%91%89%E5%8C%BA%0A%E3%81%82%E3%81%96%E3%81%BF%E9%87%8E2%E4%B8%81%E7%9B%AE9-13&coordinate=35.567999,139.552384&name=McDonald's%20Azamino%20Ekimae-Shop&place-id=I3D6D8928196FEF02&map=transit";
@@ -18,9 +18,9 @@ describe('parseInput', () => {
       { type: 'query', text: '135.1, 139.2', fromGoogle: false },
     ],
     [
-      'address strips postal code and line breaks',
+      'address keeps postal code for the romanised fallback',
       '〒225-0011\n神奈川県横浜市青葉区\nあざみ野2丁目9-13',
-      { type: 'query', text: '神奈川県横浜市青葉区 あざみ野2丁目9-13', fromGoogle: false },
+      { type: 'query', text: '〒225-0011\n神奈川県横浜市青葉区\nあざみ野2丁目9-13', fromGoogle: false },
     ],
     [
       'apple share link',
@@ -61,7 +61,7 @@ describe('parseInput', () => {
     [
       'google resolved share link without coordinates',
       GOOGLE_RESOLVED_SHARE_LINK,
-      { type: 'query', text: 'Tokyo, Shibuya, Sendagaya, 1 Chome−5−5 我妻', fromGoogle: true },
+      { type: 'query', text: '〒151-0051 Tokyo, Shibuya, Sendagaya, 1 Chome−5−5 我妻', fromGoogle: true },
     ],
     [
       'google place pin wins over viewport centre',
@@ -126,5 +126,21 @@ describe('isInJapan', () => {
     [{ lat: 0, lng: 0 }, false],
   ])('%o -> %s', (point, expected) => {
     expect(isInJapan(point)).toBe(expected);
+  });
+});
+
+describe('maybeParseRomanizedAddress', () => {
+  it.each([
+    [
+      'Sun Matsubara, 2-chōme-39-9 Matsubara, Setagaya City, Tokyo 156-0043',
+      { postalCode: '1560043', block: '2-39-9' },
+    ],
+    ['〒151-0051 Tokyo, Shibuya, Sendagaya, 1 Chome−5−5 我妻', { postalCode: '1510051', block: '1-5-5' }],
+    ['〒1500002 Tokyo, Shibuya City, Shibuya, 2 Chome-21-1', { postalCode: '1500002', block: '2-21-1' }],
+    ['3-chōme Nishishinjuku, Shinjuku City, Tokyo 160-0023', undefined],
+    ['1-5-5 Sendagaya, Shibuya, Tokyo', undefined],
+    ['東京都渋谷区千駄ヶ谷1丁目5−5', undefined],
+  ])('%s', (input, expected) => {
+    expect(maybeParseRomanizedAddress(input)).toEqual(expected);
   });
 });

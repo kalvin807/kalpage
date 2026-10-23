@@ -25,6 +25,7 @@ interface ApplePlacePageInput {
   readonly url: string;
 }
 
+/** Raw text, postal code included: the romanised-address fallback needs it, GSI gets a cleaned copy. */
 interface QueryInput {
   readonly type: 'query';
   readonly text: string;
@@ -39,6 +40,13 @@ interface InvalidInput {
 
 export type ParsedInput = EmptyInput | PointInput | ShortLinkInput | ApplePlacePageInput | QueryInput | InvalidInput;
 
+export interface RomanizedAddress {
+  /** Seven digits, no hyphen, as zipcloud expects. */
+  readonly postalCode: string;
+  /** Chōme, block and building numbers joined with hyphens, e.g. `2-39-9`. */
+  readonly block: string;
+}
+
 // Coarse box around Japan, including Okinawa and the outlying islands. It also covers parts of
 // Korea and Russia; the mapcode API answers NOT_FOUND there, this only skips obviously foreign points.
 const JAPAN_BOUNDS = { minLat: 20, maxLat: 46, minLng: 122, maxLng: 154 } as const;
@@ -46,6 +54,9 @@ const JAPAN_BOUNDS = { minLat: 20, maxLat: 46, minLng: 122, maxLng: 154 } as con
 const LAT_LNG_PATTERN = /^\s*(-?\d{1,3}(?:\.\d+)?)\s*[,\s]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/;
 const URL_PATTERN = /https?:\/\/\S+/;
 const POSTAL_CODE_PATTERN = /〒\s*\d{3}-?\d{4}/g;
+// Google writes hyphens as U+2212 in some locales ("1 Chome−5−5").
+const ROMANIZED_POSTAL_PATTERN = /〒\s*(\d{3})[-−‐]?(\d{4})|(?<!\d)(\d{3})[-−‐](\d{4})(?!\d)/;
+const ROMANIZED_BLOCK_PATTERN = /(\d+)[\s\-−‐]*ch[oō]me[\s\-−‐]*(\d+)(?:[-−‐](\d+))?/i;
 // `!3d{lat}!4d{lng}` is the selected place; `@{lat},{lng}` is only the viewport centre.
 const GOOGLE_PIN_PATTERN = /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/g;
 const GOOGLE_CENTER_PATTERN = /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/;
@@ -78,6 +89,23 @@ function maybeParseLatLng(text: string | null): LatLng | undefined {
 /** Postal codes and line breaks (Apple puts the address on several lines) both stop GSI from matching. */
 export function cleanAddress(text: string): string {
   return text.replace(POSTAL_CODE_PATTERN, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Google share links from an English UI carry addresses like
+ * "2-chōme-39-9 Matsubara, Setagaya City, Tokyo 156-0043", which GSI can't read. The postal code
+ * names the town and the chōme/block numbers are language-neutral, so together they are enough
+ * to rebuild "東京都世田谷区松原2-39-9".
+ */
+export function maybeParseRomanizedAddress(text: string): RomanizedAddress | undefined {
+  const postal = text.match(ROMANIZED_POSTAL_PATTERN);
+  const block = text.match(ROMANIZED_BLOCK_PATTERN);
+  if (!postal || !block) {
+    return undefined;
+  }
+  const postalCode = (postal[1] ?? postal[3] ?? '') + (postal[2] ?? postal[4] ?? '');
+  const numbers = [block[1], block[2], block[3]].filter((part) => part != null);
+  return { postalCode, block: numbers.join('-') };
 }
 
 /** Hosts we are willing to fetch from the server; anything else would turn the resolver into an open proxy. */
@@ -156,7 +184,7 @@ function parseGoogleUrl(url: URL): ParsedInput {
 
   const text = paramText ?? pathText;
   if (text) {
-    return { type: 'query', text: cleanAddress(text), fromGoogle: true };
+    return { type: 'query', text, fromGoogle: true };
   }
   return { type: 'invalid', error: 'このGoogleマップのリンクから場所を読み取れませんでした' };
 }
@@ -172,7 +200,7 @@ function parseAppleUrl(url: URL): ParsedInput {
   }
   const text = maybeParamText(params, APPLE_TEXT_PARAMS);
   if (text) {
-    return { type: 'query', text: cleanAddress(text), fromGoogle: false };
+    return { type: 'query', text, fromGoogle: false };
   }
   return { type: 'invalid', error: 'このAppleマップのリンクから場所を読み取れませんでした' };
 }
@@ -207,5 +235,5 @@ export function parseInput(raw: string): ParsedInput {
   if (urlText) {
     return parseMapUrl(new URL(urlText));
   }
-  return { type: 'query', text: cleanAddress(text), fromGoogle: false };
+  return { type: 'query', text, fromGoogle: false };
 }
