@@ -130,23 +130,47 @@
   }
 }
 
-/* Leaflet (mapcode tool) */
-.leaflet-container {
-  background: var(--muted);
+/* MapLibre (mapcode tool) */
+.maplibregl-map {
   font: inherit;
-}
-
-/* GSI only ships light tiles; inverting keeps the map readable in dark mode. */
-.dark .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
+  background: var(--muted);
 }
 
 .map-pin {
-  width: 28px;
-  height: 28px;
-  border: 3px solid var(--background);
-  border-radius: 50% 50% 50% 0;
-  background: var(--primary);
-  box-shadow: 0 2px 6px oklch(0 0 0 / 0.35);
-  transform: rotate(-45deg);
+  cursor: grab;
+  filter: drop-shadow(0 2px 3px oklch(0 0 0 / 0.35));
+}
+
+.map-pin:active {
+  cursor: grabbing;
+}
+
+.maplibregl-ctrl.maplibregl-ctrl-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: none;
+}
+
+.maplibregl-ctrl-group button + button {
+  border-top-color: var(--border);
+}
+
+/* MapLibre ships dark icons only. */
+.dark .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+
+.maplibregl-ctrl.maplibregl-ctrl-attrib,
+.maplibregl-ctrl-attrib.maplibregl-compact {
+  background: color-mix(in oklch, var(--card) 85%, transparent);
+  color: var(--muted-foreground);
+}
+
+.maplibregl-ctrl-attrib a {
+  color: inherit;
+}
+
+.maplibregl-cooperative-gesture-screen {
+  font-size: 0.875rem;
 }

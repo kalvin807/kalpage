@@ -8,7 +8,7 @@ import { CopyButton } from '@/components/copy-button';
 import { isInJapan, parseInput, type LatLng, type Place } from '@/lib/mapcode';
 import { maybeLookupMapcode, maybeLookupPlace } from '@/lib/mapcode/server';
 
-// Leaflet needs `window` at import time, so the map is code-split and only rendered on the client.
+// MapLibre needs `window` and WebGL, so the map is code-split and only rendered on the client.
 const MapPicker = lazy(() => import('@/components/map-picker').then((module) => ({ default: module.MapPicker })));
 
 const DESCRIPTION = '住所やGoogleマップ・Appleマップの共有リンクから、カーナビ用のマップコードを調べるツール';
