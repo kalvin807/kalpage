@@ -1,10 +1,10 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { SITE_URL } from '@/lib/site';
-import { IconCopy, IconCheck, IconCalendar } from '@tabler/icons-react';
+import { IconCalendar } from '@tabler/icons-react';
 import * as holiday_jp from '@holiday-jp/holiday_jp';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/copy-button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
@@ -441,37 +441,6 @@ function processResult(parsed: ParsedInput): ProcessedResult {
 }
 
 // --- UI Components ---
-
-interface CopyButtonProps {
-  readonly text: string;
-  readonly className?: string;
-}
-
-function CopyButton({ text, className }: CopyButtonProps) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (e) {
-      console.error('Clipboard write failed:', e);
-    }
-  };
-
-  return (
-    <Button
-      variant="ghost"
-      size="icon-xs"
-      onClick={handleCopy}
-      aria-label="コピー"
-      className={`size-6 text-muted-foreground/50 transition-all hover:text-foreground active:scale-95 ${className ?? ''}`}
-    >
-      {copied ? <IconCheck className="size-3 text-emerald-600" /> : <IconCopy className="size-3" />}
-    </Button>
-  );
-}
 
 interface ResultsSectionProps {
   readonly result: ProcessedResult;
