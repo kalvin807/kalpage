@@ -3,6 +3,11 @@ import { isInJapan, parseInput, type LatLng } from './input';
 import { maybeGetMapcode, maybeResolvePlace } from './services';
 
 const MAX_INPUT_LENGTH = 4000;
+// Upstreams occasionally hang; fail well inside the function's time limit rather than holding it open.
+const FETCH_TIMEOUT_MS = 8000;
+
+const fetchWithTimeout: typeof fetch = (input, init) =>
+  fetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
 
 /**
  * Resolution runs on the server for every input, not only short links: the client can't follow
@@ -16,7 +21,10 @@ export const maybeLookupPlace = createServerFn({ method: 'POST' })
     return data;
   })
   .handler(({ data }) =>
-    maybeResolvePlace(parseInput(data.text), { fetchFn: fetch, googleApiKey: process.env.GOOGLE_MAPS_API_KEY }),
+    maybeResolvePlace(parseInput(data.text), {
+      fetchFn: fetchWithTimeout,
+      googleApiKey: process.env.GOOGLE_MAPS_API_KEY,
+    }),
   );
 
 export const maybeLookupMapcode = createServerFn({ method: 'POST' })
@@ -26,4 +34,4 @@ export const maybeLookupMapcode = createServerFn({ method: 'POST' })
     }
     return data;
   })
-  .handler(({ data }) => (isInJapan(data) ? maybeGetMapcode(data, fetch) : undefined));
+  .handler(({ data }) => (isInJapan(data) ? maybeGetMapcode(data, fetchWithTimeout) : undefined));

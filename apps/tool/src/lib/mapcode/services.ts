@@ -24,8 +24,9 @@ export interface ResolveDeps {
 const MAPCODE_API = 'https://api.japanmapcode.com/mapcode';
 const GSI_API = 'https://msearch.gsi.go.jp/address-search/AddressSearch';
 const GOOGLE_GEOCODE_API = 'https://maps.googleapis.com/maps/api/geocode/json';
-// Free Japan Post postal code lookup; answers in kanji, which is what GSI needs.
-const ZIPCLOUD_API = 'https://zipcloud.ibsnet.co.jp/api/search';
+// Static JSON per postal code built from Japan Post data (github.com/ttskch/jp-postal-code-api):
+// answers in kanji, which is what GSI needs, and has no rate limit to trip.
+const POSTAL_CODE_API = 'https://jp-postal-code-api.ttskch.com/api/v1';
 const MAX_REDIRECTS = 5;
 
 const APPLE_LAT_PATTERN = /<meta property="place:location:latitude" content="(-?\d+(?:\.\d+)?)"/;
@@ -93,21 +94,22 @@ export function maybeParseGoogleGeocodeResponse(body: unknown): Place | undefine
   return { point: { lat, lng }, label };
 }
 
-/** Joins prefecture, city and town (東京都 + 世田谷区 + 松原) for the first match. */
-export function maybeParseZipcloudResponse(body: unknown): string | undefined {
-  if (!isRecord(body) || body.status !== 200) {
-    throw new Error(`Postal code lookup error: ${describe(body)}`);
+/** Joins the Japanese address parts (東京都 + 世田谷区 + 松原) of the first match. */
+export function maybeParsePostalCodeResponse(body: unknown): string | undefined {
+  if (!isRecord(body) || !Array.isArray(body.addresses)) {
+    throw new Error(`Unexpected postal code response: ${describe(body)}`);
   }
-  const first: unknown = Array.isArray(body.results) ? body.results[0] : undefined;
+  const first: unknown = body.addresses[0];
   if (first == null) {
     return undefined;
   }
-  if (!isRecord(first)) {
-    throw new Error(`Unexpected postal code result: ${describe(first)}`);
+  if (!isRecord(first) || !isRecord(first.ja)) {
+    throw new Error(`Unexpected postal code address: ${describe(first)}`);
   }
-  const parts = [first.address1, first.address2, first.address3];
+  const { prefecture, address1, address2, address3, address4 } = first.ja;
+  const parts = [prefecture, address1, address2, address3, address4];
   if (!parts.every((part) => typeof part === 'string')) {
-    throw new Error(`Unexpected postal code result: ${describe(first)}`);
+    throw new Error(`Unexpected postal code address: ${describe(first)}`);
   }
   return parts.join('');
 }
@@ -121,13 +123,16 @@ export function maybeParseApplePlaceHtml(html: string): Place | undefined {
   return { point: { lat: Number(lat), lng: Number(lng) }, label: html.match(APPLE_TITLE_PATTERN)?.[1] };
 }
 
-async function fetchJson(fetchFn: Fetch, url: URL): Promise<unknown> {
-  const response = await fetchFn(url);
-  // The mapcode API answers 404 with a JSON body for points without a code, so only non-JSON is fatal.
+// The mapcode API answers 404 with a JSON body for points without a code, so only non-JSON is fatal.
+async function fetchedJson(url: URL, response: Response): Promise<unknown> {
   if (!response.headers.get('content-type')?.includes('json')) {
     throw new Error(`${url.origin} returned ${response.status} ${response.statusText}`);
   }
   return response.json();
+}
+
+async function fetchJson(fetchFn: Fetch, url: URL): Promise<unknown> {
+  return fetchedJson(url, await fetchFn(url));
 }
 
 /**
@@ -137,8 +142,13 @@ async function fetchJson(fetchFn: Fetch, url: URL): Promise<unknown> {
  */
 export async function resolveShortLink(start: string, fetchFn: Fetch): Promise<string> {
   let current = new URL(start);
+  if (!isMapHost(current)) {
+    throw new Error(`Unsupported short link ${current.href}`);
+  }
   for (let hop = 0; hop < MAX_REDIRECTS; hop++) {
     const response = await fetchFn(current, { redirect: 'manual' });
+    // Only the Location header matters; release the connection instead of leaving the body unread.
+    await response.body?.cancel();
     const location = response.headers.get('location');
     if (!location) {
       throw new Error(`共有リンクを開けませんでした (${response.status})`);
@@ -162,16 +172,26 @@ export async function maybeGetMapcode(point: LatLng, fetchFn: Fetch): Promise<st
   return maybeParseMapcodeResponse(await fetchJson(fetchFn, url));
 }
 
+function normalizeForMatch(text: string): string {
+  return text.normalize('NFKC').replace(/\s+/g, '').replace(/ヶ/g, 'ケ');
+}
+
 /**
- * GSI has no lot-level data in many rural areas and silently falls back to the town centroid
- * (長野県松本市安曇4462-52 -> 長野県松本市安曇, ~7 km off). If the query named a block but the match
- * has no numbers or 丁目 at all, the pin would be wrong, so treat it as not found.
+ * GSI never says "no match" for text it half-recognises, so its answer needs a sanity check:
+ * - In many rural areas it has no lot-level data and falls back to the town centroid
+ *   (長野県松本市安曇4462-52 -> 長野県松本市安曇, ~7 km off). If the query named a block but the
+ *   match has no numbers or 丁目, the pin would be wrong.
+ * - Place names fuzzy-match unrelated areas (東京タワー -> 北海道札幌市東区). A query without numbers
+ *   must appear in the matched address, which still accepts 渋谷区 or 千駄ヶ谷.
  */
 export function isPreciseGsiMatch(query: string, matchedTitle?: string): boolean {
-  if (!/[0-9０-９]/.test(query)) {
-    return true;
+  if (matchedTitle == null) {
+    return false;
   }
-  return matchedTitle != null && /[0-9０-９]|丁目/.test(matchedTitle);
+  if (/\d/.test(query.normalize('NFKC'))) {
+    return /[0-9０-９]|丁目/.test(matchedTitle);
+  }
+  return normalizeForMatch(matchedTitle).includes(normalizeForMatch(query));
 }
 
 async function maybeGeocodeGsi(text: string, fetchFn: Fetch): Promise<Place | undefined> {
@@ -196,10 +216,13 @@ async function maybeGeocodeRomanized(text: string, fetchFn: Fetch): Promise<Plac
   if (!address) {
     return undefined;
   }
-  const url = new URL(ZIPCLOUD_API);
-  url.searchParams.set('zipcode', address.postalCode);
-  // zipcloud labels its JSON as text/plain, so this skips fetchJson's content-type check.
-  const town = maybeParseZipcloudResponse(await (await fetchFn(url)).json());
+  const url = new URL(`${POSTAL_CODE_API}/${address.postalCode}.json`);
+  const response = await fetchFn(url);
+  // One static file per postal code, so an unknown code is a plain 404 page rather than JSON.
+  if (response.status === 404) {
+    return undefined;
+  }
+  const town = maybeParsePostalCodeResponse(await fetchedJson(url, response));
   return town ? maybeGeocodeGsi(`${town}${address.block}`, fetchFn) : undefined;
 }
 
@@ -214,11 +237,21 @@ async function maybeGeocode(text: string, fromGoogle: boolean, deps: ResolveDeps
   const romanized = () => maybeGeocodeRomanized(text, fetchFn);
   const gsi = () => maybeGeocodeGsi(text, fetchFn);
   const geocoders = fromGoogle ? [google, romanized, gsi] : [gsi, romanized, google];
+  // One upstream being down (GSI has outages, Google rejects a misconfigured key) shouldn't sink the others;
+  // the first failure only surfaces if no geocoder finds the place.
+  let firstError: unknown;
   for (const geocode of geocoders) {
-    const place = await geocode?.();
-    if (place) {
-      return place;
+    try {
+      const place = await geocode?.();
+      if (place) {
+        return place;
+      }
+    } catch (error) {
+      firstError ??= error;
     }
+  }
+  if (firstError !== undefined) {
+    throw firstError;
   }
   return undefined;
 }
@@ -232,7 +265,12 @@ export async function maybeResolvePlace(input: ParsedInput, deps: ResolveDeps): 
       return maybeResolvePlace(resolved, deps);
     }
     case 'applePlacePage': {
-      const response = await deps.fetchFn(input.url);
+      const url = new URL(input.url);
+      if (!isMapHost(url)) {
+        throw new Error(`Unsupported Apple Maps URL ${url.href}`);
+      }
+      // Apple serves place pages directly; a redirect would bypass the host check above.
+      const response = await deps.fetchFn(url, { redirect: 'error' });
       return maybeParseApplePlaceHtml(await response.text());
     }
     case 'query':

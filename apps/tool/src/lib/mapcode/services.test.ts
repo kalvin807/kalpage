@@ -5,7 +5,8 @@ import {
   maybeParseGoogleGeocodeResponse,
   maybeParseGsiResponse,
   maybeParseMapcodeResponse,
-  maybeParseZipcloudResponse,
+  maybeParsePostalCodeResponse,
+  maybeResolvePlace,
   resolveShortLink,
 } from './services';
 
@@ -73,24 +74,27 @@ describe('maybeParseGoogleGeocodeResponse', () => {
   });
 });
 
-describe('maybeParseZipcloudResponse', () => {
-  it('joins prefecture, city and town', () => {
-    const body = {
-      message: null,
-      results: [{ address1: '東京都', address2: '世田谷区', address3: '松原', zipcode: '1560043' }],
-      status: 200,
-    };
-    expect(maybeParseZipcloudResponse(body)).toBe('東京都世田谷区松原');
+const MATSUBARA_POSTAL_CODE = {
+  postalCode: '1560043',
+  addresses: [
+    {
+      prefectureCode: '13',
+      ja: { prefecture: '東京都', address1: '世田谷区', address2: '松原', address3: '', address4: '' },
+    },
+  ],
+};
+
+describe('maybeParsePostalCodeResponse', () => {
+  it('joins the Japanese address parts', () => {
+    expect(maybeParsePostalCodeResponse(MATSUBARA_POSTAL_CODE)).toBe('東京都世田谷区松原');
   });
 
-  it('returns undefined for unknown postal codes', () => {
-    expect(maybeParseZipcloudResponse({ message: null, results: null, status: 200 })).toBeUndefined();
+  it('returns undefined without addresses', () => {
+    expect(maybeParsePostalCodeResponse({ postalCode: '1560043', addresses: [] })).toBeUndefined();
   });
 
-  it('throws on API errors', () => {
-    expect(() =>
-      maybeParseZipcloudResponse({ message: 'パラメータ「郵便番号」の桁数が不正です。', results: null, status: 400 }),
-    ).toThrow(/桁数/);
+  it('throws on unexpected shapes', () => {
+    expect(() => maybeParsePostalCodeResponse({ results: null })).toThrow();
   });
 });
 
@@ -144,8 +148,56 @@ describe('isPreciseGsiMatch', () => {
     ['東京都新宿区西新宿6-8-1', '東京都新宿区西新宿六丁目', true],
     ['長野県松本市安曇4462-52', '長野県松本市安曇', false],
     ['東京都渋谷区', '東京都渋谷区', true],
+    ['千駄ヶ谷', '東京都渋谷区千駄ケ谷', true],
+    ['東京タワー', '北海道札幌市東区', false],
     ['長野県松本市安曇4462-52', undefined, false],
   ])('%s -> %s', (query, title, expected) => {
     expect(isPreciseGsiMatch(query, title)).toBe(expected);
+  });
+});
+
+/** Answers by host, so the geocoder chain runs end to end without the network. */
+function fakeHosts(responses: Record<string, () => Response>): typeof fetch {
+  return async (input) => {
+    const respond = responses[new URL(String(input)).hostname];
+    if (!respond) {
+      throw new Error(`unexpected fetch ${String(input)}`);
+    }
+    return respond();
+  };
+}
+
+const GSI_MATSUBARA = [
+  {
+    geometry: { coordinates: [139.648132, 35.668777], type: 'Point' },
+    type: 'Feature',
+    properties: { title: '東京都世田谷区松原二丁目３９番９号' },
+  },
+];
+const ROMANIZED_QUERY = {
+  type: 'query',
+  text: 'Sun Matsubara, 2-chōme-39-9 Matsubara, Setagaya City, Tokyo 156-0043',
+  fromGoogle: true,
+} as const;
+
+describe('maybeResolvePlace geocoder chain', () => {
+  it('moves on when an earlier geocoder fails', async () => {
+    const fetchFn = fakeHosts({
+      'maps.googleapis.com': () => Response.json({ status: 'REQUEST_DENIED', error_message: 'bad key' }),
+      'jp-postal-code-api.ttskch.com': () => Response.json(MATSUBARA_POSTAL_CODE),
+      'msearch.gsi.go.jp': () => Response.json(GSI_MATSUBARA),
+    });
+    await expect(maybeResolvePlace(ROMANIZED_QUERY, { fetchFn, googleApiKey: 'key' })).resolves.toEqual({
+      point: { lat: 35.668777, lng: 139.648132 },
+      label: '東京都世田谷区松原二丁目３９番９号',
+    });
+  });
+
+  it('surfaces the first failure when nothing finds the place', async () => {
+    const fetchFn = fakeHosts({
+      'jp-postal-code-api.ttskch.com': () => new Response('', { status: 503, statusText: 'Service Unavailable' }),
+      'msearch.gsi.go.jp': () => Response.json([]),
+    });
+    await expect(maybeResolvePlace(ROMANIZED_QUERY, { fetchFn })).rejects.toThrow(/503/);
   });
 });

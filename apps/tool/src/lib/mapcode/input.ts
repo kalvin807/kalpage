@@ -41,7 +41,7 @@ interface InvalidInput {
 export type ParsedInput = EmptyInput | PointInput | ShortLinkInput | ApplePlacePageInput | QueryInput | InvalidInput;
 
 export interface RomanizedAddress {
-  /** Seven digits, no hyphen, as zipcloud expects. */
+  /** Seven ASCII digits, no hyphen: the postal code API's file name. */
   readonly postalCode: string;
   /** Chōme, block and building numbers joined with hyphens, e.g. `2-39-9`. */
   readonly block: string;
@@ -52,10 +52,15 @@ export interface RomanizedAddress {
 const JAPAN_BOUNDS = { minLat: 20, maxLat: 46, minLng: 122, maxLng: 154 } as const;
 
 const LAT_LNG_PATTERN = /^\s*(-?\d{1,3}(?:\.\d+)?)\s*[,\s]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/;
-const URL_PATTERN = /https?:\/\/\S+/;
-const POSTAL_CODE_PATTERN = /〒\s*\d{3}-?\d{4}/g;
-// Google writes hyphens as U+2212 in some locales ("1 Chome−5−5").
-const ROMANIZED_POSTAL_PATTERN = /〒\s*(\d{3})[-−‐]?(\d{4})|(?<!\d)(\d{3})[-−‐](\d{4})(?!\d)/;
+// ASCII only, so surrounding Japanese punctuation ("（https://…）", "https://…、見てね") isn't swallowed.
+const URL_PATTERN = /https?:\/\/[\x21-\x7e]+/;
+const URL_TRAILING_PUNCTUATION = /[).,!?'"]+$/;
+// Matched after NFKC, which turns full-width digits and hyphens into ASCII. Google writes some
+// hyphens as U+2212 ("1 Chome−5−5"), which NFKC leaves alone. Without 〒 the hyphen is required,
+// so lot numbers like 4462 aren't mistaken for postal codes.
+const POSTAL_CODE_SOURCE = String.raw`〒\s*(\d{3})[-−‐]?(\d{4})|(?<!\d)(\d{3})[-−‐](\d{4})(?!\d)`;
+const POSTAL_CODE_PATTERN = new RegExp(POSTAL_CODE_SOURCE);
+const POSTAL_CODE_GLOBAL_PATTERN = new RegExp(POSTAL_CODE_SOURCE, 'g');
 const ROMANIZED_BLOCK_PATTERN = /(\d+)[\s\-−‐]*ch[oō]me[\s\-−‐]*(\d+)(?:[-−‐](\d+))?/i;
 // `!3d{lat}!4d{lng}` is the selected place; `@{lat},{lng}` is only the viewport centre.
 const GOOGLE_PIN_PATTERN = /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/g;
@@ -88,7 +93,7 @@ function maybeParseLatLng(text: string | null): LatLng | undefined {
 
 /** Postal codes and line breaks (Apple puts the address on several lines) both stop GSI from matching. */
 export function cleanAddress(text: string): string {
-  return text.replace(POSTAL_CODE_PATTERN, ' ').replace(/\s+/g, ' ').trim();
+  return text.normalize('NFKC').replace(POSTAL_CODE_GLOBAL_PATTERN, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -98,8 +103,9 @@ export function cleanAddress(text: string): string {
  * to rebuild "東京都世田谷区松原2-39-9".
  */
 export function maybeParseRomanizedAddress(text: string): RomanizedAddress | undefined {
-  const postal = text.match(ROMANIZED_POSTAL_PATTERN);
-  const block = text.match(ROMANIZED_BLOCK_PATTERN);
+  const normalized = text.normalize('NFKC');
+  const postal = normalized.match(POSTAL_CODE_PATTERN);
+  const block = normalized.match(ROMANIZED_BLOCK_PATTERN);
   if (!postal || !block) {
     return undefined;
   }
@@ -108,8 +114,14 @@ export function maybeParseRomanizedAddress(text: string): RomanizedAddress | und
   return { postalCode, block: numbers.join('-') };
 }
 
-/** Hosts we are willing to fetch from the server; anything else would turn the resolver into an open proxy. */
+/**
+ * URLs we are willing to fetch from the server; anything else would turn the resolver into an
+ * open proxy. HTTPS on the default port only, so `maps.apple.com:6379` can't reach other services.
+ */
 export function isMapHost(url: URL): boolean {
+  if (url.protocol !== 'https:' || url.port !== '') {
+    return false;
+  }
   return isShortLink(url) || isGoogleMapsUrl(url) || isAppleMapsUrl(url);
 }
 
@@ -151,6 +163,15 @@ function maybeParamPoint(params: URLSearchParams, keys: ReadonlyArray<string>): 
   return undefined;
 }
 
+function maybeDecodeUriComponent(text: string): string | undefined {
+  try {
+    return decodeURIComponent(text);
+  } catch {
+    // Malformed escapes (`/maps/place/100%`) are bad input, not a server fault.
+    return undefined;
+  }
+}
+
 /** Text after `/maps/place/` or `/maps/search/`, e.g. a place name or `35.1,139.2`. */
 function maybeGooglePathText(url: URL): string | undefined {
   const segments = url.pathname.split('/');
@@ -159,7 +180,7 @@ function maybeGooglePathText(url: URL): string | undefined {
   if (!segment || segment.startsWith('@') || segment.startsWith('data=')) {
     return undefined;
   }
-  return decodeURIComponent(segment).replace(/\+/g, ' ').trim() || undefined;
+  return maybeDecodeUriComponent(segment)?.replace(/\+/g, ' ').trim() || undefined;
 }
 
 function parseGoogleUrl(url: URL): ParsedInput {
@@ -177,12 +198,14 @@ function parseGoogleUrl(url: URL): ParsedInput {
     return { type: 'point', point };
   }
 
+  // On a place page the viewport is centred on the place; on search or directions pages it is just
+  // wherever the map was, so the search text is the better signal there.
+  const text = paramText ?? pathText;
   const center = url.pathname.match(GOOGLE_CENTER_PATTERN);
-  if (center) {
+  if (center && (url.pathname.includes('/place/') || !text)) {
     return { type: 'point', point: { lat: Number(center[1]), lng: Number(center[2]) }, label: pathText };
   }
 
-  const text = paramText ?? pathText;
   if (text) {
     return { type: 'query', text, fromGoogle: true };
   }
@@ -206,6 +229,11 @@ function parseAppleUrl(url: URL): ParsedInput {
 }
 
 function parseMapUrl(url: URL): ParsedInput {
+  if (url.port !== '') {
+    return { type: 'invalid', error: 'GoogleマップとAppleマップのリンクに対応しています' };
+  }
+  // Old Apple links are plain http; anything we fetch goes over https.
+  url.protocol = 'https:';
   if (isShortLink(url)) {
     return { type: 'shortLink', url: url.href };
   }
@@ -223,7 +251,8 @@ function parseMapUrl(url: URL): ParsedInput {
  * link in a place name ("我妻 https://maps.app.goo.gl/…"), so any URL inside wins.
  */
 export function parseInput(raw: string): ParsedInput {
-  const text = raw.trim();
+  // NFKC so IME input like `35.6812，139.7671` or full-width digits reads like ASCII.
+  const text = raw.normalize('NFKC').trim();
   if (!text) {
     return { type: 'empty' };
   }
@@ -231,9 +260,11 @@ export function parseInput(raw: string): ParsedInput {
   if (point) {
     return { type: 'point', point };
   }
-  const urlText = text.match(URL_PATTERN)?.[0];
+  const urlText = text.match(URL_PATTERN)?.[0].replace(URL_TRAILING_PUNCTUATION, '');
   if (urlText) {
-    return parseMapUrl(new URL(urlText));
+    return URL.canParse(urlText)
+      ? parseMapUrl(new URL(urlText))
+      : { type: 'invalid', error: 'リンクを読み取れませんでした' };
   }
   return { type: 'query', text, fromGoogle: false };
 }

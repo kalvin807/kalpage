@@ -36,24 +36,19 @@ const NOT_FOUND_MESSAGE =
   '場所が見つかりませんでした。日本語の住所を入力するか、地図をタップしてピンを置いてください。';
 const OUTSIDE_JAPAN_MESSAGE = 'マップコードは日本国内の地点のみ対応しています';
 const NO_MAPCODE_MESSAGE = 'この地点のマップコードは見つかりませんでした';
+const LOOKUP_FAILED_MESSAGE = '検索中にエラーが発生しました。時間をおいてもう一度お試しください。';
+
+interface LookupError {
+  readonly message: string;
+  /** Technical cause (upstream status, API error), shown small so a misconfigured key is diagnosable. */
+  readonly detail?: string;
+}
 
 interface LookupState {
   readonly place?: Place;
   readonly mapcode?: string;
   readonly loading: boolean;
-  readonly error?: string;
-}
-
-/** Coordinates and bad links are handled locally; everything else needs the server (redirects, geocoding). */
-async function maybeFindPlace(text: string): Promise<Place | undefined> {
-  const parsed = parseInput(text);
-  if (parsed.type === 'invalid') {
-    throw new Error(parsed.error);
-  }
-  if (parsed.type === 'point') {
-    return { point: parsed.point, label: parsed.label };
-  }
-  return maybeLookupPlace({ data: { text } });
+  readonly error?: LookupError;
 }
 
 function MapcodePage() {
@@ -72,11 +67,11 @@ function MapcodePage() {
         return;
       }
       if (!place) {
-        setState({ loading: false, error: NOT_FOUND_MESSAGE });
+        setState({ loading: false, error: { message: NOT_FOUND_MESSAGE } });
         return;
       }
       if (!isInJapan(place.point)) {
-        setState({ place, loading: false, error: OUTSIDE_JAPAN_MESSAGE });
+        setState({ place, loading: false, error: { message: OUTSIDE_JAPAN_MESSAGE } });
         return;
       }
       setState({ place, loading: true });
@@ -84,21 +79,38 @@ function MapcodePage() {
       if (isStale()) {
         return;
       }
-      setState({ place, mapcode, loading: false, error: mapcode ? undefined : NO_MAPCODE_MESSAGE });
+      setState({ place, mapcode, loading: false, error: mapcode ? undefined : { message: NO_MAPCODE_MESSAGE } });
     } catch (error) {
       if (isStale()) {
         return;
       }
-      setState({ loading: false, error: error instanceof Error ? error.message : String(error) });
+      console.error('Mapcode lookup failed:', error);
+      // Keep the last pin so a failed lookup after a map tap doesn't make it vanish.
+      setState((previous) => ({
+        place: previous.place,
+        loading: false,
+        error: { message: LOOKUP_FAILED_MESSAGE, detail: error instanceof Error ? error.message : String(error) },
+      }));
     }
   };
 
+  // Coordinates and bad links are handled locally; everything else needs the server (redirects, geocoding).
   const submit = (text: string) => {
     setInput(text);
-    if (!text.trim()) {
+    const parsed = parseInput(text);
+    if (parsed.type === 'empty') {
       return;
     }
-    void lookup(() => maybeFindPlace(text));
+    if (parsed.type === 'invalid') {
+      latestRequest.current++;
+      setState({ loading: false, error: { message: parsed.error } });
+      return;
+    }
+    if (parsed.type === 'point') {
+      void lookup(async () => ({ point: parsed.point, label: parsed.label }));
+      return;
+    }
+    void lookup(() => maybeLookupPlace({ data: { text } }));
   };
 
   const pickPoint = (point: LatLng) => {
@@ -143,7 +155,7 @@ function MapcodePage() {
       </div>
 
       {/* Result */}
-      {state.error && <ErrorState message={state.error} />}
+      {state.error && <ErrorState error={state.error} />}
       {state.place && <ResultCard place={state.place} mapcode={state.mapcode} loading={state.loading} />}
 
       {/* Map */}
@@ -171,13 +183,17 @@ function MapPlaceholder() {
 }
 
 interface ErrorStateProps {
-  readonly message: string;
+  readonly error: LookupError;
 }
 
-function ErrorState({ message }: ErrorStateProps) {
+function ErrorState({ error }: ErrorStateProps) {
   return (
-    <div className="animate-in fade-in-0 mb-4 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive duration-150">
-      {message}
+    <div
+      role="alert"
+      className="animate-in fade-in-0 mb-4 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive duration-150"
+    >
+      {error.message}
+      {error.detail && <p className="mt-1 font-mono text-xs break-words opacity-70">{error.detail}</p>}
     </div>
   );
 }
@@ -191,7 +207,10 @@ interface ResultCardProps {
 function ResultCard({ place, mapcode, loading }: ResultCardProps) {
   const coordinates = `${place.point.lat.toFixed(6)}, ${place.point.lng.toFixed(6)}`;
   return (
-    <div className="animate-in fade-in-0 rounded-lg border border-border bg-card p-5 shadow-sm duration-200">
+    <div
+      role="status"
+      className="animate-in fade-in-0 rounded-lg border border-border bg-card p-5 shadow-sm duration-200"
+    >
       <div className="mb-1 text-xs font-medium tracking-wide text-muted-foreground">マップコード</div>
       <div className={`flex min-h-10 items-center gap-2 transition-opacity ${loading ? 'opacity-40' : 'opacity-100'}`}>
         <span className="font-mono text-3xl font-semibold tracking-wide tabular-nums">{mapcode ?? '— — —'}</span>

@@ -103,6 +103,43 @@ describe('parseInput', () => {
       'https://example.com/?ll=35.1,139.2',
       { type: 'invalid', error: 'GoogleマップとAppleマップのリンクに対応しています' },
     ],
+    ['full-width comma from an IME', '35.6812，139.7671', { type: 'point', point: { lat: 35.6812, lng: 139.7671 } }],
+    [
+      'link wrapped in full-width brackets',
+      '（https://maps.app.goo.gl/abc）',
+      { type: 'shortLink', url: 'https://maps.app.goo.gl/abc' },
+    ],
+    [
+      'link followed by Japanese text',
+      'https://maps.app.goo.gl/abc、見てね',
+      { type: 'shortLink', url: 'https://maps.app.goo.gl/abc' },
+    ],
+    ['unparseable link', 'http://[', { type: 'invalid', error: 'リンクを読み取れませんでした' }],
+    [
+      'malformed escape in a google path',
+      'https://www.google.com/maps/place/100%',
+      { type: 'invalid', error: 'このGoogleマップのリンクから場所を読み取れませんでした' },
+    ],
+    [
+      'google search text wins over viewport centre',
+      'https://www.google.com/maps/search/%E6%9D%B1%E4%BA%AC%E3%82%BF%E3%83%AF%E3%83%BC/@35,139,15z',
+      { type: 'query', text: '東京タワー', fromGoogle: true },
+    ],
+    [
+      'google bare viewport',
+      'https://www.google.com/maps/@35.6812,139.7671,15z',
+      { type: 'point', point: { lat: 35.6812, lng: 139.7671 } },
+    ],
+    [
+      'non-default port is rejected',
+      'https://maps.apple.com:6379/?place-id=x',
+      { type: 'invalid', error: 'GoogleマップとAppleマップのリンクに対応しています' },
+    ],
+    [
+      'old http apple links are fetched over https',
+      'http://maps.apple.com/place?place-id=I3D6D8928196FEF02',
+      { type: 'applePlacePage', url: 'https://maps.apple.com/place?place-id=I3D6D8928196FEF02' },
+    ],
   ])('%s', (_name, input, expected) => {
     expect(parseInput(input)).toEqual(expected);
   });
@@ -112,7 +149,11 @@ describe('cleanAddress', () => {
   it.each([
     ['〒151-0051 Tokyo, Shibuya', 'Tokyo, Shibuya'],
     ['〒1510051東京都渋谷区', '東京都渋谷区'],
+    ['〒150−0001 東京都渋谷区神宮前1-1-1', '東京都渋谷区神宮前1-1-1'],
+    ['150-0001 東京都渋谷区神宮前1-1-1', '東京都渋谷区神宮前1-1-1'],
+    ['〒１５０－０００１ 東京都渋谷区', '東京都渋谷区'],
     ['あざみ野2丁目9-13', 'あざみ野2丁目9-13'],
+    ['長野県松本市安曇4462-52', '長野県松本市安曇4462-52'],
   ])('%s', (input, expected) => {
     expect(cleanAddress(input)).toBe(expected);
   });

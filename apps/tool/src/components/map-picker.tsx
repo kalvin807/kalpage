@@ -23,12 +23,16 @@ const STYLE_URLS = {
   light: 'https://tiles.openfreemap.org/styles/positron',
   dark: 'https://tiles.openfreemap.org/styles/dark',
 } as const;
-// An embedded map in a scrolling page shouldn't trap the scroll wheel or one-finger swipes.
-const GESTURE_LOCALE = {
+// MapLibre's built-in strings are English; these are the ones this map shows or announces.
+const MAP_LOCALE = {
+  'Map.Title': '地図',
+  'Marker.Title': 'ピン',
+  'NavigationControl.ZoomIn': '拡大',
+  'NavigationControl.ZoomOut': '縮小',
   'CooperativeGesturesHandler.WindowsHelpText': 'Ctrl + スクロールで拡大・縮小',
   'CooperativeGesturesHandler.MacHelpText': '⌘ + スクロールで拡大・縮小',
   'CooperativeGesturesHandler.MobileHelpText': '2本の指で地図を動かせます',
-};
+} as const;
 const PIN_SVG = `<svg width="32" height="40" viewBox="0 0 32 40" aria-hidden="true">
   <path d="M16 38S4 25.5 4 16a12 12 0 0 1 24 0c0 9.5-12 22-12 22z" fill="var(--primary)" stroke="var(--background)" stroke-width="2.5"/>
   <circle cx="16" cy="16" r="4.5" fill="var(--background)"/>
@@ -69,8 +73,9 @@ export function MapPicker({ point, onPick }: MapPickerProps) {
       dragRotate: false,
       pitchWithRotate: false,
       touchPitch: false,
+      // An embedded map in a scrolling page shouldn't trap the scroll wheel or one-finger swipes.
       cooperativeGestures: true,
-      locale: GESTURE_LOCALE,
+      locale: MAP_LOCALE,
       attributionControl: { compact: true },
     });
     map.touchZoomRotate.disableRotation();
@@ -88,7 +93,14 @@ export function MapPicker({ point, onPick }: MapPickerProps) {
     element.innerHTML = PIN_SVG;
     const marker = new Marker({ element, anchor: 'bottom', draggable: true });
     marker.on('dragend', () => pick(marker.getLngLat()));
-    map.on('click', (event) => pick(event.lngLat));
+    map.on('click', (event) => {
+      // MapLibre passes clicks on markers through to the map; without this, tapping the pin would
+      // move it to the tap point on its head, ~20px north of where it points.
+      if (event.originalEvent.target instanceof Node && element.contains(event.originalEvent.target)) {
+        return;
+      }
+      pick(event.lngLat);
+    });
 
     mapRef.current = map;
     markerRef.current = marker;
@@ -121,10 +133,6 @@ export function MapPicker({ point, onPick }: MapPickerProps) {
   }, [point]);
 
   return (
-    <div
-      ref={containerRef}
-      className="isolate h-72 w-full overflow-hidden rounded-lg border border-border sm:h-96"
-      aria-label="地図"
-    />
+    <div ref={containerRef} className="isolate h-72 w-full overflow-hidden rounded-lg border border-border sm:h-96" />
   );
 }
