@@ -129,3 +129,48 @@
     @apply font-sans;
   }
 }
+
+/* MapLibre (mapcode tool) */
+.maplibregl-map {
+  font: inherit;
+  background: var(--muted);
+}
+
+.map-pin {
+  cursor: grab;
+  filter: drop-shadow(0 2px 3px oklch(0 0 0 / 0.35));
+}
+
+.map-pin:active {
+  cursor: grabbing;
+}
+
+.maplibregl-ctrl.maplibregl-ctrl-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: none;
+}
+
+.maplibregl-ctrl-group button + button {
+  border-top-color: var(--border);
+}
+
+/* MapLibre ships dark icons only. */
+.dark .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+
+.maplibregl-ctrl.maplibregl-ctrl-attrib,
+.maplibregl-ctrl-attrib.maplibregl-compact {
+  background: color-mix(in oklch, var(--card) 85%, transparent);
+  color: var(--muted-foreground);
+}
+
+.maplibregl-ctrl-attrib a {
+  color: inherit;
+}
+
+.maplibregl-cooperative-gesture-screen {
+  font-size: 0.875rem;
+}
