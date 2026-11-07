@@ -42,6 +42,9 @@ export function PortfolioLayout({ painting, year, children }: PortfolioLayoutPro
             <a href="#skills" className="text-text-muted hover:text-text-heading">
               Skills
             </a>
+            <a href="/tool" className="text-text-muted hover:text-text-heading">
+              Tools
+            </a>
           </nav>
           <div className="ml-auto flex gap-2 text-sm">
             <a
@@ -68,7 +71,12 @@ export function PortfolioLayout({ painting, year, children }: PortfolioLayoutPro
         <PaintingPixels painting={painting} />
         <div className="border-t border-line">
           <div className="mx-auto flex max-w-2xl flex-wrap justify-between gap-2 px-5 py-4 text-xs text-text-muted">
-            <span>&copy; {year} Kal.L</span>
+            <span>
+              &copy; {year} Kal.L ·{' '}
+              <a href="/tool" className="text-text-muted hover:text-text-heading">
+                Tools
+              </a>
+            </span>
             <span className="tabular-nums">35.6762&deg; N, 139.6503&deg; E</span>
           </div>
         </div>

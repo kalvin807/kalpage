@@ -126,13 +126,13 @@ function MapcodePage() {
             event.preventDefault();
             submit(input);
           }}
-          className="flex items-center rounded-lg border border-border bg-card shadow-sm transition-all focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-ring hover:border-foreground/20"
+          className="flex items-center border border-line transition-colors focus-within:border-link hover:border-text-muted"
         >
           <Input
             value={input}
             onChange={(event) => setInput(event.target.value)}
             placeholder="住所・Google / Apple マップのリンク・緯度,経度"
-            className="h-12 flex-1 border-0 bg-transparent px-4 text-base placeholder:text-muted-foreground/60 focus-visible:ring-0 sm:h-14"
+            className="h-12 flex-1 border-0 bg-transparent px-4 text-base text-text-heading placeholder:text-text-muted/70 focus-visible:ring-0 dark:bg-transparent sm:h-14"
             aria-label="住所またはマップのリンク"
             enterKeyHint="search"
           />
@@ -146,7 +146,7 @@ function MapcodePage() {
               key={example}
               type="button"
               onClick={() => submit(example)}
-              className="rounded-full border border-transparent px-2 py-1 font-mono text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground"
+              className="border border-transparent px-2 py-1 text-xs text-text-muted hover:border-line hover:text-text-heading"
             >
               {example}
             </button>
@@ -165,10 +165,10 @@ function MapcodePage() {
             <MapPicker point={state.place?.point} onPick={pickPoint} />
           </Suspense>
         </ClientOnly>
-        <p className="mt-2 text-xs text-muted-foreground">地図をタップ、またはピンをドラッグして位置を調整できます</p>
+        <p className="mt-2 mb-0 text-xs text-text-muted">地図をタップ、またはピンをドラッグして位置を調整できます</p>
       </div>
 
-      <p className="mt-10 text-xs leading-relaxed text-muted-foreground/70">
+      <p className="mt-14 mb-0 border-t border-line pt-4 text-xs text-text-muted">
         マップコードは japanmapcode.com
         から取得しています。「マップコード」および「MAPCODE」は株式会社デンソーの登録商標です。
       </p>
@@ -179,7 +179,7 @@ function MapcodePage() {
 // --- UI Components ---
 
 function MapPlaceholder() {
-  return <div className="h-72 w-full animate-pulse rounded-lg border border-border bg-muted sm:h-96" />;
+  return <div className="h-72 w-full animate-pulse border border-line bg-surface-hover sm:h-96" />;
 }
 
 interface ErrorStateProps {
@@ -190,10 +190,10 @@ function ErrorState({ error }: ErrorStateProps) {
   return (
     <div
       role="alert"
-      className="animate-in fade-in-0 mb-4 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive duration-150"
+      className="animate-in fade-in-0 mb-4 border border-destructive/50 px-4 py-3 text-sm text-destructive duration-150"
     >
       {error.message}
-      {error.detail && <p className="mt-1 font-mono text-xs break-words opacity-70">{error.detail}</p>}
+      {error.detail && <p className="m-0 mt-1 text-xs break-words opacity-70">{error.detail}</p>}
     </div>
   );
 }
@@ -207,27 +207,30 @@ interface ResultCardProps {
 function ResultCard({ place, mapcode, loading }: ResultCardProps) {
   const coordinates = `${place.point.lat.toFixed(6)}, ${place.point.lng.toFixed(6)}`;
   return (
-    <div
-      role="status"
-      className="animate-in fade-in-0 rounded-lg border border-border bg-card p-5 shadow-sm duration-200"
-    >
-      <div className="mb-1 text-xs font-medium tracking-wide text-muted-foreground">マップコード</div>
-      <div className={`flex min-h-10 items-center gap-2 transition-opacity ${loading ? 'opacity-40' : 'opacity-100'}`}>
-        <span className="font-mono text-3xl font-semibold tracking-wide tabular-nums">{mapcode ?? '— — —'}</span>
-        {mapcode && !loading && <CopyButton text={mapcode} />}
+    <div role="status" className="animate-in fade-in-0 border border-line duration-200">
+      <div className="border-b border-line px-4 py-4">
+        <div className="mb-1 text-xs text-text-muted">マップコード</div>
+        <div
+          className={`flex min-h-10 items-center gap-2 transition-opacity ${loading ? 'opacity-40' : 'opacity-100'}`}
+        >
+          <span className="text-3xl font-semibold text-text-heading tabular-nums">{mapcode ?? '— — —'}</span>
+          {mapcode && !loading && <CopyButton text={mapcode} />}
+        </div>
       </div>
-      <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
+      <dl className="m-0 text-sm">
         {place.label && (
-          <>
-            <dt className="text-muted-foreground">場所</dt>
-            <dd className="min-w-0 break-words">{place.label}</dd>
-          </>
+          <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] border-b border-line">
+            <dt className="px-4 py-2 text-text-muted">場所</dt>
+            <dd className="m-0 border-l border-line px-3 py-2 break-words text-text-heading">{place.label}</dd>
+          </div>
         )}
-        <dt className="text-muted-foreground">座標</dt>
-        <dd className="flex items-center gap-1 font-mono tabular-nums">
-          {coordinates}
-          <CopyButton text={coordinates} />
-        </dd>
+        <div className="grid grid-cols-[4.5rem_minmax(0,1fr)]">
+          <dt className="px-4 py-2 text-text-muted">座標</dt>
+          <dd className="m-0 flex items-center gap-1 border-l border-line px-3 py-2 text-text-heading tabular-nums">
+            {coordinates}
+            <CopyButton text={coordinates} />
+          </dd>
+        </div>
       </dl>
     </div>
   );

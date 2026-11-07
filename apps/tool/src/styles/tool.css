@@ -1,94 +1,38 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import '@fontsource-variable/inter';
+@import './theme.css';
 
-@custom-variant dark (&:is(.dark *));
+/* Dark is the default palette (see theme.css), so `dark:` applies unless ThemeProvider set `.light`. */
+@custom-variant dark (&:not(.light *));
 
+/* shadcn tokens, mapped onto the shared palette so the ui/ primitives follow the portfolio look. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.267 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.267 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.267 0 0);
-  --primary: oklch(0.652 0.143 166.3);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.973 0 0);
-  --secondary-foreground: oklch(0.389 0 0);
-  --muted: oklch(0.973 0 0);
-  --muted-foreground: oklch(0.589 0 0);
-  --accent: oklch(0.951 0.031 166.3);
-  --accent-foreground: oklch(0.652 0.143 166.3);
-  --destructive: oklch(0.608 0.156 23.5);
-  --border: oklch(0.925 0 0);
-  --input: oklch(1 0 0);
-  --ring: oklch(0.652 0.143 166.3);
-  --chart-1: oklch(0.652 0.143 166.3);
-  --chart-2: oklch(0.593 0.143 166.3);
-  --chart-3: oklch(0.523 0.143 166.3);
-  --chart-4: oklch(0.389 0 0);
-  --chart-5: oklch(0.589 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.973 0 0);
-  --sidebar-foreground: oklch(0.267 0 0);
-  --sidebar-primary: oklch(0.652 0.143 166.3);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.951 0.031 166.3);
-  --sidebar-accent-foreground: oklch(0.652 0.143 166.3);
-  --sidebar-border: oklch(0.925 0 0);
-  --sidebar-ring: oklch(0.652 0.143 166.3);
-}
-
-.dark {
-  --background: oklch(0.197 0 0);
-  --foreground: oklch(0.925 0 0);
-  --card: oklch(0.239 0 0);
-  --card-foreground: oklch(0.925 0 0);
-  --popover: oklch(0.239 0 0);
-  --popover-foreground: oklch(0.925 0 0);
-  --primary: oklch(0.787 0.143 163.8);
-  --primary-foreground: oklch(0.197 0 0);
-  --secondary: oklch(0.267 0 0);
-  --secondary-foreground: oklch(0.831 0 0);
-  --muted: oklch(0.239 0 0);
-  --muted-foreground: oklch(0.678 0 0);
-  --accent: oklch(0.354 0.059 166.3);
-  --accent-foreground: oklch(0.787 0.143 163.8);
-  --destructive: oklch(0.674 0.143 23.5);
-  --border: oklch(0.323 0 0);
-  --input: oklch(0.267 0 0);
-  --ring: oklch(0.787 0.143 163.8);
-  --chart-1: oklch(0.787 0.143 163.8);
-  --chart-2: oklch(0.826 0.143 163.8);
-  --chart-3: oklch(0.909 0.143 163.8);
-  --chart-4: oklch(0.831 0 0);
-  --chart-5: oklch(0.678 0 0);
-  --sidebar: oklch(0.239 0 0);
-  --sidebar-foreground: oklch(0.925 0 0);
-  --sidebar-primary: oklch(0.787 0.143 163.8);
-  --sidebar-primary-foreground: oklch(0.197 0 0);
-  --sidebar-accent: oklch(0.354 0.059 166.3);
-  --sidebar-accent-foreground: oklch(0.787 0.143 163.8);
-  --sidebar-border: oklch(0.323 0 0);
-  --sidebar-ring: oklch(0.787 0.143 163.8);
+  --background: var(--palette-bg);
+  --foreground: var(--palette-text);
+  --card: var(--palette-bg);
+  --card-foreground: var(--palette-text);
+  --popover: var(--palette-raised);
+  --popover-foreground: var(--palette-text);
+  /* Solid buttons are inverted text-on-background, like the portfolio's Email button. */
+  --primary: var(--palette-text);
+  --primary-foreground: var(--palette-bg);
+  --secondary: var(--palette-hover);
+  --secondary-foreground: var(--palette-text);
+  --muted: var(--palette-hover);
+  --muted-foreground: var(--palette-muted);
+  --accent: var(--palette-hover);
+  --accent-foreground: var(--palette-heading);
+  --destructive: var(--palette-danger);
+  --border: var(--palette-line);
+  --input: var(--palette-line);
+  --ring: color-mix(in oklch, var(--palette-link) 80%, transparent);
+  /* A unit is required: shadcn derives the other radii with calc(var(--radius) - 2px). */
+  --radius: 0rem;
 }
 
 @theme inline {
-  --font-sans: 'Inter Variable', sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
+  --font-sans: var(--font-mono);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -120,14 +64,6 @@
   * {
     @apply border-border outline-ring/50;
   }
-
-  body {
-    @apply font-sans bg-background text-foreground;
-  }
-
-  html {
-    @apply font-sans;
-  }
 }
 
 /* MapLibre (mapcode tool) */
@@ -147,8 +83,8 @@
 
 .maplibregl-ctrl.maplibregl-ctrl-group {
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--card);
+  border-radius: 0;
+  background: var(--background);
   box-shadow: none;
 }
 
@@ -157,13 +93,13 @@
 }
 
 /* MapLibre ships dark icons only. */
-.dark .maplibregl-ctrl-icon {
+:root:not(.light) .maplibregl-ctrl-icon {
   filter: invert(1);
 }
 
 .maplibregl-ctrl.maplibregl-ctrl-attrib,
 .maplibregl-ctrl-attrib.maplibregl-compact {
-  background: color-mix(in oklch, var(--card) 85%, transparent);
+  background: color-mix(in oklch, var(--background) 85%, transparent);
   color: var(--muted-foreground);
 }
 

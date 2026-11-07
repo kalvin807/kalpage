@@ -4,6 +4,8 @@ import { GlobalErrorComponent } from '@/components/error-boundary';
 import { ThemeProvider } from '@/lib/theme-provider';
 import { ThemeToggle } from '@/components/theme-toggle';
 
+import avatarUrl from '@/assets/avatar.webp';
+
 import toolCss from '@/styles/tool.css?url';
 
 const TOOL_NAME = 'kalvin.io/tool';
@@ -22,7 +24,7 @@ export const Route = createFileRoute('/tool')({
       },
       { name: 'author', content: 'Kal.L' },
       { name: 'robots', content: 'index,follow,max-image-preview:large' },
-      { name: 'theme-color', content: '#f5f4f1' },
+      { name: 'theme-color', content: '#121212' },
       { property: 'og:type', content: 'website' },
       { property: 'og:title', content: TOOL_NAME },
       { property: 'og:description', content: TOOL_DESCRIPTION },
@@ -84,25 +86,43 @@ function ToolLayout() {
 
   return (
     <ThemeProvider>
-      <div className="min-h-dvh">
-        <div className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
-          <header className="mb-8">
-            <div className="flex items-start justify-between">
-              <div>
-                <Link
-                  to="/tool"
-                  className="font-mono text-sm font-medium tracking-tight text-foreground transition-colors hover:text-primary"
-                >
-                  {TOOL_NAME}
-                </Link>
-                {pageTitle && <h1 className="mt-1 text-lg font-semibold tracking-tight">{pageTitle}</h1>}
-              </div>
-              <ThemeToggle />
-            </div>
-          </header>
-          <Outlet />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-bg focus:p-3"
+      >
+        本文へ移動
+      </a>
+      <header className="border-b border-line">
+        <div className="mx-auto flex max-w-2xl items-center gap-2 px-5 py-3">
+          <a href="/" className="flex items-center gap-2.5 text-text-heading hover:no-underline">
+            <img
+              src={avatarUrl}
+              alt=""
+              width={24}
+              height={24}
+              loading="eager"
+              className="size-6 [image-rendering:pixelated]"
+            />
+            kalvin.io
+          </a>
+          <span aria-hidden="true" className="text-text-muted">
+            /
+          </span>
+          <Link to="/tool" className="text-text-muted hover:text-text-heading">
+            tool
+          </Link>
+          <div className="ml-auto">
+            <ThemeToggle />
+          </div>
         </div>
-      </div>
+      </header>
+
+      <main id="main-content" className="mx-auto max-w-2xl px-5 pt-12 pb-20 sm:pt-16">
+        {pageTitle && (
+          <h1 className="pixel-heading m-0 mb-6 text-[0.9375rem] font-semibold text-text-heading">{pageTitle}</h1>
+        )}
+        <Outlet />
+      </main>
     </ThemeProvider>
   );
 }

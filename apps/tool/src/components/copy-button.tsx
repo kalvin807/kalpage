@@ -28,7 +28,7 @@ export function CopyButton({ text, className }: CopyButtonProps) {
       aria-label="コピー"
       className={`size-6 text-muted-foreground/50 transition-all hover:text-foreground active:scale-95 ${className ?? ''}`}
     >
-      {copied ? <IconCheck className="size-3 text-emerald-600" /> : <IconCopy className="size-3" />}
+      {copied ? <IconCheck className="size-3 text-link" /> : <IconCopy className="size-3" />}
     </Button>
   );
 }
