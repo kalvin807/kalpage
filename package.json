@@ -27,12 +27,15 @@
     "knip": "knip"
   },
   "devDependencies": {
-    "@types/node": "^26.6.3",
-    "knip": "^6.38.0",
-    "oxfmt": "^0.70.0",
-    "oxlint": "^1.85.0",
-    "oxlint-tsgolint": "^7.0.2003",
-    "typescript": "^6.0.3"
+    "@types/node": "^26.6.6",
+    "knip": "^6.44.1",
+    "oxfmt": "^0.77.0",
+    "oxlint": "^1.92.0",
+    "oxlint-tsgolint": "^7.0.2006",
+    "typescript": "^7.0.2"
+  },
+  "overrides": {
+    "@emnapi/runtime": "^1.11.3"
   },
   "packageManager": "bun@1.4.2"
 }

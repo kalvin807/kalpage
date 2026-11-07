@@ -3,7 +3,8 @@
   "workspaces": {
     ".": {
       "entry": [],
-      "project": []
+      "project": [],
+      "ignoreBinaries": ["dev", "preview", "typecheck"]
     },
     "apps/portfolio": {
       "astro": true
