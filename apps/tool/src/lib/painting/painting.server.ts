@@ -7,9 +7,35 @@ import { STRIP_COLS, STRIP_ROWS, type PaintingInfo, type PaintingPayload, type P
 const MAX_RETRIES = 3;
 const CACHE_TTL_SECONDS = 60 * 60 * 6;
 const CACHE_TTL_MS = CACHE_TTL_SECONDS * 1000;
+// v1/search was retired on 2026-10-01 (it now answers 410). v1.1/search is paginated
+// with offset/limit and reports the match count as `total`.
 const SEARCH_URL =
-  'https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=11&hasImages=true&q=painting';
+  'https://collectionapi.metmuseum.org/public/collection/v1.1/search?departmentId=11&hasImages=true&q=painting';
 const OBJECT_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+
+interface SearchPage {
+  readonly total: number;
+  readonly objectIDs: readonly number[];
+}
+
+async function searchPage(offset: number, limit: number): Promise<SearchPage> {
+  const res = await fetch(`${SEARCH_URL}&offset=${offset}&limit=${limit}`);
+  if (!res.ok) {
+    throw new Error(`Search API failed: ${res.status}`);
+  }
+  const data = (await res.json()) as unknown as { total?: number; objectIDs?: number[] };
+  return { total: data.total ?? 0, objectIDs: data.objectIDs ?? [] };
+}
+
+/** Returns up to `count` consecutive matching object IDs starting at a random offset. */
+async function randomObjectIDs(count: number): Promise<readonly number[]> {
+  const { total } = await searchPage(0, 1);
+  if (total === 0) {
+    throw new Error('No paintings found');
+  }
+  const offset = Math.floor(Math.random() * Math.max(1, total - count + 1));
+  return (await searchPage(offset, count)).objectIDs;
+}
 
 interface VerticalBand {
   readonly top: number;
@@ -76,21 +102,12 @@ export async function fetchPaintingPixels(): Promise<PaintingPayload> {
       return cached.payload;
     }
 
-    const searchRes = await fetch(SEARCH_URL);
-    if (!searchRes.ok) {
-      throw new Error('Search API failed');
-    }
-    const searchData = (await searchRes.json()) as unknown as { objectIDs?: number[] };
-    const objectIDs = searchData.objectIDs ?? [];
-    if (objectIDs.length === 0) {
-      throw new Error('No paintings found');
-    }
+    const objectIDs = await randomObjectIDs(MAX_RETRIES);
 
     let imageUrl: string | null = null;
     let info: PaintingInfo = { title: '', artist: '', date: '', url: '' };
 
-    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-      const id = objectIDs[Math.floor(Math.random() * objectIDs.length)];
+    for (const id of objectIDs) {
       const objRes = await fetch(OBJECT_URL + id);
       if (!objRes.ok) {
         continue;
