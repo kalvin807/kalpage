@@ -74,6 +74,7 @@ export const Route = createFileRoute('/tool')({
 
 const PAGE_TITLES: Record<string, string> = {
   '/tool/date': '和暦・西暦変換',
+  '/tool/mapcode': 'マップコード変換',
 };
 
 function ToolLayout() {

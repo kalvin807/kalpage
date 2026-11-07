@@ -21,6 +21,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "jpeg-js": "^0.4.4",
+    "maplibre-gl": "^6.13.0",
     "nitro": "3.0.261103-rc",
     "react": "^19.3.1",
     "react-day-picker": "^10.0.2",

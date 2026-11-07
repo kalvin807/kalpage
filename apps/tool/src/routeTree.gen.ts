@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ToolRouteImport } from './routes/tool'
 import { Route as ToolIndexRouteImport } from './routes/tool/index'
 import { Route as ToolDateRouteImport } from './routes/tool/date'
+import { Route as ToolMapcodeRouteImport } from './routes/tool/mapcode'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,18 +41,25 @@ const ToolDateRoute = ToolDateRouteImport.update({
   path: '/date',
   getParentRoute: () => ToolRoute,
 } as any)
+const ToolMapcodeRoute = ToolMapcodeRouteImport.update({
+  id: '/mapcode',
+  path: '/mapcode',
+  getParentRoute: () => ToolRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tool': typeof ToolRouteWithChildren
   '/tool/date': typeof ToolDateRoute
+  '/tool/mapcode': typeof ToolMapcodeRoute
   '/tool/': typeof ToolIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tool/date': typeof ToolDateRoute
+  '/tool/mapcode': typeof ToolMapcodeRoute
   '/tool': typeof ToolIndexRoute
 }
 export interface FileRoutesById {
@@ -60,14 +68,23 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tool': typeof ToolRouteWithChildren
   '/tool/date': typeof ToolDateRoute
+  '/tool/mapcode': typeof ToolMapcodeRoute
   '/tool/': typeof ToolIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/tool' | '/tool/date' | '/tool/'
+  fullPaths:
+    '/' | '/sitemap.xml' | '/tool' | '/tool/date' | '/tool/mapcode' | '/tool/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/tool/date' | '/tool'
-  id: '__root__' | '/' | '/sitemap.xml' | '/tool' | '/tool/date' | '/tool/'
+  to: '/' | '/sitemap.xml' | '/tool/date' | '/tool/mapcode' | '/tool'
+  id:
+    | '__root__'
+    | '/'
+    | '/sitemap.xml'
+    | '/tool'
+    | '/tool/date'
+    | '/tool/mapcode'
+    | '/tool/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -113,16 +130,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolDateRouteImport
       parentRoute: typeof ToolRoute
     }
+    '/tool/mapcode': {
+      id: '/tool/mapcode'
+      path: '/mapcode'
+      fullPath: '/tool/mapcode'
+      preLoaderRoute: typeof ToolMapcodeRouteImport
+      parentRoute: typeof ToolRoute
+    }
   }
 }
 
 interface ToolRouteChildren {
   ToolDateRoute: typeof ToolDateRoute
+  ToolMapcodeRoute: typeof ToolMapcodeRoute
   ToolIndexRoute: typeof ToolIndexRoute
 }
 
 const ToolRouteChildren: ToolRouteChildren = {
   ToolDateRoute: ToolDateRoute,
+  ToolMapcodeRoute: ToolMapcodeRoute,
   ToolIndexRoute: ToolIndexRoute,
 }
 

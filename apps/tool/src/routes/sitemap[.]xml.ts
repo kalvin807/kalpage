@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { SITE_URL } from '@/lib/site';
 
-const SITEMAP_PATHS = ['/', '/tool', '/tool/date'] as const;
+const SITEMAP_PATHS = ['/', '/tool', '/tool/date', '/tool/mapcode'] as const;
 
 function buildSitemap(): string {
   const urls = SITEMAP_PATHS.map((path) => `  <url>\n    <loc>${new URL(path, SITE_URL).href}</loc>\n  </url>`);
