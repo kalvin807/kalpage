@@ -9,17 +9,7 @@ const config = defineConfig({
     // vite 8 resolves tsconfig `paths` natively; replaces the vite-tsconfig-paths plugin.
     tsconfigPaths: true,
   },
-  plugins: [
-    tailwindcss(),
-    tanstackStart({
-      sitemap: {
-        enabled: true,
-        host: 'https://tool.kalvin.io',
-      },
-    }),
-    nitro(),
-    viteReact(),
-  ],
+  plugins: [tailwindcss(), tanstackStart(), nitro(), viteReact()],
 });
 
 export default config;

@@ -1,35 +1,15 @@
----
-// jpeg-js keeps this island free of native binaries: sharp's libvips .so does
+// jpeg-js keeps the painting fetch free of native binaries: sharp's libvips .so does
 // not survive Vercel's file tracing under Bun's isolated node_modules layout.
 // Met's primaryImageSmall is always a JPEG, so a pure-JS decoder is enough.
 import { decode } from 'jpeg-js';
+import { STRIP_COLS, STRIP_ROWS, type PaintingInfo, type PaintingPayload, type PixelData } from './painting';
 
-// The footer strip is a fixed 64x10 grid of roughly square cells.
-const STRIP_COLS = 64;
-const STRIP_ROWS = 10;
 const MAX_RETRIES = 3;
 const CACHE_TTL_SECONDS = 60 * 60 * 6;
 const CACHE_TTL_MS = CACHE_TTL_SECONDS * 1000;
-const SEARCH_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=11&hasImages=true&q=painting';
+const SEARCH_URL =
+  'https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=11&hasImages=true&q=painting';
 const OBJECT_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
-
-interface PixelData {
-  readonly r: number;
-  readonly g: number;
-  readonly b: number;
-}
-
-interface PaintingInfo {
-  readonly title: string;
-  readonly artist: string;
-  readonly date: string;
-  readonly url: string;
-}
-
-interface PaintingPayload {
-  readonly pixels: PixelData[];
-  readonly info: PaintingInfo;
-}
 
 interface VerticalBand {
   readonly top: number;
@@ -55,7 +35,13 @@ function centerBand(width: number, height: number): VerticalBand {
 }
 
 /** Box-average downsample of an RGBA band into a cols x rows grid of RGB cells. */
-function downsamplePixels(data: Uint8Array, width: number, band: VerticalBand, cols: number, rows: number): PixelData[] {
+function downsamplePixels(
+  data: Uint8Array,
+  width: number,
+  band: VerticalBand,
+  cols: number,
+  rows: number,
+): PixelData[] {
   const pixels: PixelData[] = [];
   for (let row = 0; row < rows; row++) {
     const y0 = band.top + Math.floor((row * band.height) / rows);
@@ -81,7 +67,7 @@ function downsamplePixels(data: Uint8Array, width: number, band: VerticalBand, c
   return pixels;
 }
 
-async function fetchPaintingPixels(): Promise<PaintingPayload> {
+export async function fetchPaintingPixels(): Promise<PaintingPayload> {
   const now = Date.now();
   const cached = globalCache.paintingPixelsCache;
 
@@ -151,45 +137,4 @@ async function fetchPaintingPixels(): Promise<PaintingPayload> {
     }
     throw e;
   }
-}
-
-Astro.response.headers.set(
-  'Cache-Control',
-  `public, max-age=0, s-maxage=${CACHE_TTL_SECONDS}, stale-while-revalidate=86400`,
-);
-
-let error = false;
-let result: PaintingPayload = { pixels: [], info: { title: '', artist: '', date: '', url: '' } };
-
-try {
-  result = await fetchPaintingPixels();
-} catch {
-  error = true;
-}
-
-const { pixels, info } = result;
----
-
-{
-  error ? (
-    <p class="mx-auto my-0 max-w-2xl px-5 py-2.5 text-xs text-text-muted">Couldn't load today's painting.</p>
-  ) : (
-    <Fragment>
-      <div
-        aria-hidden="true"
-        class="grid aspect-[64/10] w-full gap-px bg-bg"
-        style={`grid-template-columns:repeat(${STRIP_COLS},1fr);grid-template-rows:repeat(${STRIP_ROWS},1fr)`}
-      >
-        {pixels.map((px) => (
-          <div style={`background:rgb(${px.r},${px.g},${px.b})`} />
-        ))}
-      </div>
-      <p class="mx-auto my-0 max-w-2xl px-5 py-2.5 text-xs text-text-muted">
-        <a href={info.url} target="_blank" rel="noopener noreferrer" class="text-text hover:text-text-heading">
-          {info.title}
-        </a>
-        {[info.artist, info.date].filter(Boolean).map((part) => `\u00a0· ${part}`)}
-      </p>
-    </Fragment>
-  )
 }
