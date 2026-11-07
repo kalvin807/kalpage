@@ -5,9 +5,6 @@
       "entry": [],
       "project": []
     },
-    "apps/portfolio": {
-      "astro": true
-    },
     "apps/tool": {
       "ignore": ["src/components/ui/**"]
     }

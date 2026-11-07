@@ -20,7 +20,7 @@ export const Route = createFileRoute('/tool/mapcode')({
       { title: 'マップコード変換' },
       { name: 'description', content: DESCRIPTION },
       { property: 'og:url', content: `${SITE_URL}/tool/mapcode` },
-      { property: 'og:title', content: 'マップコード変換 - tool.kalvin.io' },
+      { property: 'og:title', content: 'マップコード変換 - kalvin.io/tool' },
       { property: 'og:description', content: DESCRIPTION },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: 'マップコード変換' },

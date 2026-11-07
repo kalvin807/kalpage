@@ -163,7 +163,7 @@ export const Route = createFileRoute('/tool/date')({
         content: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール',
       },
       { property: 'og:url', content: `${SITE_URL}/tool/date` },
-      { property: 'og:title', content: '和暦・西暦変換 - tool.kalvin.io' },
+      { property: 'og:title', content: '和暦・西暦変換 - kalvin.io/tool' },
       {
         property: 'og:description',
         content: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール',

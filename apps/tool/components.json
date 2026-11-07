@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "src/styles.css",
+    "css": "src/styles/tool.css",
     "baseColor": "stone",
     "cssVariables": true,
     "prefix": ""

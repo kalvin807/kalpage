@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import '@fontsource/geist-mono/latin-400.css';
+@import '@fontsource/geist-mono/latin-600.css';
 
 @theme {
   --color-bg: oklch(0.18 0 0);
@@ -9,11 +11,12 @@
   --color-surface-hover: oklch(1 0 0 / 0.04);
   --color-link: oklch(0.76 0.11 238);
   --color-ring: oklch(0.76 0.11 238 / 0.8);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @layer base {
   html {
+    color-scheme: dark;
     scroll-padding-top: 2rem;
   }
 

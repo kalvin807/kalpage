@@ -30,7 +30,7 @@ export function GlobalErrorComponent({ error, reset }: ErrorComponentProps) {
             Retry
           </Button>
           <Link
-            to="/"
+            to="/tool"
             className={cn(buttonVariants({ variant: 'default' }), 'flex-1 sm:flex-initial items-center gap-2')}
           >
             <IconHome className="size-4" aria-hidden="true" />

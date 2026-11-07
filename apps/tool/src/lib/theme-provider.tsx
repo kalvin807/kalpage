@@ -43,9 +43,12 @@ export function ThemeProvider({ children, defaultTheme = 'light' }: ThemeProvide
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
     root.classList.add(theme);
     root.style.colorScheme = theme;
+    return () => {
+      root.classList.remove(theme);
+      root.style.removeProperty('color-scheme');
+    };
   }, [theme]);
 
   return <ThemeProviderContext.Provider value={{ theme, setTheme }}>{children}</ThemeProviderContext.Provider>;
