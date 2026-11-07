@@ -8,18 +8,18 @@ import { IconAlertCircle, IconHome, IconRefresh } from '@tabler/icons-react';
 export function GlobalErrorComponent({ error, reset }: ErrorComponentProps) {
   return (
     <div className="min-h-dvh flex items-center justify-center p-6">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
+      <div className="w-full max-w-md border border-line p-6">
         <div className="flex items-center gap-3 mb-2">
           <IconAlertCircle className="size-6 text-destructive" aria-hidden="true" />
-          <h2 className="text-lg font-semibold text-card-foreground">Error</h2>
+          <h2 className="m-0 text-[0.9375rem] font-semibold text-text-heading">Error</h2>
         </div>
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-sm text-text-muted mb-4">
           An unexpected error occurred. Please try refreshing the page or go back home.
         </p>
         {import.meta.env.DEV && (
           <details className="mb-4">
-            <summary className="cursor-pointer text-sm text-muted-foreground mb-2">Error details (dev)</summary>
-            <pre className="mt-2 p-3 bg-muted rounded-md text-xs overflow-auto max-h-48">
+            <summary className="cursor-pointer text-sm text-text-muted mb-2">Error details (dev)</summary>
+            <pre className="mt-2 p-3 border border-line text-xs overflow-auto max-h-48">
               {error instanceof Error ? (error.stack ?? error.message) : String(error)}
             </pre>
           </details>
@@ -31,7 +31,10 @@ export function GlobalErrorComponent({ error, reset }: ErrorComponentProps) {
           </Button>
           <Link
             to="/tool"
-            className={cn(buttonVariants({ variant: 'default' }), 'flex-1 sm:flex-initial items-center gap-2')}
+            className={cn(
+              buttonVariants({ variant: 'default' }),
+              'flex-1 sm:flex-initial items-center gap-2 hover:no-underline',
+            )}
           >
             <IconHome className="size-4" aria-hidden="true" />
             Home

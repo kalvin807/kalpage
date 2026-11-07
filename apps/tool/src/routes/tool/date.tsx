@@ -215,7 +215,7 @@ function DateConverterPage() {
       {/* Input */}
       <div className="mb-8">
         <div
-          className={`relative flex items-center rounded-lg border bg-card shadow-sm transition-all ${isFocused ? 'border-primary/60 ring-2 ring-ring' : 'border-border hover:border-foreground/20'}`}
+          className={`relative flex items-center border transition-colors ${isFocused ? 'border-link' : 'border-line hover:border-text-muted'}`}
         >
           <Input
             ref={inputRef}
@@ -224,17 +224,17 @@ function DateConverterPage() {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder="2024-01-15, 令和6年, R6..."
-            className="h-12 flex-1 border-0 bg-transparent px-4 text-base font-mono font-medium tracking-wide placeholder:font-sans placeholder:font-normal placeholder:text-muted-foreground/60 focus-visible:ring-0 sm:h-14 sm:text-lg"
+            className="h-12 flex-1 border-0 bg-transparent px-4 text-base text-text-heading tabular-nums placeholder:text-text-muted/70 focus-visible:ring-0 dark:bg-transparent sm:h-14 sm:text-lg"
             aria-label="日付入力"
           />
           <Popover>
             <PopoverTrigger
-              className="mr-2 flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="mr-2 flex size-9 shrink-0 items-center justify-center text-text-muted hover:bg-surface-hover hover:text-text-heading"
               aria-label="カレンダーから選択"
             >
               <IconCalendar className="size-4.5" />
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-auto p-0">
+            <PopoverContent align="end" className="w-auto p-0 shadow-none ring-line">
               <Calendar
                 mode="single"
                 captionLayout="dropdown"
@@ -248,7 +248,6 @@ function DateConverterPage() {
                   }
                 }}
                 defaultMonth={result.conversion?.western.date ?? new Date()}
-                className="rounded-lg"
               />
             </PopoverContent>
           </Popover>
@@ -259,18 +258,18 @@ function DateConverterPage() {
               key={quick}
               type="button"
               onClick={() => setInput(quick)}
-              className="rounded-full border border-border bg-card px-2.5 py-1 text-xs text-foreground transition-colors hover:bg-secondary"
+              className="border border-line px-2.5 py-1 text-xs text-text-heading hover:border-text-muted"
             >
               {quick}
             </button>
           ))}
-          <span className="mx-1 h-3.5 w-px bg-border" aria-hidden="true" />
+          <span className="mx-1 h-3.5 w-px bg-line" aria-hidden="true" />
           {EXAMPLE_INPUTS.map((example) => (
             <button
               key={example}
               type="button"
               onClick={() => setInput(example)}
-              className="rounded-full border border-transparent px-2 py-1 font-mono text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground"
+              className="border border-transparent px-2 py-1 text-xs text-text-muted hover:border-line hover:text-text-heading"
             >
               {example}
             </button>
@@ -464,7 +463,7 @@ function ResultsSection({ result }: ResultsSectionProps) {
 
 function EmptyState() {
   return (
-    <div className="animate-in fade-in-0 py-6 text-center text-sm text-muted-foreground duration-200">
+    <div className="animate-in fade-in-0 border border-line py-6 text-center text-sm text-text-muted duration-200">
       変換する日付を入力してください
     </div>
   );
@@ -476,7 +475,7 @@ interface ErrorStateProps {
 
 function ErrorState({ message }: ErrorStateProps) {
   return (
-    <div className="animate-in fade-in-0 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive duration-150">
+    <div className="animate-in fade-in-0 border border-destructive/50 px-4 py-3 text-sm text-destructive duration-150">
       {message}
     </div>
   );
@@ -492,13 +491,13 @@ interface DetailCellProps {
 
 function DetailCell({ label, value, sub, mono = false, prefix }: DetailCellProps) {
   return (
-    <div className="group bg-card px-5 py-3">
-      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+    <div className="group px-4 py-2.5">
+      <p className="m-0 text-xs text-text-muted">{label}</p>
       <div className="mt-0.5 flex items-center gap-1.5">
         {prefix && <span>{prefix}</span>}
-        <span className={`text-sm font-medium ${mono ? 'font-mono tabular-nums' : ''}`}>{value}</span>
-        {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
-        <CopyButton text={value} className="opacity-0 group-hover:opacity-100" />
+        <span className={`text-sm text-text-heading ${mono ? 'tabular-nums' : ''}`}>{value}</span>
+        {sub && <span className="text-xs text-text-muted">{sub}</span>}
+        <CopyButton text={value} className="opacity-0 group-focus-within:opacity-100 group-hover:opacity-100" />
       </div>
     </div>
   );
@@ -514,10 +513,10 @@ function ConversionCards({ conversion, extras }: ConversionCardsProps) {
     <div className="animate-in fade-in-0 slide-in-from-bottom-1 space-y-4 duration-200">
       {/* Holiday banner */}
       {extras?.holiday && (
-        <div className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
+        <div className="flex items-center gap-3 border border-destructive/50 px-4 py-2.5">
           <span className="text-base">🎌</span>
           <div className="flex-1">
-            <span className="text-sm font-medium text-destructive">{extras.holiday.name}</span>
+            <span className="text-sm text-destructive">{extras.holiday.name}</span>
             <span className="ml-2 text-xs text-destructive/70">{extras.holiday.nameEn}</span>
           </div>
           <CopyButton text={extras.holiday.name} />
@@ -525,37 +524,33 @@ function ConversionCards({ conversion, extras }: ConversionCardsProps) {
       )}
 
       {/* Main card */}
-      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+      <div className="border border-line">
         {/* Hero: primary conversion */}
-        <div className="border-b border-border/60 px-5 py-5">
+        <div className="border-b border-line px-4 py-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-2xl font-semibold tracking-tight">{conversion.japanese.formatted}</p>
-              <p className="mt-1 font-mono text-sm text-muted-foreground">{conversion.western.formatted}</p>
+              <p className="m-0 text-2xl font-semibold text-text-heading">{conversion.japanese.formatted}</p>
+              <p className="m-0 mt-1 text-sm text-text-muted tabular-nums">{conversion.western.formatted}</p>
             </div>
             <CopyButton text={conversion.japanese.formatted} />
           </div>
         </div>
 
         {/* Detail grid */}
-        <div className="grid grid-cols-2 divide-x divide-border/40">
+        <div className="grid grid-cols-2 divide-x divide-line">
           <DetailCell label="ISO" value={conversion.western.iso} mono />
           <DetailCell label="Romaji" value={conversion.japanese.formattedRomaji} mono />
         </div>
-        <div className="grid grid-cols-2 divide-x divide-border/40 border-t border-border/40">
+        <div className="grid grid-cols-2 divide-x divide-line border-t border-line">
           <DetailCell
             label="元号"
             value={`${conversion.japanese.era.name} (${conversion.japanese.era.abbreviation})`}
             sub={conversion.japanese.era.nameRomaji}
           />
-          {extras ? (
-            <DetailCell label="干支" value={extras.zodiac.animal} prefix={extras.zodiac.emoji} />
-          ) : (
-            <div className="bg-card px-5 py-3" />
-          )}
+          {extras ? <DetailCell label="干支" value={extras.zodiac.animal} prefix={extras.zodiac.emoji} /> : <div />}
         </div>
         {extras?.weekday && extras.relative && (
-          <div className="grid grid-cols-2 divide-x divide-border/40 border-t border-border/40">
+          <div className="grid grid-cols-2 divide-x divide-line border-t border-line">
             <DetailCell label="曜日" value={extras.weekday.jp} sub={extras.weekday.en} />
             <DetailCell label="今日から" value={extras.relative.label} sub={extras.relative.age} />
           </div>
@@ -563,7 +558,7 @@ function ConversionCards({ conversion, extras }: ConversionCardsProps) {
 
         {/* Footer: star sign */}
         {extras?.starSign && (
-          <div className="flex items-center gap-2 border-t border-border/60 px-5 py-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 border-t border-line px-4 py-2.5 text-sm text-text-muted">
             <span>{extras.starSign.emoji}</span>
             <span>{extras.starSign.name}</span>
           </div>
@@ -584,29 +579,29 @@ interface AmbiguousResultsProps {
 function AmbiguousResults({ alternatives }: AmbiguousResultsProps) {
   return (
     <div className="animate-in fade-in-0 space-y-4 duration-200">
-      <div className="rounded-lg border border-accent bg-accent/50 px-4 py-3 text-sm">
-        <span className="font-medium text-accent-foreground">複数の解釈があります</span>
-        <span className="ml-1 text-muted-foreground"> — 入力された値は複数の日付として解釈できます</span>
+      <div className="border border-line px-4 py-2.5 text-sm">
+        <span className="text-text-heading">複数の解釈があります</span>
+        <span className="ml-1 text-text-muted"> — 入力された値は複数の日付として解釈できます</span>
       </div>
 
       {alternatives.map((alt, index) => (
         <div
           key={index}
-          className="animate-in fade-in-0 slide-in-from-bottom-1 overflow-hidden rounded-lg border border-border bg-card shadow-sm duration-200"
+          className="animate-in fade-in-0 slide-in-from-bottom-1 border border-line duration-200"
           style={{ animationDelay: `${(index + 1) * 50}ms`, animationFillMode: 'both' }}
         >
           {/* Hero */}
-          <div className="border-b border-border/60 px-5 py-4">
-            <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div className="px-4 py-3">
+            <p className="m-0 mb-1 text-xs text-text-muted">
               {alt.label}
               {alt.extras?.holiday && <span className="ml-2 text-destructive">🎌 {alt.extras.holiday.name}</span>}
             </p>
-            <p className="text-lg font-semibold tracking-tight">{alt.conversion.japanese.formatted}</p>
-            <p className="mt-0.5 font-mono text-sm text-muted-foreground">{alt.conversion.western.formatted}</p>
+            <p className="m-0 text-lg font-semibold text-text-heading">{alt.conversion.japanese.formatted}</p>
+            <p className="m-0 mt-0.5 text-sm text-text-muted tabular-nums">{alt.conversion.western.formatted}</p>
           </div>
           {/* Footer */}
           {alt.extras && (
-            <div className="flex gap-4 px-5 py-2.5 text-xs text-muted-foreground">
+            <div className="flex gap-4 border-t border-line px-4 py-2 text-xs text-text-muted">
               <span>
                 {alt.extras.zodiac.emoji} {alt.extras.zodiac.animal}
               </span>
@@ -625,21 +620,21 @@ function AmbiguousResults({ alternatives }: AmbiguousResultsProps) {
 
 function EraReferenceSection() {
   return (
-    <div className="mt-10 border-t border-border pt-8">
-      <h2 className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">年号一覧</h2>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-0 sm:grid-cols-3">
+    <section className="mt-14">
+      <h2 className="pixel-heading m-0 mb-4 text-[0.9375rem] font-semibold text-text-heading">年号一覧</h2>
+      <div className="grid grid-cols-2 border-t border-l border-line sm:grid-cols-3">
         {JAPANESE_ERAS.map((era, i) => (
           <div
             key={era.name}
-            className="animate-in fade-in-0 flex items-baseline gap-2.5 border-b border-border/40 py-2.5 duration-200"
+            className="animate-in fade-in-0 flex items-baseline gap-2.5 border-r border-b border-line px-3 py-2.5 duration-200"
             style={{ animationDelay: `${i * 25}ms`, animationFillMode: 'both' }}
           >
-            <span className="font-mono text-xs font-medium text-primary">{era.abbreviation}</span>
-            <span className="text-sm font-medium">{era.name}</span>
-            <span className="text-xs text-muted-foreground">{era.nameRomaji}</span>
+            <span className="text-xs text-link">{era.abbreviation}</span>
+            <span className="text-sm text-text-heading">{era.name}</span>
+            <span className="text-xs text-text-muted">{era.nameRomaji}</span>
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

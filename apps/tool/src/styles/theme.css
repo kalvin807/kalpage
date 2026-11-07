@@ -1,0 +1,101 @@
+/*
+ * Shared design system for the portfolio and the tools: Geist Mono, flat 1px rules, no radius or shadow.
+ * Dark is the default; the tools can opt into light through the `.light` class set by ThemeProvider.
+ * Import after `tailwindcss` so the @theme tokens register as utilities (bg-bg, text-text-muted, border-line...).
+ */
+@import '@fontsource/geist-mono/latin-400.css';
+@import '@fontsource/geist-mono/latin-600.css';
+
+:root {
+  color-scheme: dark;
+  --palette-bg: oklch(0.18 0 0);
+  --palette-raised: oklch(0.22 0 0);
+  --palette-text: oklch(0.9 0 0);
+  --palette-heading: oklch(0.98 0 0);
+  --palette-muted: oklch(0.66 0 0);
+  --palette-line: oklch(0.33 0 0);
+  --palette-hover: oklch(1 0 0 / 0.04);
+  --palette-link: oklch(0.76 0.11 238);
+  --palette-danger: oklch(0.72 0.15 25);
+}
+
+.light {
+  color-scheme: light;
+  --palette-bg: oklch(0.985 0 0);
+  --palette-raised: oklch(1 0 0);
+  --palette-text: oklch(0.3 0 0);
+  --palette-heading: oklch(0.18 0 0);
+  --palette-muted: oklch(0.5 0 0);
+  --palette-line: oklch(0.87 0 0);
+  --palette-hover: oklch(0 0 0 / 0.04);
+  --palette-link: oklch(0.5 0.14 245);
+  --palette-danger: oklch(0.55 0.19 25);
+}
+
+@theme inline {
+  --color-bg: var(--palette-bg);
+  --color-text: var(--palette-text);
+  --color-text-heading: var(--palette-heading);
+  --color-text-muted: var(--palette-muted);
+  --color-line: var(--palette-line);
+  --color-surface-hover: var(--palette-hover);
+  --color-link: var(--palette-link);
+  --color-ring: color-mix(in oklch, var(--palette-link) 80%, transparent);
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, 'Hiragino Sans', 'Noto Sans JP', monospace;
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 2rem;
+  }
+
+  ::selection {
+    background: var(--color-text-heading);
+    color: var(--color-bg);
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* Pixel-square heading marker; echoes the painting strip in the portfolio footer. */
+.pixel-heading::before {
+  content: '';
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.6rem;
+  vertical-align: 0.15em;
+  background: var(--color-text-heading);
+}

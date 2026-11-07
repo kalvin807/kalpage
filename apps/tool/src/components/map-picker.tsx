@@ -34,7 +34,7 @@ const MAP_LOCALE = {
   'CooperativeGesturesHandler.MobileHelpText': '2本の指で地図を動かせます',
 } as const;
 const PIN_SVG = `<svg width="32" height="40" viewBox="0 0 32 40" aria-hidden="true">
-  <path d="M16 38S4 25.5 4 16a12 12 0 0 1 24 0c0 9.5-12 22-12 22z" fill="var(--primary)" stroke="var(--background)" stroke-width="2.5"/>
+  <path d="M16 38S4 25.5 4 16a12 12 0 0 1 24 0c0 9.5-12 22-12 22z" fill="var(--palette-link)" stroke="var(--background)" stroke-width="2.5"/>
   <circle cx="16" cy="16" r="4.5" fill="var(--background)"/>
 </svg>`;
 
@@ -132,7 +132,5 @@ export function MapPicker({ point, onPick }: MapPickerProps) {
     }
   }, [point]);
 
-  return (
-    <div ref={containerRef} className="isolate h-72 w-full overflow-hidden rounded-lg border border-border sm:h-96" />
-  );
+  return <div ref={containerRef} className="isolate h-72 w-full overflow-hidden border border-line sm:h-96" />;
 }
