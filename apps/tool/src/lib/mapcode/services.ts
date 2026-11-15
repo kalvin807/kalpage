@@ -3,6 +3,7 @@ import {
   isMapHost,
   maybeParseRomanizedAddress,
   parseInput,
+  PREFECTURE_PATTERN,
   type LatLng,
   type ParsedInput,
 } from './input';
@@ -12,7 +13,11 @@ type Fetch = typeof fetch;
 export interface Place {
   readonly point: LatLng;
   readonly label?: string;
+  /** The geocoder only knew the surrounding area, so the pin is that area's centre, not the place itself. */
+  readonly approximate?: boolean;
 }
+
+export type GsiMatch = 'precise' | 'approximate';
 
 export interface ResolveDeps {
   readonly fetchFn: Fetch;
@@ -91,7 +96,8 @@ export function maybeParseGoogleGeocodeResponse(body: unknown): Place | undefine
     throw new Error(`Unexpected Google coordinates: ${describe(first)}`);
   }
   const label = typeof first.formatted_address === 'string' ? first.formatted_address : undefined;
-  return { point: { lat, lng }, label };
+  const place = { point: { lat, lng }, label };
+  return first.geometry.location_type === 'APPROXIMATE' ? { ...place, approximate: true } : place;
 }
 
 /** Joins the Japanese address parts (東京都 + 世田谷区 + 松原) of the first match. */
@@ -179,19 +185,31 @@ function normalizeForMatch(text: string): string {
 /**
  * GSI never says "no match" for text it half-recognises, so its answer needs a sanity check:
  * - In many rural areas it has no lot-level data and falls back to the town centroid
- *   (長野県松本市安曇4462-52 -> 長野県松本市安曇, ~7 km off). If the query named a block but the
- *   match has no numbers or 丁目, the pin would be wrong.
+ *   (長野県松本市安曇4462-52 -> 長野県松本市安曇, ~7 km off). That is still the right area to start
+ *   from, but only `approximate`, and only if the query names that town: fuzzy matches land
+ *   anywhere (日本、沖縄県那覇市久茂地1-1-1 -> 長野県麻績村日). GSI drops the 郡, so the prefecture is
+ *   left out of the comparison (沖縄県国頭郡恩納村恩納 vs 沖縄県恩納村恩納).
  * - Place names fuzzy-match unrelated areas (東京タワー -> 北海道札幌市東区). A query without numbers
- *   must appear in the matched address, which still accepts 渋谷区 or 千駄ヶ谷.
+ *   must appear in the matched title, which still accepts 渋谷区 or 千駄ヶ谷; a title that is an
+ *   address rather than the place's own name is an area centroid.
  */
-export function isPreciseGsiMatch(query: string, matchedTitle?: string): boolean {
+export function maybeClassifyGsiMatch(query: string, matchedTitle?: string): GsiMatch | undefined {
   if (matchedTitle == null) {
-    return false;
+    return undefined;
   }
-  if (/\d/.test(query.normalize('NFKC'))) {
-    return /[0-9０-９]|丁目/.test(matchedTitle);
+  const normalizedQuery = normalizeForMatch(query);
+  const title = normalizeForMatch(matchedTitle);
+  const area = title.replace(PREFECTURE_PATTERN, '');
+  if (/\d/.test(normalizedQuery)) {
+    if (/\d|丁目/.test(title)) {
+      return 'precise';
+    }
+    return area && normalizedQuery.includes(area) ? 'approximate' : undefined;
   }
-  return normalizeForMatch(matchedTitle).includes(normalizeForMatch(query));
+  if (!title.includes(normalizedQuery)) {
+    return undefined;
+  }
+  return area === title ? 'precise' : 'approximate';
 }
 
 async function maybeGeocodeGsi(text: string, fetchFn: Fetch): Promise<Place | undefined> {
@@ -199,7 +217,11 @@ async function maybeGeocodeGsi(text: string, fetchFn: Fetch): Promise<Place | un
   const url = new URL(GSI_API);
   url.searchParams.set('q', query);
   const place = maybeParseGsiResponse(await fetchJson(fetchFn, url));
-  return place && isPreciseGsiMatch(query, place.label) ? place : undefined;
+  const match = maybeClassifyGsiMatch(query, place?.label);
+  if (!place || !match) {
+    return undefined;
+  }
+  return match === 'approximate' ? { ...place, approximate: true } : place;
 }
 
 async function maybeGeocodeGoogle(text: string, apiKey: string, fetchFn: Fetch): Promise<Place | undefined> {
@@ -230,6 +252,7 @@ async function maybeGeocodeRomanized(text: string, fetchFn: Fetch): Promise<Plac
  * GSI is free and exact for Japanese addresses but fuzzy-matches anything else (東京タワー lands in
  * Sapporo), so text that came from a Google link goes to Google first when a key is configured,
  * then to the romanised-address rebuild, which only fires on text with a postal code and chōme.
+ * An approximate match is kept only if no later geocoder pins the place itself.
  */
 async function maybeGeocode(text: string, fromGoogle: boolean, deps: ResolveDeps): Promise<Place | undefined> {
   const { fetchFn, googleApiKey } = deps;
@@ -240,15 +263,20 @@ async function maybeGeocode(text: string, fromGoogle: boolean, deps: ResolveDeps
   // One upstream being down (GSI has outages, Google rejects a misconfigured key) shouldn't sink the others;
   // the first failure only surfaces if no geocoder finds the place.
   let firstError: unknown;
+  let approximate: Place | undefined;
   for (const geocode of geocoders) {
     try {
       const place = await geocode?.();
-      if (place) {
+      if (place && !place.approximate) {
         return place;
       }
+      approximate ??= place;
     } catch (error) {
       firstError ??= error;
     }
+  }
+  if (approximate) {
+    return approximate;
   }
   if (firstError !== undefined) {
     throw firstError;

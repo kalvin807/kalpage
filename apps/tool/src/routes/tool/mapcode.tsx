@@ -36,6 +36,8 @@ const NOT_FOUND_MESSAGE =
   '場所が見つかりませんでした。日本語の住所を入力するか、地図をタップしてピンを置いてください。';
 const OUTSIDE_JAPAN_MESSAGE = 'マップコードは日本国内の地点のみ対応しています';
 const NO_MAPCODE_MESSAGE = 'この地点のマップコードは見つかりませんでした';
+const APPROXIMATE_MESSAGE =
+  '番地まで特定できなかったため、地域の中心を表示しています。地図のピンを目的地に合わせてください。';
 const LOOKUP_FAILED_MESSAGE = '検索中にエラーが発生しました。時間をおいてもう一度お試しください。';
 
 interface LookupError {
@@ -216,6 +218,7 @@ function ResultCard({ place, mapcode, loading }: ResultCardProps) {
           <span className="text-3xl font-semibold text-text-heading tabular-nums">{mapcode ?? '— — —'}</span>
           {mapcode && !loading && <CopyButton text={mapcode} />}
         </div>
+        {place.approximate && <p className="m-0 mt-2 text-xs text-text-muted">{APPROXIMATE_MESSAGE}</p>}
       </div>
       <dl className="m-0 text-sm">
         {place.label && (

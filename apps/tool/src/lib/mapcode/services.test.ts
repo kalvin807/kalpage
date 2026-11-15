@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  isPreciseGsiMatch,
+  maybeClassifyGsiMatch,
   maybeParseApplePlaceHtml,
   maybeParseGoogleGeocodeResponse,
   maybeParseGsiResponse,
@@ -8,6 +8,7 @@ import {
   maybeParsePostalCodeResponse,
   maybeResolvePlace,
   resolveShortLink,
+  type GsiMatch,
 } from './services';
 
 describe('maybeParseMapcodeResponse', () => {
@@ -141,18 +142,22 @@ describe('resolveShortLink', () => {
   });
 });
 
-describe('isPreciseGsiMatch', () => {
-  it.each<[string, string | undefined, boolean]>([
-    ['東京都渋谷区千駄ヶ谷1-5-5', '東京都渋谷区千駄ケ谷一丁目５番５号', true],
-    ['あざみ野2丁目9-13', '神奈川県横浜市青葉区あざみ野二丁目９番', true],
-    ['東京都新宿区西新宿6-8-1', '東京都新宿区西新宿六丁目', true],
-    ['長野県松本市安曇4462-52', '長野県松本市安曇', false],
-    ['東京都渋谷区', '東京都渋谷区', true],
-    ['千駄ヶ谷', '東京都渋谷区千駄ケ谷', true],
-    ['東京タワー', '北海道札幌市東区', false],
-    ['長野県松本市安曇4462-52', undefined, false],
+describe('maybeClassifyGsiMatch', () => {
+  it.each<[string, string | undefined, GsiMatch | undefined]>([
+    ['東京都渋谷区千駄ヶ谷1-5-5', '東京都渋谷区千駄ケ谷一丁目５番５号', 'precise'],
+    ['あざみ野2丁目9-13', '神奈川県横浜市青葉区あざみ野二丁目９番', 'precise'],
+    ['東京都新宿区西新宿6-8-1', '東京都新宿区西新宿六丁目', 'precise'],
+    ['沖縄美ら海水族館', '沖縄美ら海水族館', 'precise'],
+    ['長野県松本市安曇4462-52', '長野県松本市安曇', 'approximate'],
+    ['沖縄県国頭郡恩納村恩納2767', '沖縄県恩納村恩納', 'approximate'],
+    ['東京都渋谷区', '東京都渋谷区', 'approximate'],
+    ['千駄ヶ谷', '東京都渋谷区千駄ケ谷', 'approximate'],
+    ['東京タワー', '北海道札幌市東区', undefined],
+    ['日本、沖縄県那覇市久茂地1丁目1-1', '長野県麻績村日', undefined],
+    ['東京都港区芝公園4-2-8', '東京都', undefined],
+    ['長野県松本市安曇4462-52', undefined, undefined],
   ])('%s -> %s', (query, title, expected) => {
-    expect(isPreciseGsiMatch(query, title)).toBe(expected);
+    expect(maybeClassifyGsiMatch(query, title)).toBe(expected);
   });
 });
 
@@ -180,6 +185,23 @@ const ROMANIZED_QUERY = {
   fromGoogle: true,
 } as const;
 
+const GSI_AZUMI = [
+  {
+    geometry: { coordinates: [137.7, 36.19], type: 'Point' },
+    type: 'Feature',
+    properties: { title: '長野県松本市安曇' },
+  },
+];
+const GOOGLE_AZUMI = {
+  status: 'OK',
+  results: [
+    {
+      formatted_address: '日本、〒390-1520 長野県松本市安曇４４６２−５２',
+      geometry: { location: { lat: 36.12, lng: 137.63 }, location_type: 'ROOFTOP' },
+    },
+  ],
+};
+
 describe('maybeResolvePlace geocoder chain', () => {
   it('moves on when an earlier geocoder fails', async () => {
     const fetchFn = fakeHosts({
@@ -190,6 +212,23 @@ describe('maybeResolvePlace geocoder chain', () => {
     await expect(maybeResolvePlace(ROMANIZED_QUERY, { fetchFn, googleApiKey: 'key' })).resolves.toEqual({
       point: { lat: 35.668777, lng: 139.648132 },
       label: '東京都世田谷区松原二丁目３９番９号',
+    });
+  });
+
+  it('prefers a later precise match over an approximate one', async () => {
+    const fetchFn = fakeHosts({
+      'msearch.gsi.go.jp': () => Response.json(GSI_AZUMI),
+      'maps.googleapis.com': () => Response.json(GOOGLE_AZUMI),
+    });
+    const query = { type: 'query', text: '長野県松本市安曇4462-52', fromGoogle: false } as const;
+    await expect(maybeResolvePlace(query, { fetchFn, googleApiKey: 'key' })).resolves.toEqual({
+      point: { lat: 36.12, lng: 137.63 },
+      label: '日本、〒390-1520 長野県松本市安曇４４６２−５２',
+    });
+    await expect(maybeResolvePlace(query, { fetchFn })).resolves.toEqual({
+      point: { lat: 36.19, lng: 137.7 },
+      label: '長野県松本市安曇',
+      approximate: true,
     });
   });
 
