@@ -5,8 +5,6 @@
       "entry": [],
       "project": []
     },
-    "apps/tool": {
-      "ignore": ["src/components/ui/**"]
-    }
+    "apps/tool": {}
   }
 }

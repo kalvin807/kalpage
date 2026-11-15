@@ -16,6 +16,11 @@ const ThemeProviderContext = createContext<ThemeProviderState | undefined>(undef
 
 const THEME_CHANGE_EVENT = 'theme-change';
 
+const THEME_COLORS: Record<Theme, string> = {
+  dark: '#121212',
+  light: '#fbfbfb',
+};
+
 function subscribeToTheme(onChange: () => void) {
   window.addEventListener('storage', onChange);
   window.addEventListener(THEME_CHANGE_EVENT, onChange);
@@ -45,6 +50,7 @@ export function ThemeProvider({ children, defaultTheme = 'dark' }: ThemeProvider
     const root = window.document.documentElement;
     root.classList.add(theme);
     root.style.colorScheme = theme;
+    window.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[theme]);
     return () => {
       root.classList.remove(theme);
       root.style.removeProperty('color-scheme');

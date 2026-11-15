@@ -1,6 +1,7 @@
 import { lazy, Suspense, useRef, useState } from 'react';
 import { ClientOnly, createFileRoute } from '@tanstack/react-router';
 import { IconLoader2 } from '@tabler/icons-react';
+import { faqStructuredData, toolPageStructuredData } from '@/lib/structured-data';
 import { SITE_URL } from '@/lib/site';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,22 +12,62 @@ import { maybeLookupMapcode, maybeLookupPlace } from '@/lib/mapcode/server';
 // MapLibre needs `window` and WebGL, so the map is code-split and only rendered on the client.
 const MapPicker = lazy(() => import('@/components/map-picker').then((module) => ({ default: module.MapPicker })));
 
-const DESCRIPTION = '住所やGoogleマップ・Appleマップの共有リンクから、カーナビ用のマップコードを調べるツール';
+const PAGE_TITLE = 'マップコード変換 | kalvin.io';
+const PAGE_DESCRIPTION =
+  '住所・GoogleマップやAppleマップの共有リンク・緯度経度から、カーナビ用のマップコードを無料で検索できるツールです。日本全国の住所に対応しています。';
+const OG_IMAGE_ALT = 'Kal.L — kalvin.io';
+
+const FAQ = [
+  {
+    question: 'マップコードとは何ですか？',
+    answer:
+      '地図上の位置を数字で表すコードで、カーナビの目的地入力などに使われます。「マップコード」および「MAPCODE」は株式会社デンソーの登録商標です。',
+  },
+  {
+    question: 'どのような入力に対応していますか？',
+    answer:
+      '日本語の住所、GoogleマップやAppleマップの共有リンク、緯度・経度（例: 26.694333, 127.877833）に対応しています。地図をタップして位置を指定することもできます。',
+  },
+  {
+    question: '日本国外の場所も変換できますか？',
+    answer: 'いいえ。マップコードは日本国内の地点のみ対応しています。',
+  },
+  {
+    question: 'ピンの位置は調整できますか？',
+    answer: 'はい。地図をタップするかピンをドラッグして位置を調整すると、その地点のマップコードを再取得します。',
+  },
+] as const;
 
 export const Route = createFileRoute('/tool/mapcode')({
   component: MapcodePage,
   head: () => ({
     meta: [
-      { title: 'マップコード変換' },
-      { name: 'description', content: DESCRIPTION },
+      { title: PAGE_TITLE },
+      { name: 'description', content: PAGE_DESCRIPTION },
       { property: 'og:url', content: `${SITE_URL}/tool/mapcode` },
-      { property: 'og:title', content: 'マップコード変換 - kalvin.io/tool' },
-      { property: 'og:description', content: DESCRIPTION },
+      { property: 'og:title', content: PAGE_TITLE },
+      { property: 'og:description', content: PAGE_DESCRIPTION },
+      { property: 'og:image:alt', content: OG_IMAGE_ALT },
       { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'マップコード変換' },
-      { name: 'twitter:description', content: DESCRIPTION },
+      { name: 'twitter:title', content: PAGE_TITLE },
+      { name: 'twitter:description', content: PAGE_DESCRIPTION },
+      { name: 'twitter:image:alt', content: OG_IMAGE_ALT },
     ],
     links: [{ rel: 'canonical', href: `${SITE_URL}/tool/mapcode` }],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify(
+          toolPageStructuredData({
+            name: 'マップコード変換',
+            path: '/tool/mapcode',
+            description: PAGE_DESCRIPTION,
+            breadcrumbName: 'マップコード変換',
+          }),
+        ),
+      },
+      { type: 'application/ld+json', children: JSON.stringify(faqStructuredData(FAQ)) },
+    ],
   }),
 });
 
@@ -121,6 +162,10 @@ function MapcodePage() {
 
   return (
     <>
+      <p className="mt-0 mb-6 text-sm text-text-muted">
+        住所・GoogleマップやAppleマップの共有リンク・緯度経度から、カーナビで使えるマップコードを調べる無料ツールです。日本全国の住所に対応しています。
+      </p>
+
       {/* Input */}
       <div className="mb-6">
         <form
@@ -132,7 +177,7 @@ function MapcodePage() {
         >
           <Input
             value={input}
-            onChange={(event) => setInput(event.target.value)}
+            onValueChange={setInput}
             placeholder="住所・Google / Apple マップのリンク・緯度,経度"
             className="h-12 flex-1 border-0 bg-transparent px-4 text-base text-text-heading placeholder:text-text-muted/70 focus-visible:ring-0 dark:bg-transparent sm:h-14"
             aria-label="住所またはマップのリンク"
@@ -169,6 +214,8 @@ function MapcodePage() {
         </ClientOnly>
         <p className="mt-2 mb-0 text-xs text-text-muted">地図をタップ、またはピンをドラッグして位置を調整できます</p>
       </div>
+
+      <MapcodeGuideSections />
 
       <p className="mt-14 mb-0 border-t border-line pt-4 text-xs text-text-muted">
         マップコードは japanmapcode.com
@@ -236,5 +283,53 @@ function ResultCard({ place, mapcode, loading }: ResultCardProps) {
         </div>
       </dl>
     </div>
+  );
+}
+
+function MapcodeGuideSections() {
+  return (
+    <>
+      <section className="mt-14">
+        <h2 className="pixel-heading m-0 mb-4 text-[0.9375rem] font-semibold text-text-heading">マップコードとは</h2>
+        <p className="m-0 text-sm text-text-muted">
+          マップコードは、地図上の位置を数字で表すコードです。住所より短い数字で地点を指定でき、カーナビの目的地入力などに使われます。「マップコード」および「MAPCODE」は株式会社デンソーの登録商標です。
+        </p>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="pixel-heading m-0 mb-4 text-[0.9375rem] font-semibold text-text-heading">使い方</h2>
+        <ol className="m-0 list-decimal space-y-2 border-t border-line pt-4 pl-5 text-sm text-text-muted">
+          <li>住所・Googleマップ／Appleマップの共有リンク・緯度経度のいずれかを入力します。</li>
+          <li>「変換」を押すか、地図をタップして位置を指定します。</li>
+          <li>表示されたマップコードをコピーして、カーナビに入力します。</li>
+        </ol>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="pixel-heading m-0 mb-4 text-[0.9375rem] font-semibold text-text-heading">対応範囲</h2>
+        <p className="m-0 text-sm text-text-muted">
+          日本国内の住所・地点に対応しています。番地まで特定できない場合は地域の中心を表示するため、地図のピンで位置を調整してください。マップコードは
+          japanmapcode.com から取得しています。
+        </p>
+      </section>
+
+      <FaqSection />
+    </>
+  );
+}
+
+function FaqSection() {
+  return (
+    <section className="mt-14">
+      <h2 className="pixel-heading m-0 mb-4 text-[0.9375rem] font-semibold text-text-heading">よくある質問</h2>
+      <dl className="m-0 border-t border-line">
+        {FAQ.map((item) => (
+          <div key={item.question} className="border-r border-b border-l border-line px-4 py-3">
+            <dt className="text-sm font-medium text-text-heading">{item.question}</dt>
+            <dd className="m-0 mt-1 text-sm text-text-muted">{item.answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }

@@ -1,8 +1,7 @@
 'use client';
 
 import { Link, type ErrorComponentProps } from '@tanstack/react-router';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import { IconAlertCircle, IconHome, IconRefresh } from '@tabler/icons-react';
 
 export function GlobalErrorComponent({ error, reset }: ErrorComponentProps) {
@@ -29,16 +28,10 @@ export function GlobalErrorComponent({ error, reset }: ErrorComponentProps) {
             <IconRefresh className="size-4 mr-2" aria-hidden="true" />
             Retry
           </Button>
-          <Link
-            to="/tool"
-            className={cn(
-              buttonVariants({ variant: 'default' }),
-              'flex-1 sm:flex-initial items-center gap-2 hover:no-underline',
-            )}
-          >
+          <Button render={<Link to="/tool" />} className="flex-1 items-center gap-2 hover:no-underline sm:flex-initial">
             <IconHome className="size-4" aria-hidden="true" />
             Home
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

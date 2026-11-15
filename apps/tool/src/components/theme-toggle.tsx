@@ -1,4 +1,5 @@
 import { IconMoon, IconSun } from '@tabler/icons-react';
+import { Button } from '@/components/ui/button';
 import { useTheme } from '../lib/theme-provider';
 
 export function ThemeToggle() {
@@ -6,13 +7,14 @@ export function ThemeToggle() {
   const nextTheme = theme === 'light' ? 'dark' : 'light';
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="icon-lg"
       onClick={() => setTheme(nextTheme)}
       aria-label={`Switch to ${nextTheme} mode`}
-      className="inline-flex size-9 items-center justify-center border border-line text-text-heading hover:border-text-muted"
+      className="border border-line hover:border-text-muted"
     >
       {theme === 'light' ? <IconMoon className="size-4" /> : <IconSun className="size-4" />}
-    </button>
+    </Button>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { faqStructuredData, toolPageStructuredData } from '@/lib/structured-data';
 import { SITE_URL } from '@/lib/site';
 import { IconCalendar } from '@tabler/icons-react';
 import * as holiday_jp from '@holiday-jp/holiday_jp';
@@ -153,35 +154,70 @@ function getRelativeInfo(date: Date): RelativeInfo {
   return { label, age: `満${age}歳` };
 }
 
+const PAGE_TITLE = '和暦・西暦変換 | kalvin.io';
+const PAGE_DESCRIPTION =
+  '西暦と和暦（明治・大正・昭和・平成・令和）を相互変換する無料ツール。日付を入れるだけで元号・干支・曜日・祝日・星座も表示します。';
+const OG_IMAGE_ALT = 'Kal.L — kalvin.io';
+
+const FAQ = [
+  {
+    question: '和暦と西暦はどう変換しますか？',
+    answer:
+      '元号ごとの開始年を基準に計算します。たとえば令和6年は2024年です。入力欄には「2024-01-15」「2024年1月15日」「令和6年1月15日」「R6.1.15」「19970224」などの形式で入力できます。',
+  },
+  {
+    question: '対応している元号は？',
+    answer:
+      '明治・大正・昭和・平成・令和に対応しています。明治元年10月23日（1868年10月23日）以降の日付を変換できます。',
+  },
+  {
+    question: '明治より前の日付は変換できますか？',
+    answer: 'いいえ。明治より前の日付には対応していません。',
+  },
+  {
+    question: '日付以外に何がわかりますか？',
+    answer: '曜日・日本の祝日・干支・星座・今日からの日数（過去の日付では満年齢）を表示します。',
+  },
+] as const;
+
+const CONVERSION_EXAMPLES = [
+  { input: '令和6年1月15日', western: '2024年1月15日' },
+  { input: '平成31年4月30日', western: '2019年4月30日' },
+  { input: '昭和64年1月1日', western: '1989年1月1日' },
+  { input: '大正元年', western: '1912年' },
+  { input: '明治元年', western: '1868年' },
+] as const;
+
 export const Route = createFileRoute('/tool/date')({
   component: DateConverterPage,
   head: () => ({
     meta: [
-      { title: '和暦・西暦変換' },
-      {
-        name: 'description',
-        content: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール',
-      },
+      { title: PAGE_TITLE },
+      { name: 'description', content: PAGE_DESCRIPTION },
       { property: 'og:url', content: `${SITE_URL}/tool/date` },
-      { property: 'og:title', content: '和暦・西暦変換 - kalvin.io/tool' },
-      {
-        property: 'og:description',
-        content: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール',
-      },
-      {
-        name: 'twitter:card',
-        content: 'summary_large_image',
-      },
-      {
-        name: 'twitter:title',
-        content: '和暦・西暦変換',
-      },
-      {
-        name: 'twitter:description',
-        content: '西暦と和暦（令和・平成・昭和・大正・明治）を相互変換するツール',
-      },
+      { property: 'og:title', content: PAGE_TITLE },
+      { property: 'og:description', content: PAGE_DESCRIPTION },
+      { property: 'og:image:alt', content: OG_IMAGE_ALT },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: PAGE_TITLE },
+      { name: 'twitter:description', content: PAGE_DESCRIPTION },
+      { name: 'twitter:image:alt', content: OG_IMAGE_ALT },
     ],
     links: [{ rel: 'canonical', href: `${SITE_URL}/tool/date` }],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify(
+          toolPageStructuredData({
+            name: '和暦・西暦変換',
+            path: '/tool/date',
+            description: PAGE_DESCRIPTION,
+            breadcrumbName: '和暦・西暦変換',
+          }),
+        ),
+      },
+      { type: 'application/ld+json', children: JSON.stringify(faqStructuredData(FAQ)) },
+    ],
   }),
 });
 
@@ -205,6 +241,9 @@ function DateConverterPage() {
     const parsed = parseInput(input);
     return processResult(parsed);
   }, [input]);
+  const selectedDate = result.conversion?.western.date;
+  const selectedIso = selectedDate ? formatISOWithPrecision(selectedDate, 'day') : undefined;
+  const selectedMonth = selectedDate ? formatISOWithPrecision(selectedDate, 'month') : undefined;
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -212,6 +251,10 @@ function DateConverterPage() {
 
   return (
     <>
+      <p className="mt-0 mb-6 text-sm text-text-muted">
+        西暦と和暦（明治・大正・昭和・平成・令和）を相互変換する無料ツールです。日付を入力すると、元号・干支・曜日・祝日・星座・今日からの日数も表示します。
+      </p>
+
       {/* Input */}
       <div className="mb-8">
         <div
@@ -220,7 +263,7 @@ function DateConverterPage() {
           <Input
             ref={inputRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onValueChange={setInput}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder="2024-01-15, 令和6年, R6..."
@@ -235,20 +278,7 @@ function DateConverterPage() {
               <IconCalendar className="size-4.5" />
             </PopoverTrigger>
             <PopoverContent align="end" className="w-auto p-0 shadow-none ring-line">
-              <Calendar
-                mode="single"
-                captionLayout="dropdown"
-                selected={result.conversion?.western.date}
-                onSelect={(date) => {
-                  if (date) {
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const day = String(date.getDate()).padStart(2, '0');
-                    setInput(`${year}-${month}-${day}`);
-                  }
-                }}
-                defaultMonth={result.conversion?.western.date ?? new Date()}
-              />
+              <Calendar value={selectedIso} onValueChange={setInput} defaultMonth={selectedMonth} />
             </PopoverContent>
           </Popover>
         </div>
@@ -280,8 +310,14 @@ function DateConverterPage() {
       {/* Results */}
       <ResultsSection result={result} />
 
+      {/* Conversion examples */}
+      <ConversionExamplesSection />
+
       {/* Era Reference */}
       <EraReferenceSection />
+
+      {/* FAQ */}
+      <FaqSection />
     </>
   );
 }
@@ -635,6 +671,50 @@ function EraReferenceSection() {
           </div>
         ))}
       </div>
+    </section>
+  );
+}
+
+function ConversionExamplesSection() {
+  return (
+    <section className="mt-14">
+      <h2 className="pixel-heading m-0 mb-4 text-[0.9375rem] font-semibold text-text-heading">変換の例</h2>
+      <div className="overflow-x-auto border-t border-line">
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr>
+              <th className="border-b border-line px-3 py-2 text-left text-xs font-normal text-text-muted">入力</th>
+              <th className="border-b border-l border-line px-3 py-2 text-left text-xs font-normal text-text-muted">
+                西暦
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {CONVERSION_EXAMPLES.map((example) => (
+              <tr key={example.input}>
+                <td className="border-b border-line px-3 py-2 text-text-heading">{example.input}</td>
+                <td className="border-b border-l border-line px-3 py-2 text-text-muted">{example.western}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function FaqSection() {
+  return (
+    <section className="mt-14">
+      <h2 className="pixel-heading m-0 mb-4 text-[0.9375rem] font-semibold text-text-heading">よくある質問</h2>
+      <dl className="m-0 border-t border-line">
+        {FAQ.map((item) => (
+          <div key={item.question} className="border-r border-b border-l border-line px-4 py-3">
+            <dt className="text-sm font-medium text-text-heading">{item.question}</dt>
+            <dd className="m-0 mt-1 text-sm text-text-muted">{item.answer}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }

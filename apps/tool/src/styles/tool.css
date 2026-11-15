@@ -1,12 +1,11 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 @import './theme.css';
 
 /* Dark is the default palette (see theme.css), so `dark:` applies unless ThemeProvider set `.light`. */
 @custom-variant dark (&:not(.light *));
 
-/* shadcn tokens, mapped onto the shared palette so the ui/ primitives follow the portfolio look. */
+/* Control tokens, mapped onto the shared palette so the ui/ primitives follow the portfolio look. */
 :root {
   --background: var(--palette-bg);
   --foreground: var(--palette-text);
@@ -27,7 +26,7 @@
   --border: var(--palette-line);
   --input: var(--palette-line);
   --ring: color-mix(in oklch, var(--palette-link) 80%, transparent);
-  /* A unit is required: shadcn derives the other radii with calc(var(--radius) - 2px). */
+  /* A unit is required: the other radii are derived with calc(var(--radius) - 2px). */
   --radius: 0rem;
 }
 
