@@ -20,6 +20,6 @@ The mapcode tool reads `GOOGLE_MAPS_API_KEY` (Geocoding API) on the server. With
 - `src/lib/painting/`: Met Museum painting fetch and downsampling for the footer strip.
 - `src/lib/japanese-date/`: era definitions, parsing, conversion, formatting, and parser tests.
 - `src/lib/mapcode/`: address and map share link parsing, geocoding, and the Japan MAPCODE lookup. Server functions in `server.ts` call GSI, jp-postal-code-api, japanmapcode.com, and (optionally) Google Geocoding.
-- `src/components/ui/`: shared UI components.
+- `src/components/ui/`: shared ui-sdk primitives styled for the tool pages.
 
 Run `bun run check` for lint, formatting, type checks, and tests. Run `bun run fix` to apply Oxlint fixes and Oxfmt formatting.

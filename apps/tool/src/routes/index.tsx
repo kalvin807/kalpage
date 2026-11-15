@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { PERSON_ID, WEBSITE_ID } from '@/lib/structured-data';
 import { SITE_URL } from '@/lib/site';
 import { maybeGetPainting } from '@/lib/painting/painting.functions';
 import { Hero, ProjectCard, Section, SkillGroup, TimelineItem } from '@/components/portfolio/blocks';
@@ -13,28 +14,41 @@ const PAGE_DESCRIPTION =
 const OG_IMAGE_URL = `${SITE_URL}/og-image.png`;
 const OG_IMAGE_ALT = 'Kal.L, fullstack engineer in Tokyo';
 
-const STRUCTURED_DATA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: 'Calvin (Kal)',
-    url: HOME_URL,
-    jobTitle: 'Fullstack Engineer',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Tokyo',
-      addressCountry: 'JP',
+const STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': PERSON_ID,
+      name: 'Calvin (Kal)',
+      url: HOME_URL,
+      jobTitle: 'Fullstack Engineer',
+      description: PAGE_DESCRIPTION,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Tokyo',
+        addressCountry: 'JP',
+      },
+      sameAs: ['https://github.com/kalvin807'],
+      knowsAbout: ['AI Agents', 'Speech Systems', 'TypeScript', 'Python', 'Go', 'Next.js'],
+      knowsLanguage: ['Cantonese', 'Mandarin', 'English', 'Japanese'],
+      alumniOf: [
+        { '@type': 'CollegeOrUniversity', name: 'Georgia Institute of Technology' },
+        { '@type': 'CollegeOrUniversity', name: 'The University of Hong Kong' },
+      ],
     },
-    sameAs: ['https://github.com/kalvin807'],
-    knowsAbout: ['AI Agents', 'Speech Systems', 'TypeScript', 'Python', 'Go', 'Next.js'],
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Kal.L Portfolio',
-    url: HOME_URL,
-  },
-];
+    {
+      '@type': 'WebSite',
+      '@id': WEBSITE_ID,
+      name: 'Kal.L Portfolio',
+      url: HOME_URL,
+      description: PAGE_DESCRIPTION,
+      inLanguage: 'en',
+      author: { '@id': PERSON_ID },
+      publisher: { '@id': PERSON_ID },
+    },
+  ],
+};
 
 export const Route = createFileRoute('/')({
   staticData: { lang: 'en' },
@@ -47,10 +61,6 @@ export const Route = createFileRoute('/')({
       { title: PAGE_TITLE },
       { name: 'robots', content: 'index,follow,max-image-preview:large' },
       { name: 'description', content: PAGE_DESCRIPTION },
-      {
-        name: 'keywords',
-        content: 'software engineer, developer, Tokyo, Japan, portfolio, web development, programming',
-      },
       { name: 'author', content: 'Kal.L' },
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: HOME_URL },

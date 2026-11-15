@@ -2,4 +2,7 @@
 User-agent: *
 Disallow:
 
+# AI crawlers are welcome. A machine-readable summary of this site is at:
+# https://kalvin.io/llms.txt
+
 Sitemap: https://kalvin.io/sitemap.xml

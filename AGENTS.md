@@ -114,3 +114,9 @@
 - Use `visibility` or `opacity` for hiding components with animations (avoid breaking layout).
 - Test scrolling behavior on long content.
 - Ensure Dark Mode compatibility (no hardcoded hex black/white on text).
+
+## ui-sdk
+
+- Follow the `ui-sdk` skill when it is installed before using ui-sdk.
+- Read `node_modules/@ui-sdk/react/docs/llms.txt` in `apps/tool` before using ui-sdk.
+- To build a new component, search `node_modules/@ui-sdk/react/docs/core.md` by heading and read `rendering.md` beside it.

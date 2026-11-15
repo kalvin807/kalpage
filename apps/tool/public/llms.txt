@@ -1,0 +1,27 @@
+# kalvin.io
+
+> Portfolio and Japanese utility tools by Kal.L (Calvin), a fullstack engineer in Tokyo.
+
+## About
+
+- Kal.L (Calvin) is a fullstack engineer based in Tokyo, Japan.
+- Focus areas: AI agents, speech systems, TypeScript, Python, Go, and fast web interfaces.
+- Portfolio: https://kalvin.io/
+- GitHub: https://github.com/kalvin807
+
+## Tools
+
+- [便利ツール集](https://kalvin.io/tool): index of the Japanese utility tools.
+- [和暦・西暦変換](https://kalvin.io/tool/date): converts between Japanese era years (Meiji, Taisho, Showa, Heisei, Reiwa) and Gregorian dates. Accepts formats such as `2024-01-15`, `2024年1月15日`, `令和6年1月15日`, `R6.1.15` and `19970224`. Shows the era, sexagenary cycle, weekday, Japanese public holiday, star sign, and time relative to today. Covers dates from 23 October 1868 onward.
+- [マップコード変換](https://kalvin.io/tool/mapcode): finds Japanese mapcodes from a Japanese address, a Google Maps or Apple Maps share link, or coordinates such as `26.694333, 127.877833`. Japan only. Mapcodes come from japanmapcode.com. "マップコード" and "MAPCODE" are registered trademarks of Denso Corporation.
+
+## Site facts
+
+- Languages: English (portfolio), Japanese (tools).
+- Sitemap: https://kalvin.io/sitemap.xml
+- All crawlers, including AI crawlers, are allowed.
+- Last updated: 2026-11-15
+
+## Optional
+
+- [Full text](https://kalvin.io/llms-full.txt): expanded descriptions of the portfolio and tools.

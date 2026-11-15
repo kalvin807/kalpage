@@ -1,0 +1,70 @@
+# kalvin.io — full text
+
+> Portfolio and Japanese utility tools by Kal.L (Calvin), a fullstack engineer in Tokyo.
+
+## About Kal.L
+
+Kal.L (Calvin) is a fullstack engineer based in Tokyo, Japan. He builds AI agents, speech systems, and fast web apps, from the model layer to the user interface.
+
+- GitHub: https://github.com/kalvin807
+- Languages: Cantonese, Mandarin, English, Japanese
+- Technical skills: TypeScript, JavaScript, Python, Go, Ruby, React, Next.js, PyTorch, LLM/GenAI
+
+## Experience
+
+- 2025 — now: Fullstack Engineer at an AI voice company (Tokyo). Builds AI agent and voice products end to end, from the model layer to the user interface.
+- 2024 — 2025: Speech Team Lead at an ad-tech company (Tokyo). Led the team building low-latency conversational agents for enterprise partners, and took speech-to-text pipelines from prototype to production scale.
+- 2023 — 2026: M.S. Computer Science (Machine Learning), Georgia Tech.
+- 2023 — 2024: Software Engineer at a social hiring platform (Tokyo). Built high-performance enterprise SaaS interfaces with Next.js and Rails, designed a loyalty point system, and ran zero-downtime data migrations.
+- 2022: Software Engineer at a telecom company (Tokyo). Led a small team to deliver an internal career platform that won a company-wide award, and tuned query performance across a distributed database.
+- 2021 — 2022: Software Engineer at a fintech startup (Hong Kong). Built Go and Python microservices that parsed and analyzed bank statements, and rebuilt the testing infrastructure.
+- 2017 — 2021: B.Eng. Computer Science, The University of Hong Kong.
+
+## Projects
+
+- GBFinder Omega: realtime raid finder for Granblue Fantasy, written in Go. Delivers high volumes of raid signals in under a second. https://github.com/kalvin807/gbf-raid-finder
+- henkaku: small JavaScript library that converts strings between full-width and half-width characters. https://github.com/kalvin807/henkaku
+- guru-pu: Discord bot that assigns server roles automatically. https://github.com/kalvin807/guru-pu
+- akaina: computer vision model that counts Magikarp in a YouTube live stream. https://github.com/kalvin807/akaina-detector
+
+## Tools
+
+### 和暦・西暦変換 (Japanese era / Gregorian date converter)
+
+URL: https://kalvin.io/tool/date
+
+Converts between Japanese era years and Western (Gregorian) dates. Supported eras: Meiji (1868–1912), Taisho (1912–1926), Showa (1926–1989), Heisei (1989–2019), Reiwa (2019–present). Dates before 23 October 1868 are not supported.
+
+Accepted input examples:
+- `2024-01-15` and `2024年1月15日`
+- `令和6年1月15日`, `R6.1.15`, `令和6年`, `R6`
+- `19970224`
+- Relative words such as `今日`, `昨日`, `明日`
+
+Output includes the converted Japanese era date, the Gregorian date, ISO date, rōmaji date, era name, sexagenary cycle (eto), weekday, Japanese public holiday, star sign, and the distance from today (with full age for past dates).
+
+Conversion examples:
+- 令和6年1月15日 = 2024年1月15日
+- 平成31年4月30日 = 2019年4月30日
+- 昭和64年1月1日 = 1989年1月1日
+- 大正元年 = 1912年
+- 明治元年 = 1868年
+
+### マップコード変換 (address to Japanese mapcode)
+
+URL: https://kalvin.io/tool/mapcode
+
+Finds a Japanese mapcode (a numeric code used for car navigation destinations) from a Japanese address, a Google Maps or Apple Maps share link, or latitude/longitude coordinates. A map is shown so the pin can be adjusted; the tool then looks up the mapcode for the adjusted point.
+
+- Supported input: Japanese addresses, Google/Apple Maps share links, coordinates such as `26.694333, 127.877833`, or a tap/drag on the embedded map.
+- Coverage: Japan only. Mapcodes are supplied by japanmapcode.com.
+- If the block number cannot be resolved, the tool shows the approximate area and asks the user to adjust the pin.
+- "マップコード" and "MAPCODE" are registered trademarks of Denso Corporation.
+
+## Site
+
+- Language: English (portfolio), Japanese (tools).
+- Structured data: Person and WebSite on the portfolio; WebApplication and BreadcrumbList on tool pages; FAQPage on both tools.
+- Sitemap: https://kalvin.io/sitemap.xml
+- Crawling: all crawlers, including AI crawlers, are allowed.
+- Last updated: 2026-11-15
